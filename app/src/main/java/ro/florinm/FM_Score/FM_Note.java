@@ -156,12 +156,20 @@ public class FM_Note extends FM_BaseNote {
             if (offset >= 5.0f)
                 for (int i = 5; i <= offset; i++) {
                     ly = StartY1 + i * Stave.getDistanceBetweenStaveLines();
-                    canvas.drawLine(StartX + padding + WidthAccidental(Stave.StaveFont) + paddingNote - Stave.getDistanceBetweenStaveLines() / 3, ly, StartX + padding + WidthAccidental(Stave.StaveFont) + paddingNote + WidthNote(Stave.StaveFont) + Stave.getDistanceBetweenStaveLines() / 3, ly, Stave.StaveLineColor);
+                    float tX = StartX + padding + WidthAccidental(Stave.StaveFont) + paddingNote - Stave.getDistanceBetweenStaveLines() / 3;
+                    float tXe = StartX + padding + WidthAccidental(Stave.StaveFont) + paddingNote + WidthNote(Stave.StaveFont) + Stave.getDistanceBetweenStaveLines() / 3;
+                    float tY = ly;
+                    float tYe = ly + FM_Const.dpTOpx(context,1);
+                    canvas.drawRect(tX, tY,tXe, tYe, Stave.StaveLineColor);
                 }
             if (offset < 0.0f)
                 for (int i = -1; i >= offset; i--) {
                     ly = StartY1 + i * Stave.getDistanceBetweenStaveLines();
-                    canvas.drawLine(StartX + padding + WidthAccidental(Stave.StaveFont) + paddingNote - Stave.getDistanceBetweenStaveLines() / 3, ly, StartX + padding + WidthAccidental(Stave.StaveFont) + paddingNote + WidthNote(Stave.StaveFont) + Stave.getDistanceBetweenStaveLines() / 3, ly, Stave.StaveLineColor);
+                    float tX = StartX + padding + WidthAccidental(Stave.StaveFont) + paddingNote - Stave.getDistanceBetweenStaveLines() / 3;
+                    float tXe = StartX + padding + WidthAccidental(Stave.StaveFont) + paddingNote + WidthNote(Stave.StaveFont) + Stave.getDistanceBetweenStaveLines() / 3;
+                    float tY = ly;
+                    float tYe = ly + FM_Const.dpTOpx(context,1);
+                    canvas.drawRect(tX, tY,tXe, tYe, Stave.StaveLineColor);
                 }
         }
         Stave.StaveFont.setColor(Color);
