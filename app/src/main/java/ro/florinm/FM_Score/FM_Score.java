@@ -29,12 +29,11 @@ public class FM_Score extends View {
     protected Paint StaveFont;
     FM_KeySignature FirstStaveKey, SecondStaveKey;
     private float DistanceBetweenStaveLines;
-    private float DistanceBetweenStaves;
-    private float DistanceBetweenLines;
+    private float DistanceBetweenStaves_cnt;                //Distance between Staves as number of distances between lines
+    private float DistanceBetweenRows_cnt;                 //Distance between Rows of staves as number of distances between lines
     protected Paint StaveLineColor;
-    private float PaddingTop;
-    float PaddingStart;
-    float PaddingEnd;
+    private float PaddingT_cnt, PaddingS_p, PaddingE_p;     //padding Start and padding End are set as percentange of the total width
+    private float PaddingS, PaddingE;                       //padding Top is set as number of Distances between Lines.
     private boolean StartBar;
     private boolean EndBar;
     @FM_ClefValue private int FirstStaveClef, SecondStaveClef;
@@ -63,14 +62,14 @@ public class FM_Score extends View {
         StaveFont = new Paint();
         StaveFont.setAntiAlias(true);
         StaveFont.setTypeface(bravura);
-        StaveFont.setColor(StaveLineColor.getColor());
+        StaveFont.setColor(Color);
         Lines = 1;
         setDistanceBetweenStaveLines(10);
-        setDistanceBetweenStaves(50);
-        setDistanceBetweenLines(50);
-        setPaddingTop(40);
-        setPaddingStart(15);
-        setPaddingEnd(10);
+        setDistanceBetweenStaves(5);
+        setDistanceBetweenRows(10);
+        setPaddingT(5);
+        setPaddingS(5);
+        setPaddingE(5);
         setStartBar(true);
         setEndBar(true);
         StaffCount = FM_StaffCount._1;
@@ -125,11 +124,17 @@ public class FM_Score extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         try {
-            int MaxHeight = (int) (PaddingTop + (Lines * (4 * DistanceBetweenStaveLines + DistanceBetweenLines)));
+            int MaxHeight = (int) (getPaddingT() + (Lines * (4 * DistanceBetweenStaveLines + getDistanceBetweenRows())));
             if (StaffCount == FM_StaffCount._2)
-                MaxHeight = MaxHeight + Lines * (int)(DistanceBetweenStaves + 4 * DistanceBetweenStaveLines);
+                MaxHeight = MaxHeight + Lines * (int)(getDistanceBetweenStaves() + 4 * DistanceBetweenStaveLines);
+
             heightMeasureSpec = MeasureSpec.makeMeasureSpec(MaxHeight, MeasureSpec.AT_MOST);
             getLayoutParams().height = MaxHeight;
+//            int tmp = MeasureSpec.makeMeasureSpec(MaxHeight, MeasureSpec.AT_MOST);
+//            if (tmp > heightMeasureSpec) {
+//                heightMeasureSpec = tmp;
+//                getLayoutParams().height = MaxHeight;
+//            }
         } catch (Exception ignored) {
         } finally {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -138,9 +143,11 @@ public class FM_Score extends View {
 
     @Override
     public void onSizeChanged(int width, int height, int old_width, int old_height) {
+        if (width < 100) width = 100;
         super.onSizeChanged(width, height, old_width, old_height);
         this.width = width;
-        this.height = height;
+        PaddingS = PaddingS_p * width / 100.f;
+        PaddingE = PaddingE_p * width / 100.f;
         ComputeLines();
         invalidate();
         requestLayout();
@@ -149,8 +156,8 @@ public class FM_Score extends View {
     @SuppressLint("DrawAllocation")
     @Override
     protected void onDraw(Canvas canvas) {
-        float ys1 = PaddingTop;
-        float ys2 = PaddingTop;
+        float ys1 = getPaddingT();
+        float ys2;
         float BarYs = 0;
         float BarYe = 0;
         for (int l = 0; l < Lines; l++) {
@@ -158,23 +165,23 @@ public class FM_Score extends View {
             BarYs = ys1;
             BarYe = ys1 + 4 * DistanceBetweenStaveLines;
             //draw stave lines
-            for (int i = 0; i < 5; i++) canvas.drawLine(PaddingStart, ys1 + i * DistanceBetweenStaveLines, width - PaddingEnd, ys1 + i * DistanceBetweenStaveLines, StaveLineColor);
+            for (int i = 0; i < 5; i++) canvas.drawRect(PaddingS, ys1 + i * DistanceBetweenStaveLines, width - PaddingE, ys1 + i * DistanceBetweenStaveLines + FM_Const.dpTOpx(context, 1), StaveLineColor);
             //draw clef
             if (FirstStaveClef == FM_ClefValue.TREBLE) DrawTrebleClef(canvas, ys1);
             else DrawBassClef(canvas, ys1);
             //draw keySignature
-            FirstStaveKey.SetDrawParameters(PaddingStart + getClefWidth(), ys1, ys1);
+            FirstStaveKey.SetDrawParameters(PaddingS + getClefWidth(), ys1, ys1);
             FirstStaveKey.DrawNote(canvas);
             //draw timeSignature
             if (l == 0) DrawTimeSignature(canvas, ys1);
 
             if (StaffCount == FM_StaffCount._2) {
-                ys2 = ys1 + (DistanceBetweenStaves + 4 * DistanceBetweenStaveLines);
+                ys2 = ys1 + (getDistanceBetweenStaves() + 4 * DistanceBetweenStaveLines);
                 BarYe = ys2 + 4 * DistanceBetweenStaveLines;
-                for (int i = 0; i < 5; i++) canvas.drawLine(PaddingStart, ys2 + i * DistanceBetweenStaveLines, width - PaddingEnd, ys2 + i * DistanceBetweenStaveLines, StaveLineColor);
+                for (int i = 0; i < 5; i++) canvas.drawRect(PaddingS, ys2 + i * DistanceBetweenStaveLines, width - PaddingE, ys2 + i * DistanceBetweenStaveLines + FM_Const.dpTOpx(context, 1), StaveLineColor);
                 if (SecondStaveClef == FM_ClefValue.TREBLE) DrawTrebleClef(canvas, ys2);
                 else DrawBassClef(canvas, ys2);
-                SecondStaveKey.SetDrawParameters(PaddingStart + getClefWidth(), ys2, ys2);
+                SecondStaveKey.SetDrawParameters(PaddingS + getClefWidth(), ys2, ys2);
                 SecondStaveKey.DrawNote(canvas);
                 if (l == 0) DrawTimeSignature(canvas, ys2);
 
@@ -188,14 +195,14 @@ public class FM_Score extends View {
                     int height = bounds.height();
                     f.setTextSize(f.getTextSize() * (BarYe - BarYs) / height);
                     f.setColor(StaveFont.getColor());
-                    canvas.drawText(FM_Const.Bracket, PaddingStart - f.measureText(FM_Const.Bracket) - 2, ys2 + 4 * DistanceBetweenStaveLines, f);
+                    canvas.drawText(FM_Const.Bracket, PaddingS - f.measureText(FM_Const.Bracket) - 2, ys2 + 4 * DistanceBetweenStaveLines, f);
                 }
                 //End Draw Bracket
             }
 
-            if (StartBar) canvas.drawLine(PaddingStart, BarYs, PaddingStart, BarYe, StaveLineColor);
-            if (EndBar) canvas.drawLine(width - PaddingEnd, BarYs, width - PaddingEnd, BarYe, StaveLineColor);
-            ys1 = ys2 + (DistanceBetweenLines + 4 * DistanceBetweenStaveLines);
+            if (StartBar) canvas.drawLine(PaddingS, BarYs, PaddingS, BarYe, StaveLineColor);
+            if (EndBar) canvas.drawLine(width - PaddingE, BarYs, width - PaddingE, BarYe, StaveLineColor);
+            ys1 = ys2 + (getDistanceBetweenRows() + 4 * DistanceBetweenStaveLines);
         }
 
         for (int i = 0; i < StaveNotes.size(); i++) StaveNotes.get(i).DrawNote(canvas);
@@ -204,11 +211,11 @@ public class FM_Score extends View {
         for (int j = 0; j < Beams.size(); j++) Beams.get(j).Draw(this, canvas);
 
         if (EndBar) {
-            canvas.drawRect(width - PaddingEnd - FM_Const.dpTOpx(context,DistanceBetweenStaveLines / 7), BarYs, width - PaddingEnd, BarYe, StaveLineColor);
-            canvas.drawRect(width - PaddingEnd - FM_Const.dpTOpx(context,DistanceBetweenStaveLines * 2 / 7), BarYs, width - PaddingEnd - FM_Const.dpTOpx(context,DistanceBetweenStaveLines *17 / 70), BarYe, StaveLineColor);
+            canvas.drawRect(width - PaddingE - FM_Const.dpTOpx(context,DistanceBetweenStaveLines / 7), BarYs, width - PaddingE, BarYe, StaveLineColor);
+            canvas.drawRect(width - PaddingE - FM_Const.dpTOpx(context,DistanceBetweenStaveLines * 2 / 7), BarYs, width - PaddingE - FM_Const.dpTOpx(context,DistanceBetweenStaveLines *17 / 70), BarYe, StaveLineColor);
 
-            //canvas.drawLine(width - PaddingEnd - 10, BarYs, width - PaddingEnd - 10, BarYe, StaveLineColor);
-            //canvas.drawLine(width - PaddingEnd - 11, BarYs, width - PaddingEnd - 11, BarYe, StaveLineColor);
+            //canvas.drawLine(width - PaddingE - 10, BarYs, width - PaddingE - 10, BarYe, StaveLineColor);
+            //canvas.drawLine(width - PaddingE - 11, BarYs, width - PaddingE - 11, BarYe, StaveLineColor);
         }
         invalidate();
         requestLayout();
@@ -242,32 +249,36 @@ public class FM_Score extends View {
         requestLayout();
     }
 
-    public int getPaddingStart() {
-        return (int)PaddingStart;
+    public float getPaddingS() {
+        return PaddingS;
     }
 
-    public void setPaddingStart(int p) {
-        PaddingStart = FM_Const.dpTOpx(context, p);
+    public void setPaddingS(float percent) {
+        PaddingS_p = percent;
+        if (width < 100) width = 100;
+        PaddingS = percent * width / 100.f;
         invalidate();
         requestLayout();
     }
 
-    public int getPaddingTop() {
-        return (int)PaddingTop;
+    public float getPaddingT() {
+        return PaddingT_cnt * DistanceBetweenStaveLines;
     }
 
-    public void setPaddingTop(int p) {
-        PaddingTop = FM_Const.dpTOpx(context, p);
+    public void setPaddingT(float count) {
+        PaddingT_cnt = count;
         invalidate();
         requestLayout();
     }
 
-    public int getPaddingEnd() {
-        return (int)PaddingEnd;
+    public float getPaddingE() {
+        return PaddingE;
     }
 
-    public void setPaddingEnd(int p) {
-        PaddingEnd = FM_Const.dpTOpx(context, p);
+    public void setPaddingE(float percent) {
+        PaddingE_p = percent;
+        if (width < 100) width = 100;
+        PaddingE = percent * width / 100.f;;
         invalidate();
         requestLayout();
     }
@@ -283,39 +294,39 @@ public class FM_Score extends View {
         requestLayout();
     }
 
-    public float getDistanceBetweenLines() {
-        return DistanceBetweenLines;
+    public float getDistanceBetweenRows() {
+        return DistanceBetweenRows_cnt * DistanceBetweenStaveLines;
     }
 
-    public void setDistanceBetweenLines(float d) {
-        DistanceBetweenLines = FM_Const.dpTOpx(context, d);
+    public void setDistanceBetweenRows(float d) {
+        DistanceBetweenRows_cnt = d;
         invalidate();
         requestLayout();
     }
 
     public float getDistanceBetweenStaves() {
-        return DistanceBetweenStaves;
+        return DistanceBetweenStaves_cnt * DistanceBetweenStaveLines;
     }
 
     public void setDistanceBetweenStaves(float d) {
-        DistanceBetweenStaves = FM_Const.dpTOpx(context, d);
+        DistanceBetweenStaves_cnt = d;
         invalidate();
         requestLayout();
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        super.onTouchEvent(event);
-
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                return true;
-
-            case MotionEvent.ACTION_UP:
-                performClick();
-                return true;
-        }
-        return false;
+        return super.onTouchEvent(event);
+//
+//        switch (event.getAction()) {
+//            case MotionEvent.ACTION_DOWN:
+//                return true;
+//
+//            case MotionEvent.ACTION_UP:
+//                performClick();
+//                return true;
+//        }
+//        return false;
     }
 
     @Override
@@ -372,12 +383,12 @@ public class FM_Score extends View {
 
     private void DrawTrebleClef(Canvas canvas, float y){
         StaveFont.setColor(StaveLineColor.getColor());
-        canvas.drawText(FM_Const.TrebleClef, PaddingStart+FM_Const.spTOpx(context, 3), y + 3 * DistanceBetweenStaveLines, StaveFont);
+        canvas.drawText(FM_Const.TrebleClef, PaddingS+FM_Const.spTOpx(context, 3), y + 3 * DistanceBetweenStaveLines, StaveFont);
     }
 
     private void DrawBassClef(Canvas canvas, float y){
         StaveFont.setColor(StaveLineColor.getColor());
-        canvas.drawText(FM_Const.BassClef, PaddingStart+FM_Const.spTOpx(context, 3), y + 1 * DistanceBetweenStaveLines, StaveFont);
+        canvas.drawText(FM_Const.BassClef, PaddingS+FM_Const.spTOpx(context, 3), y + 1 * DistanceBetweenStaveLines, StaveFont);
     }
 
     protected float getTimeSignatureWidth(){
@@ -389,25 +400,29 @@ public class FM_Score extends View {
     private void DrawTimeSignature(Canvas canvas, float y){
         StaveFont.setColor(StaveLineColor.getColor());
         if (TimeSignature == FM_TimeSignature._4_4) {
-            canvas.drawText(FM_Const._4, PaddingStart + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 1 * DistanceBetweenStaveLines, StaveFont);
-            canvas.drawText(FM_Const._4, PaddingStart + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 3 * DistanceBetweenStaveLines, StaveFont);
+            canvas.drawText(FM_Const._4, PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 1 * DistanceBetweenStaveLines, StaveFont);
+            canvas.drawText(FM_Const._4, PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 3 * DistanceBetweenStaveLines, StaveFont);
         }
         if (TimeSignature == FM_TimeSignature._2_4) {
-            canvas.drawText(FM_Const._2, PaddingStart + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 1 * DistanceBetweenStaveLines, StaveFont);
-            canvas.drawText(FM_Const._4, PaddingStart + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 3 * DistanceBetweenStaveLines, StaveFont);
+            canvas.drawText(FM_Const._2, PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 1 * DistanceBetweenStaveLines, StaveFont);
+            canvas.drawText(FM_Const._4, PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 3 * DistanceBetweenStaveLines, StaveFont);
         }
         if (TimeSignature == FM_TimeSignature._3_4) {
-            canvas.drawText(FM_Const._3, PaddingStart + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 1 * DistanceBetweenStaveLines, StaveFont);
-            canvas.drawText(FM_Const._4, PaddingStart + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 3 * DistanceBetweenStaveLines, StaveFont);
+            canvas.drawText(FM_Const._3, PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 1 * DistanceBetweenStaveLines, StaveFont);
+            canvas.drawText(FM_Const._4, PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 3 * DistanceBetweenStaveLines, StaveFont);
         }
         if (TimeSignature == FM_TimeSignature._3_2) {
-            canvas.drawText(FM_Const._3, PaddingStart + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 1 * DistanceBetweenStaveLines, StaveFont);
-            canvas.drawText(FM_Const._2, PaddingStart + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 3 * DistanceBetweenStaveLines, StaveFont);
+            canvas.drawText(FM_Const._3, PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 1 * DistanceBetweenStaveLines, StaveFont);
+            canvas.drawText(FM_Const._2, PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 3 * DistanceBetweenStaveLines, StaveFont);
         }
     }
 
     public void addStaffNote(FM_BaseNote n){
         addStaffNote(n, FirstStaveClef,false, false, false);
+    }
+
+    public void clearStaffNotes(){
+        StaveNotes.clear();
     }
 
     public void addStaffNote(FM_BaseNote n, @FM_ClefValue int clef){
@@ -436,7 +451,7 @@ public class FM_Score extends View {
 
     public void addStaffNote(FM_BaseNote n, @FM_ClefValue int clef, boolean addToBeam, boolean addToTuple, boolean addToTie){
         if (n instanceof FM_BarNote) clef = FirstStaveClef;
-        if (clef == SecondStaveClef) StaffCount = FM_StaffCount._2;
+        if (clef != FirstStaveClef && clef == SecondStaveClef) StaffCount = FM_StaffCount._2;
         n.setClef(clef);
         n.setColor(Color);
         n.setContext(context);
@@ -444,12 +459,13 @@ public class FM_Score extends View {
         if (n instanceof FM_Note && addToBeam) AddToBeam((FM_Note)n);
         if (n instanceof FM_Note && addToTuple) AddToTuple((FM_Note)n);
         if (n instanceof FM_Note && addToTie) AddToTie((FM_Note)n);
+        ComputeLines();
     }
 
     public void addChord(List<FM_Note> n, @FM_ClefValue List<Integer> clef) {
         FM_Chord C = new FM_Chord(this);
         for (int i = 0; i < n.size(); i++) {
-            if (clef.get(i) == SecondStaveClef) StaffCount = FM_StaffCount._2;
+            if (clef.get(i) != FirstStaveClef && clef.get(i) == SecondStaveClef) StaffCount = FM_StaffCount._2;
             n.get(i).setClef(clef.get(i));
             n.get(i).setColor(Color);
             n.get(i).setContext(context);
@@ -457,17 +473,18 @@ public class FM_Score extends View {
         }
         C.Compute(StaveFont);
         StaveNotes.add(C);
+        ComputeLines();
     }
 
     private void ComputeLines() {
         if (StaveNotes.size() == 0) return;
         int l = 1;
-        float startX = PaddingStart + getClefWidth() + getTimeSignatureWidth() + SecondStaveKey.WidthAll(StaveFont);
-        float endX = width - PaddingEnd - 15;
-        float ys1 = PaddingTop;
-        float ys2 = PaddingTop;
+        float startX = PaddingS + getClefWidth() + getTimeSignatureWidth() + SecondStaveKey.WidthAll(StaveFont);
+        float endX = width - PaddingE - 15;
+        float ys1 = getPaddingT();
+        float ys2 = getPaddingT();
         if (StaffCount == FM_StaffCount._2)
-            ys2 = ys1 + (DistanceBetweenStaves + 4 * DistanceBetweenStaveLines);
+            ys2 = ys1 + (getDistanceBetweenStaves() + 4 * DistanceBetweenStaveLines);
 
         if (Align == FM_Align.ALIGN_LEFT_NOTES) {
             float X = startX;
@@ -478,11 +495,11 @@ public class FM_Score extends View {
                     if (last_note instanceof FM_BarNote) last_note.setVisible(false);
                     l++;
                     X = startX;
-                    ys1 = ys2 + (DistanceBetweenLines + 4 * DistanceBetweenStaveLines);
+                    ys1 = ys2 + (getDistanceBetweenRows() + 4 * DistanceBetweenStaveLines);
                     ys2 = ys1;
                 }
                 if (StaffCount == FM_StaffCount._2)
-                    ys2 = ys1 + (DistanceBetweenStaves + 4 * DistanceBetweenStaveLines);
+                    ys2 = ys1 + (getDistanceBetweenStaves() + 4 * DistanceBetweenStaveLines);
                 if (StaveNotes.get(i).clef == FirstStaveClef)
                     StaveNotes.get(i).SetDrawParameters(X, ys1, ys2);
                 if (StaveNotes.get(i).clef == SecondStaveClef)
@@ -508,7 +525,7 @@ public class FM_Score extends View {
                 else if (X + w > endX) {
                     l++;
                     X = startX;
-                    ys1 = ys2 + (DistanceBetweenLines + 4 * DistanceBetweenStaveLines);
+                    ys1 = ys2 + (getDistanceBetweenRows() + 4 * DistanceBetweenStaveLines);
                     ys2 = ys1;
                     if (bar_cnt>0) {
                         bar_cnt = 0;
@@ -518,7 +535,7 @@ public class FM_Score extends View {
                     }
                 }
                 if (StaffCount == FM_StaffCount._2)
-                    ys2 = ys1 + (DistanceBetweenStaves + 4 * DistanceBetweenStaveLines);
+                    ys2 = ys1 + (getDistanceBetweenStaves() + 4 * DistanceBetweenStaveLines);
                 if (StaveNotes.get(i).clef == FirstStaveClef)
                     StaveNotes.get(i).SetDrawParameters(X, ys1, ys2);
                 if (StaveNotes.get(i).clef == SecondStaveClef)

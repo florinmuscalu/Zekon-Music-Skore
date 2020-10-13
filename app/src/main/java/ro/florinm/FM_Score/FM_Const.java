@@ -8,6 +8,7 @@ import androidx.annotation.IntDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.List;
 
 public class FM_Const {
     //notes
@@ -91,5 +92,61 @@ public class FM_Const {
 
     public static float getY2(float slope, float x1, float y1, float x2){
         return y1 + slope * (x2 - x1);
+    }
+
+    public static int keyToNote(String key) {
+        return keyToNote(key, 0);
+    }
+
+    public static int keyCount(String key){
+            key = key.replace("\\","").replace("\"","").replace("[","").replace("]","").toLowerCase().trim();
+            String[] s = key.split(",");
+            return s.length;
+    }
+
+    public static int keyToNote(String key, int pos){
+        key = key.replace("\\","").replace("\"","").replace("[","").replace("]","").toLowerCase().trim();
+        String[] s = key.split(",");
+        key = s[pos];
+        if (key.startsWith("do")) return FM_NoteValue.DO;
+        if (key.startsWith("re")) return FM_NoteValue.RE;
+        if (key.startsWith("mi")) return FM_NoteValue.MI;
+        if (key.startsWith("fa")) return FM_NoteValue.FA;
+        if (key.startsWith("sol")) return FM_NoteValue.SOL;
+        if (key.startsWith("la")) return FM_NoteValue.LA;
+        if (key.startsWith("si")) return FM_NoteValue.SI;
+        if (key.startsWith("c")) return FM_NoteValue.DO;
+        if (key.startsWith("d")) return FM_NoteValue.RE;
+        if (key.startsWith("e")) return FM_NoteValue.MI;
+        if (key.startsWith("f")) return FM_NoteValue.FA;
+        if (key.startsWith("g")) return FM_NoteValue.SOL;
+        if (key.startsWith("a")) return FM_NoteValue.LA;
+        if (key.startsWith("b")) return FM_NoteValue.SI;
+        return FM_NoteValue.DO;
+    }
+
+    public static int keyToOctave(String key) {
+        return keyToOctave(key, 0);
+    }
+
+    public static int keyToOctave(String key, int pos){
+        key = key.replace("\\","").replace("\"","").replace("[","").replace("]","").toLowerCase().trim();
+        String[] s = key.split(",");
+        key = s[pos];
+        return Integer.parseInt(key.substring(key.length()-1));
+    }
+
+    public static int keyToAccidental(String key, int pos){
+        key = key.replace("\\","").replace("\"","").replace("[","").replace("]","").toLowerCase().trim();
+        String[] s = key.split(",");
+        key = s[pos].substring(1);
+        if (key.contains("###")) return FM_Accidental.TripleSharp;
+        if (key.contains("##")) return FM_Accidental.DoubleSharp;
+        if (key.contains("#")) return FM_Accidental.Sharp;
+        if (key.contains("bbb")) return FM_Accidental.TripleFlat;
+        if (key.contains("bb")) return FM_Accidental.DoubleFlat;
+        if (key.contains("b")) return FM_Accidental.Flat;
+        if (key.contains("n")) return FM_Accidental.Natural;
+        return FM_Accidental.None;
     }
 }

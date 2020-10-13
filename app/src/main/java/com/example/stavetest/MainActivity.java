@@ -35,12 +35,12 @@ public class MainActivity extends AppCompatActivity {
         s.setSecondStaveClef(FM_ClefValue.BASS);
         s.setTimeSignature(FM_TimeSignature._4_4);
         s.setKeySignature(FM_KeySignatureValue.DOb);
-        s.setDistanceBetweenStaveLines(8);
+        s.setDistanceBetweenStaveLines(10);
         s.setNoteSpacing(0);
         s.setTimeSignature(FM_TimeSignature._2_4);
         s.setKeySignature(FM_KeySignatureValue.DOsharp);
         s.setAlign(FM_Align.CENTER);
-
+        s.setPaddingT(5);
         addSimpleMelodic();
         addRandom();
 
