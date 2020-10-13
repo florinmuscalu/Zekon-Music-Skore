@@ -12,7 +12,7 @@ public class FM_Note extends FM_BaseNote {
     final int duration;
     @FM_Accidental
     private final int Accidental;
-    private final boolean stem;
+    boolean stem;
     boolean stem_up, beam, tuple;
     float ys, startX;
 

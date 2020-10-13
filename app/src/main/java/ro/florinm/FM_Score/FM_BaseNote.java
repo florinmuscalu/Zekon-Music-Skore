@@ -19,6 +19,7 @@ public abstract class FM_BaseNote{
     FM_Score Stave;
     float StartX;
     float StartY1, StartY2;
+    int line;
 
     public FM_BaseNote(@FM_NoteType int type, FM_Score Stave) {
         this.type = type;
@@ -84,6 +85,7 @@ public abstract class FM_BaseNote{
     }
 
     public void setVisible(boolean visible) {
+        line = -1;
         Visible = visible;
     }
 }

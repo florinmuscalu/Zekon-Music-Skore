@@ -5,9 +5,8 @@ import android.graphics.Paint;
 
 public class FM_BarNote extends FM_BaseNote {
 
-    public FM_BarNote(FM_Score Stave, @FM_ClefValue int clef) {
+    public FM_BarNote(FM_Score Stave) {
         super(FM_NoteType.BAR, Stave);
-        this.clef = clef;
         Stave.addStaffNote(this, clef);
     }
 

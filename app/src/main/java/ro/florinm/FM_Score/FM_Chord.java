@@ -3,6 +3,7 @@ package ro.florinm.FM_Score;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.provider.ContactsContract;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +60,7 @@ public class FM_Chord extends FM_BaseNote {
                 if (distance == 1) {
                     Notes.get(i).setPaddingDot(Notes.get(i).paddingDot + Notes.get(j).WidthNote(font) * 0.7f);      //pad the dot on first note
                     Notes.get(j).setPaddingNote(Notes.get(j).paddingNote + Notes.get(i).WidthNote(font) * 0.9f);   //pad the note on the second note
+                    if (Notes.get(i).stem_up == Notes.get(j).stem_up) Notes.get(j).stem = false;
                 }
             }
         //pad the accidentals when the distance between notes is les or equal to 3
@@ -116,7 +118,12 @@ public class FM_Chord extends FM_BaseNote {
         StartX = x;
         StartY1 = ys1;
         StartY2 = ys2;
-        for (int i = 0; i< Notes.size(); i++) Notes.get(i).SetDrawParameters(StartX, StartY1, StartY2);
+        for (int i = 0; i< Notes.size(); i++) {
+            if (Notes.get(i).clef == Stave.getFirstStaveClef())
+                Notes.get(i).SetDrawParameters(StartX, ys1, ys2);
+            if (Notes.get(i).clef == Stave.getSecondStaveClef())
+                Notes.get(i).SetDrawParameters(StartX, ys2, ys2);
+        }
     }
 
     public void DrawNote(Canvas canvas) {
