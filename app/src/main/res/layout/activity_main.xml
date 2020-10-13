@@ -9,6 +9,7 @@
     tools:context=".MainActivity">
 
     <ScrollView
+        android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#b0e0e6"
@@ -20,12 +21,7 @@
         <ro.florinm.FM_Score.FM_Score
             android:id="@+id/stave"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="712dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="wrap_content" />
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

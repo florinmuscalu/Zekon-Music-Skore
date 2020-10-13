@@ -32,8 +32,8 @@ public class FM_Score extends View {
     private float DistanceBetweenStaves_cnt;                //Distance between Staves as number of distances between lines
     private float DistanceBetweenRows_cnt;                 //Distance between Rows of staves as number of distances between lines
     protected Paint StaveLineColor;
-    private float PaddingT_cnt, PaddingS_p, PaddingE_p;     //padding Start and padding End are set as percentange of the total width
-    private float PaddingS, PaddingE;                       //padding Top is set as number of Distances between Lines.
+    private float PaddingV_cnt, PaddingS_p, PaddingE_p;     //padding Start and padding End are set as percentange of the total width
+    private float PaddingS, PaddingE;                       //padding Vertical is set as number of Distances between Lines.
     private boolean StartBar;
     private boolean EndBar;
     @FM_ClefValue private int FirstStaveClef, SecondStaveClef;
@@ -41,6 +41,7 @@ public class FM_Score extends View {
     private final Context context;
     @FM_Align private int Align;
 
+    private boolean CenterVertical = true;
 
     private List<FM_BaseNote> StaveNotes = new ArrayList<>();
     private List<FM_Tie> Ties = new ArrayList<>();
@@ -79,6 +80,9 @@ public class FM_Score extends View {
         setKeySignature(FM_KeySignatureValue.DO);
         setAlign(FM_Align.ALIGN_LEFT_MEASURES);
     }
+
+    public boolean getCenterVertical() { return CenterVertical; };
+    public void setCenterVertical(boolean center) { CenterVertical = center; };
 
     public int getID() {
         return ID;
@@ -121,20 +125,23 @@ public class FM_Score extends View {
         requestLayout();
     }
 
+    private float getDrawHeight(){
+        float MaxHeight = Lines * (4 * DistanceBetweenStaveLines) + (Lines - 1) * + getDistanceBetweenRows();
+        if (StaffCount == FM_StaffCount._2) MaxHeight = MaxHeight + Lines * (getDistanceBetweenStaves() + 4 * DistanceBetweenStaveLines);
+        if (!CenterVertical) {
+            MaxHeight = MaxHeight + 2 * (int) getPaddingVertical();
+        }
+        return  MaxHeight;
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         try {
-            int MaxHeight = (int) (getPaddingT() + (Lines * (4 * DistanceBetweenStaveLines + getDistanceBetweenRows())));
-            if (StaffCount == FM_StaffCount._2)
-                MaxHeight = MaxHeight + Lines * (int)(getDistanceBetweenStaves() + 4 * DistanceBetweenStaveLines);
-
-            heightMeasureSpec = MeasureSpec.makeMeasureSpec(MaxHeight, MeasureSpec.AT_MOST);
-            getLayoutParams().height = MaxHeight;
-//            int tmp = MeasureSpec.makeMeasureSpec(MaxHeight, MeasureSpec.AT_MOST);
-//            if (tmp > heightMeasureSpec) {
-//                heightMeasureSpec = tmp;
-//                getLayoutParams().height = MaxHeight;
-//            }
+            if (!CenterVertical) {
+                int MaxHeight = (int) getDrawHeight();
+                heightMeasureSpec = MeasureSpec.makeMeasureSpec(MaxHeight, MeasureSpec.AT_MOST);
+                getLayoutParams().height = MaxHeight;
+            }
         } catch (Exception ignored) {
         } finally {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -143,9 +150,9 @@ public class FM_Score extends View {
 
     @Override
     public void onSizeChanged(int width, int height, int old_width, int old_height) {
-        if (width < 100) width = 100;
         super.onSizeChanged(width, height, old_width, old_height);
         this.width = width;
+        this.height = height;
         PaddingS = PaddingS_p * width / 100.f;
         PaddingE = PaddingE_p * width / 100.f;
         ComputeLines();
@@ -156,7 +163,7 @@ public class FM_Score extends View {
     @SuppressLint("DrawAllocation")
     @Override
     protected void onDraw(Canvas canvas) {
-        float ys1 = getPaddingT();
+        float ys1 = getPaddingVertical();
         float ys2;
         float BarYs = 0;
         float BarYe = 0;
@@ -261,12 +268,13 @@ public class FM_Score extends View {
         requestLayout();
     }
 
-    public float getPaddingT() {
-        return PaddingT_cnt * DistanceBetweenStaveLines;
+    public float getPaddingVertical() {
+        if (CenterVertical) return  getMeasuredHeight() / 2f - getDrawHeight() / 2f;
+        return PaddingV_cnt * DistanceBetweenStaveLines;
     }
 
     public void setPaddingT(float count) {
-        PaddingT_cnt = count;
+        PaddingV_cnt = count;
         invalidate();
         requestLayout();
     }
@@ -481,10 +489,9 @@ public class FM_Score extends View {
         int l = 1;
         float startX = PaddingS + getClefWidth() + getTimeSignatureWidth() + SecondStaveKey.WidthAll(StaveFont);
         float endX = width - PaddingE - 15;
-        float ys1 = getPaddingT();
-        float ys2 = getPaddingT();
-        if (StaffCount == FM_StaffCount._2)
-            ys2 = ys1 + (getDistanceBetweenStaves() + 4 * DistanceBetweenStaveLines);
+        float ys1 = getPaddingVertical();
+        float ys2 = getPaddingVertical();
+        if (StaffCount == FM_StaffCount._2) ys2 = ys1 + (getDistanceBetweenStaves() + 4 * DistanceBetweenStaveLines);
 
         if (Align == FM_Align.ALIGN_LEFT_NOTES) {
             float X = startX;
@@ -513,6 +520,8 @@ public class FM_Score extends View {
             if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote)
                 StaveNotes.get(StaveNotes.size() - 1).setVisible(false);
         }
+
+
         if (Align == FM_Align.ALIGN_LEFT_MEASURES || Align == FM_Align.CENTER) {
             float X = startX;
             int last_bar = 0;
@@ -523,13 +532,12 @@ public class FM_Score extends View {
                 if (StaveNotes.get(i) instanceof FM_BarNote) {
                     last_bar = i;
                     bar_cnt++;
-                }
-                else if (X + w > endX) {
+                } else if (X + w > endX) {
                     l++;
                     X = startX;
                     ys1 = ys2 + (getDistanceBetweenRows() + 4 * DistanceBetweenStaveLines);
                     ys2 = ys1;
-                    if (bar_cnt>0) {
+                    if (bar_cnt > 0) {
                         bar_cnt = 0;
                         i = last_bar;
                         StaveNotes.get(last_bar).setVisible(false);
@@ -549,6 +557,7 @@ public class FM_Score extends View {
             if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote)
                 StaveNotes.get(StaveNotes.size() - 1).setVisible(false);
         }
+
         Lines = l;
         if (Align == FM_Align.CENTER) {
             for (int i = 1; i <= Lines; i++) {
@@ -561,7 +570,7 @@ public class FM_Score extends View {
                         X = X + w;
                         cnt++;
                     }
-                diff = (endX - X)/(cnt + 1);
+                diff = (endX - X) / (cnt + 1);
                 X = startX;
                 for (int j = 0; j < StaveNotes.size(); j++)
                     if (StaveNotes.get(j).line == i) {
@@ -570,6 +579,20 @@ public class FM_Score extends View {
                         X = X + w + diff;
                     }
             }
+        }
+
+        ys1 = getPaddingVertical();
+        ys2 = getPaddingVertical();
+        for (int i = 1; i <= Lines; i++) {
+            if (StaffCount == FM_StaffCount._2) ys2 = ys1 + (getDistanceBetweenStaves() + 4 * DistanceBetweenStaveLines);
+            for (int j = 0; j < StaveNotes.size(); j++) {
+                if (StaveNotes.get(j).line == i) {
+                    if (StaveNotes.get(j).clef == FirstStaveClef) StaveNotes.get(j).SetDrawParameters(StaveNotes.get(j).StartX, ys1, ys2);
+                    if (StaveNotes.get(j).clef == SecondStaveClef) StaveNotes.get(j).SetDrawParameters(StaveNotes.get(j).StartX, ys2, ys2);
+                }
+            }
+            ys1 = ys2 + (getDistanceBetweenRows() + 4 * DistanceBetweenStaveLines);
+            ys2 = ys1;
         }
     }
 

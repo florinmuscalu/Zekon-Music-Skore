@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         FM_Score s = findViewById(R.id.stave);
+        s.setBackgroundColor(Color.argb(255, 200, 200, 100));
         s.setColor(Color.argb(255, 0, 0, 0));
         s.setFirstStaveClef(FM_ClefValue.TREBLE);
         s.setSecondStaveClef(FM_ClefValue.BASS);
@@ -41,11 +42,18 @@ public class MainActivity extends AppCompatActivity {
         s.setKeySignature(FM_KeySignatureValue.DOsharp);
         s.setAlign(FM_Align.CENTER);
         s.setPaddingT(5);
+        s.setCenterVertical(false);
         addSimpleMelodic();
         addRandom();
-
         addTestAll();
-    }
+/*        List<FM_Note> chord = new ArrayList<>();
+        List<Integer> clefs = new ArrayList<>();
+        chord.add(new FM_Note(s, FM_NoteValue.SI, 3, FM_Accidental.Flat, FM_DurationValue.NOTE_WHOLE, true, true));
+        chord.add(new FM_Note(s, FM_NoteValue.FA, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, false, false));
+        clefs.add(FM_ClefValue.TREBLE);
+        clefs.add(FM_ClefValue.TREBLE);
+        s.addChord(chord, clefs);
+  */  }
 
     public void addRandom(){
         FM_Score s = findViewById(R.id.stave);
