@@ -200,8 +200,8 @@ public class FM_Score extends View {
                 //End Draw Bracket
             }
 
-            if (StartBar) canvas.drawLine(PaddingS, BarYs, PaddingS, BarYe, StaveLineColor);
-            if (EndBar) canvas.drawLine(width - PaddingE, BarYs, width - PaddingE, BarYe, StaveLineColor);
+            if (StartBar) canvas.drawRect(PaddingS - FM_Const.dpTOpx(context, 1), BarYs, PaddingS, BarYe, StaveLineColor);
+            if (EndBar) canvas.drawRect(width - PaddingE, BarYs, width - PaddingE + FM_Const.dpTOpx(context, 1), BarYe, StaveLineColor);
             ys1 = ys2 + (getDistanceBetweenRows() + 4 * DistanceBetweenStaveLines);
         }
 
