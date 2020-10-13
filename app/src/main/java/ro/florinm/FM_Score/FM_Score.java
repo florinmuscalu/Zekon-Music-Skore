@@ -500,17 +500,24 @@ public class FM_Score extends View {
         if (Align == FM_Align.ALIGN_LEFT_MEASURES || Align == FM_Align.CENTER) {
             float X = startX;
             int last_bar = 0;
+            int bar_cnt = 0;
             for (int i = 0; i < StaveNotes.size(); i++) {
                 float w = StaveNotes.get(i).WidthAll(StaveFont) + NoteSpacing;
-                if (StaveNotes.get(i) instanceof FM_BarNote) last_bar = i;
+                if (StaveNotes.get(i) instanceof FM_BarNote) {
+                    last_bar = i;
+                    bar_cnt++;
+                }
                 else if (X + w > endX) {
                     l++;
                     X = startX;
                     ys1 = ys2 + (DistanceBetweenLines + 4 * DistanceBetweenStaveLines);
                     ys2 = ys1;
-                    i = last_bar;
-                    StaveNotes.get(last_bar).setVisible(false);
-                    continue;
+                    if (bar_cnt>0) {
+                        bar_cnt = 0;
+                        i = last_bar;
+                        StaveNotes.get(last_bar).setVisible(false);
+                        continue;
+                    }
                 }
                 if (StaffCount == FM_StaffCount._2)
                     ys2 = ys1 + (DistanceBetweenStaves + 4 * DistanceBetweenStaveLines);
