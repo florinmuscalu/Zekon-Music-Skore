@@ -35,8 +35,12 @@ public class MainActivity extends AppCompatActivity {
         s.setSecondStaveClef(FM_ClefValue.BASS);
         s.setTimeSignature(FM_TimeSignature._4_4);
         s.setKeySignature(FM_KeySignatureValue.DOb);
-        s.setDistanceBetweenStaveLines(10);
+        s.setDistanceBetweenStaveLines(8);
         s.setNoteSpacing(0);
+        s.setTimeSignature(FM_TimeSignature._2_4);
+        s.setKeySignature(FM_KeySignatureValue.DOsharp);
+        s.setAlign(FM_Align.CENTER);
+
         addSimpleMelodic();
         addRandom();
 
@@ -49,19 +53,22 @@ public class MainActivity extends AppCompatActivity {
 
 
         s.BeginTie();
+        s.BeginBeam();
         List<FM_Note> chord = new ArrayList<>();
         List<Integer> clefs = new ArrayList<>();
-        FM_Note n = new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true, false);
+        FM_Note n = new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.Flat, FM_DurationValue.NOTE_EIGHT, true, true);
         s.AddToTie(n);
+        s.AddToBeam(n);
         chord.add(n);
-        chord.add(new FM_Note(s, FM_NoteValue.RE, 4, FM_Accidental.DoubleSharp, FM_DurationValue.NOTE_WHOLE_D, true, true));
-        chord.add(new FM_Note(s, FM_NoteValue.FA, 4, FM_Accidental.Sharp, FM_DurationValue.NOTE_WHOLE_D, true, false));
+        chord.add(new FM_Note(s, FM_NoteValue.RE, 4, FM_Accidental.DoubleSharp, FM_DurationValue.NOTE_WHOLE, false, true));
+        chord.add(new FM_Note(s, FM_NoteValue.FA, 4, FM_Accidental.Sharp, FM_DurationValue.NOTE_WHOLE_D, false, false));
         clefs.add(FM_ClefValue.TREBLE);
         clefs.add(FM_ClefValue.TREBLE);
         clefs.add(FM_ClefValue.TREBLE);
         s.addChord(chord, clefs);
 
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true, false), FM_ClefValue.TREBLE, false, false, true);
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.Flat, FM_DurationValue.NOTE_EIGHT, true, true), FM_ClefValue.TREBLE, true, false, true);
+        s.EndBeam();
         s.EndTie();
         s.addStaffNote(new FM_Note(s, FM_NoteValue.RE, 4, FM_Accidental.None, FM_DurationValue.NOTE_EIGHT, true, true), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.MI, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true, true), FM_ClefValue.TREBLE);
@@ -119,10 +126,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void addTestAll() {
         FM_Score s = findViewById(R.id.stave);
-        s.setTimeSignature(FM_TimeSignature._2_4);
-        s.setKeySignature(FM_KeySignatureValue.DOsharp);
-        s.setAlign(FM_Align.CENTER);
-
         //Pauses
         s.addStaffNote(new FM_Pause(s, FM_DurationValue.NOTE_WHOLE), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Pause(s, FM_DurationValue.NOTE_HALF), FM_ClefValue.TREBLE);
@@ -290,8 +293,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void addSimpleMelodic(){
         FM_Score s = findViewById(R.id.stave);
-        s.setTimeSignature(FM_TimeSignature._2_4);
-        s.setKeySignature(FM_KeySignatureValue.DO);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.None, FM_DurationValue.NOTE_QUARTER, true, true), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.MI, 4, FM_Accidental.None, FM_DurationValue.NOTE_QUARTER, true, true), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_BarNote(s), FM_ClefValue.TREBLE);

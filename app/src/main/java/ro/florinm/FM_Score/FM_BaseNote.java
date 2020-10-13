@@ -50,6 +50,9 @@ public abstract class FM_BaseNote{
     public abstract void DrawNote(Canvas canvas);
     public abstract float getDisplacement();
     public abstract String toString();
+    public float WidthAll(Paint font, boolean all) {
+        return WidthAll(font);
+    }
     public abstract float WidthAll(Paint font);
     public abstract float WidthAccidental(Paint font);
     public abstract float WidthNote(Paint font);

@@ -204,13 +204,11 @@ public class FM_Score extends View {
         for (int j = 0; j < Beams.size(); j++) Beams.get(j).Draw(this, canvas);
 
         if (EndBar) {
-            canvas.drawLine(width - PaddingEnd - 1, BarYs, width - PaddingEnd - 1, BarYe, StaveLineColor);
-            canvas.drawLine(width - PaddingEnd - 2, BarYs, width - PaddingEnd - 2, BarYe, StaveLineColor);
-            canvas.drawLine(width - PaddingEnd - 3, BarYs, width - PaddingEnd - 3, BarYe, StaveLineColor);
-            canvas.drawLine(width - PaddingEnd - 4, BarYs, width - PaddingEnd - 4, BarYe, StaveLineColor);
-            canvas.drawLine(width - PaddingEnd - 5, BarYs, width - PaddingEnd - 5, BarYe, StaveLineColor);
-            canvas.drawLine(width - PaddingEnd - 10, BarYs, width - PaddingEnd - 10, BarYe, StaveLineColor);
-            canvas.drawLine(width - PaddingEnd - 11, BarYs, width - PaddingEnd - 11, BarYe, StaveLineColor);
+            canvas.drawRect(width - PaddingEnd - FM_Const.dpTOpx(context,DistanceBetweenStaveLines / 7), BarYs, width - PaddingEnd, BarYe, StaveLineColor);
+            canvas.drawRect(width - PaddingEnd - FM_Const.dpTOpx(context,DistanceBetweenStaveLines * 2 / 7), BarYs, width - PaddingEnd - FM_Const.dpTOpx(context,DistanceBetweenStaveLines *17 / 70), BarYe, StaveLineColor);
+
+            //canvas.drawLine(width - PaddingEnd - 10, BarYs, width - PaddingEnd - 10, BarYe, StaveLineColor);
+            //canvas.drawLine(width - PaddingEnd - 11, BarYs, width - PaddingEnd - 11, BarYe, StaveLineColor);
         }
         invalidate();
         requestLayout();
@@ -475,7 +473,7 @@ public class FM_Score extends View {
             float X = startX;
             FM_BaseNote last_note = null;
             for (int i = 0; i < StaveNotes.size(); i++) {
-                float w = StaveNotes.get(i).WidthAll(StaveFont) + NoteSpacing;
+                float w = StaveNotes.get(i).WidthAll(StaveFont, true) + NoteSpacing;
                 if (X + w > endX) {
                     if (last_note instanceof FM_BarNote) last_note.setVisible(false);
                     l++;
@@ -502,7 +500,7 @@ public class FM_Score extends View {
             int last_bar = 0;
             int bar_cnt = 0;
             for (int i = 0; i < StaveNotes.size(); i++) {
-                float w = StaveNotes.get(i).WidthAll(StaveFont) + NoteSpacing;
+                float w = StaveNotes.get(i).WidthAll(StaveFont, true) + NoteSpacing;
                 if (StaveNotes.get(i) instanceof FM_BarNote) {
                     last_bar = i;
                     bar_cnt++;
@@ -540,7 +538,7 @@ public class FM_Score extends View {
                 float diff = 0;
                 for (int j = 0; j < StaveNotes.size(); j++)
                     if (StaveNotes.get(j).line == i) {
-                        float w = StaveNotes.get(j).WidthAll(StaveFont);
+                        float w = StaveNotes.get(j).WidthAll(StaveFont, true);
                         X = X + w;
                         cnt++;
                     }
@@ -548,7 +546,7 @@ public class FM_Score extends View {
                 X = startX;
                 for (int j = 0; j < StaveNotes.size(); j++)
                     if (StaveNotes.get(j).line == i) {
-                        float w = StaveNotes.get(j).WidthAll(StaveFont);
+                        float w = StaveNotes.get(j).WidthAll(StaveFont, true);
                         StaveNotes.get(j).SetDrawParameters(X + diff, StaveNotes.get(j).StartY1, StaveNotes.get(j).StartY2);
                         X = X + w + diff;
                     }

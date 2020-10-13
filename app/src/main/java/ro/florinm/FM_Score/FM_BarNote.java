@@ -42,8 +42,9 @@ public class FM_BarNote extends FM_BaseNote {
         Paint C = new Paint();
         C.setAntiAlias(true);
         C.setColor(Color);
-        canvas.drawLine(StartX + padding, BarYs, StartX + padding, BarYe, C);
-        canvas.drawLine(StartX + padding - 1, BarYs, StartX + padding - 1, BarYe, C);
-        canvas.drawLine(StartX + padding + 1, BarYs, StartX + padding + 1, BarYe, C);
+        canvas.drawRect(StartX + padding, BarYs, StartX + padding + FM_Const.dpTOpx(context,Stave.getDistanceBetweenStaveLines() *3 / 70), BarYe, C);
+        //canvas.drawLine(StartX + padding, BarYs, StartX + padding, BarYe, C);
+        //canvas.drawLine(StartX + padding - 1, BarYs, StartX + padding - 1, BarYe, C);
+        //canvas.drawLine(StartX + padding + 1, BarYs, StartX + padding + 1, BarYe, C);
     }
 }

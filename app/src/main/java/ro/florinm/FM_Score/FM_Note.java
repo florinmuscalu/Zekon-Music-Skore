@@ -102,7 +102,11 @@ public class FM_Note extends FM_BaseNote {
     }
 
     public float WidthAll(Paint font) {
-        return padding + WidthAccidental(font) + paddingNote + font.measureText(toStringNote()) + paddingDot + font.measureText(toStringDot()) + paddingExtra;
+        return WidthAll(font, false);
+    }
+
+    public float WidthAll(Paint font, boolean all) {
+        return padding + WidthAccidental(font) + paddingNote + WidthNote(font, all) + paddingDot + font.measureText(toStringDot()) + paddingExtra;
     }
 
     public float WidthAccidental(Paint font) {
@@ -114,9 +118,14 @@ public class FM_Note extends FM_BaseNote {
     }
 
     public float WidthNote(Paint font) {
+        return WidthNote(font, false);
+    }
+
+    public float WidthNote(Paint font, boolean all) {
         String s = FM_Const.FillNote;
         if (duration == 1 || duration == 51) s = FM_Const._1Note;
         if (duration == 2 || duration == 52) s = FM_Const.EmptyNote;
+        if (all) s = toString();
         return font.measureText(s);
     }
 
