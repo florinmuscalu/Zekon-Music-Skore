@@ -3,6 +3,7 @@ package ro.florinm.FM_Score;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
@@ -30,8 +31,8 @@ public class FM_Tie {
 
         Paint C = new Paint();
         C.setColor(stave.StaveFont.getColor());
-        C.setStyle(Paint.Style.STROKE);
-        C.setStrokeWidth(FM_Const.dpTOpx(stave.getContext(), 2));
+        //C.setStyle(Paint.Style.STROKE);
+        //C.setStrokeWidth(FM_Const.dpTOpx(stave.getContext(), 2));
         C.setAntiAlias(true);
 
         if (x > xe && ye > y) {
@@ -58,13 +59,23 @@ public class FM_Tie {
             else
                 canvas.drawArc(oval, 270f, 90f, false, C);
         } else {
-            RectF oval;
-            if (s.stem_up)
-                oval = new RectF(x, y - stave.getDistanceBetweenStaveLines() / 2, xe, y + stave.getDistanceBetweenStaveLines() / 2);
-            else
-                oval = new RectF(x, y - stave.getDistanceBetweenStaveLines() * 3 / 2, xe, y - stave.getDistanceBetweenStaveLines() / 2);
-            if (s.stem_up) canvas.drawArc(oval, 0f, 180f, false, C);
-            else canvas.drawArc(oval, 180f, 180f, false, C);
+            Path p = new Path();
+            if (s.stem_up) {
+                p = new Path();
+                p.reset();
+                p.moveTo(x, y);
+                p.cubicTo(x, y, (xe + x) / 2, y + stave.getDistanceBetweenStaveLines() * 2 / 3, xe, ye);
+                p.cubicTo(xe, ye, (xe + x) / 2, y + stave.getDistanceBetweenStaveLines() / 2, x, y);
+            } else {
+                p = new Path();
+                y = y - stave.getDistanceBetweenStaveLines();
+                ye = ye - stave.getDistanceBetweenStaveLines();
+                p.reset();
+                p.moveTo(x, y);
+                p.cubicTo(x, y, (xe + x) / 2, y - stave.getDistanceBetweenStaveLines() * 2 / 3, xe, ye);
+                p.cubicTo(xe, ye, (xe + x) / 2, y - stave.getDistanceBetweenStaveLines() / 2, x, y);
+            }
+            canvas.drawPath(p, C);
         }
     }
 }
