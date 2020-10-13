@@ -490,6 +490,7 @@ public class FM_Score extends View {
             float X = startX;
             FM_BaseNote last_note = null;
             for (int i = 0; i < StaveNotes.size(); i++) {
+                StaveNotes.get(i).setVisible(true);
                 float w = StaveNotes.get(i).WidthAll(StaveFont, true) + NoteSpacing;
                 if (X + w > endX) {
                     if (last_note instanceof FM_BarNote) last_note.setVisible(false);
@@ -517,6 +518,7 @@ public class FM_Score extends View {
             int last_bar = 0;
             int bar_cnt = 0;
             for (int i = 0; i < StaveNotes.size(); i++) {
+                StaveNotes.get(i).setVisible(true);
                 float w = StaveNotes.get(i).WidthAll(StaveFont, true) + NoteSpacing;
                 if (StaveNotes.get(i) instanceof FM_BarNote) {
                     last_bar = i;
