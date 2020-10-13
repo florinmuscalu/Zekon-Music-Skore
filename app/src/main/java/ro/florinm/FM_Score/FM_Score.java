@@ -32,9 +32,8 @@ public class FM_Score extends View {
     private float DistanceBetweenStaves;
     private float DistanceBetweenLines;
     protected Paint StaveLineColor;
-    private float PaddingTop;
-    float PaddingStart;
-    float PaddingEnd;
+    private float PaddingTop_p, PaddingStart_p, PaddingEnd_p;
+    private float PaddingTop, PaddingStart, PaddingEnd;
     private boolean StartBar;
     private boolean EndBar;
     @FM_ClefValue private int FirstStaveClef, SecondStaveClef;
@@ -128,8 +127,11 @@ public class FM_Score extends View {
             int MaxHeight = (int) (PaddingTop + (Lines * (4 * DistanceBetweenStaveLines + DistanceBetweenLines)));
             if (StaffCount == FM_StaffCount._2)
                 MaxHeight = MaxHeight + Lines * (int)(DistanceBetweenStaves + 4 * DistanceBetweenStaveLines);
-            heightMeasureSpec = MeasureSpec.makeMeasureSpec(MaxHeight, MeasureSpec.AT_MOST);
-            getLayoutParams().height = MaxHeight;
+            int tmp = MeasureSpec.makeMeasureSpec(MaxHeight, MeasureSpec.AT_MOST);
+            if (tmp > heightMeasureSpec) {
+                heightMeasureSpec = tmp;
+                getLayoutParams().height = MaxHeight;
+            }
         } catch (Exception ignored) {
         } finally {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -141,6 +143,9 @@ public class FM_Score extends View {
         super.onSizeChanged(width, height, old_width, old_height);
         this.width = width;
         this.height = height;
+        PaddingStart = PaddingStart_p * width / 100.f;
+        PaddingEnd = PaddingEnd_p * width / 100.f;
+        PaddingTop = PaddingTop_p * height / 100.f;
         ComputeLines();
         invalidate();
         requestLayout();
@@ -246,8 +251,9 @@ public class FM_Score extends View {
         return (int)PaddingStart;
     }
 
-    public void setPaddingStart(int p) {
-        PaddingStart = FM_Const.dpTOpx(context, p);
+    public void setPaddingStart(int percent) {
+        PaddingStart_p = percent;
+        PaddingStart = percent * width / 100.f;
         invalidate();
         requestLayout();
     }
@@ -256,8 +262,9 @@ public class FM_Score extends View {
         return (int)PaddingTop;
     }
 
-    public void setPaddingTop(int p) {
-        PaddingTop = FM_Const.dpTOpx(context, p);
+    public void setPaddingTop(int percent) {
+        PaddingTop_p = percent;
+        PaddingTop = percent * height / 100.f;;
         invalidate();
         requestLayout();
     }
@@ -266,8 +273,9 @@ public class FM_Score extends View {
         return (int)PaddingEnd;
     }
 
-    public void setPaddingEnd(int p) {
-        PaddingEnd = FM_Const.dpTOpx(context, p);
+    public void setPaddingEnd(int percent) {
+        PaddingEnd_p = percent;
+        PaddingEnd = percent * width / 100.f;;
         invalidate();
         requestLayout();
     }
@@ -410,6 +418,10 @@ public class FM_Score extends View {
         addStaffNote(n, FirstStaveClef,false, false, false);
     }
 
+    public void clearStaffNotes(){
+        StaveNotes.clear();
+    }
+
     public void addStaffNote(FM_BaseNote n, @FM_ClefValue int clef){
         addStaffNote(n, clef,false, false, false);
     }
@@ -436,7 +448,7 @@ public class FM_Score extends View {
 
     public void addStaffNote(FM_BaseNote n, @FM_ClefValue int clef, boolean addToBeam, boolean addToTuple, boolean addToTie){
         if (n instanceof FM_BarNote) clef = FirstStaveClef;
-        if (clef == SecondStaveClef) StaffCount = FM_StaffCount._2;
+        if (clef != FirstStaveClef && clef == SecondStaveClef) StaffCount = FM_StaffCount._2;
         n.setClef(clef);
         n.setColor(Color);
         n.setContext(context);
@@ -444,12 +456,13 @@ public class FM_Score extends View {
         if (n instanceof FM_Note && addToBeam) AddToBeam((FM_Note)n);
         if (n instanceof FM_Note && addToTuple) AddToTuple((FM_Note)n);
         if (n instanceof FM_Note && addToTie) AddToTie((FM_Note)n);
+        ComputeLines();
     }
 
     public void addChord(List<FM_Note> n, @FM_ClefValue List<Integer> clef) {
         FM_Chord C = new FM_Chord(this);
         for (int i = 0; i < n.size(); i++) {
-            if (clef.get(i) == SecondStaveClef) StaffCount = FM_StaffCount._2;
+            if (clef.get(i) != FirstStaveClef && clef.get(i) == SecondStaveClef) StaffCount = FM_StaffCount._2;
             n.get(i).setClef(clef.get(i));
             n.get(i).setColor(Color);
             n.get(i).setContext(context);
@@ -457,6 +470,7 @@ public class FM_Score extends View {
         }
         C.Compute(StaveFont);
         StaveNotes.add(C);
+        ComputeLines();
     }
 
     private void ComputeLines() {

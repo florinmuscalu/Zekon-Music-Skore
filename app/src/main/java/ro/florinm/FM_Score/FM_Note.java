@@ -150,7 +150,7 @@ public class FM_Note extends FM_BaseNote {
         float dy;
         boolean l = false;
         float offset = getDisplacement();
-        if (offset >= 5.0f || offset <= 1.0f) l = true;
+        if (offset >= 5.0f || offset < 0.0f) l = true;
         dy = StartY1 + offset * Stave.getDistanceBetweenStaveLines();
         if (l) {
             if (offset >= 5.0f)
@@ -158,8 +158,8 @@ public class FM_Note extends FM_BaseNote {
                     ly = StartY1 + i * Stave.getDistanceBetweenStaveLines();
                     canvas.drawLine(StartX + padding + WidthAccidental(Stave.StaveFont) + paddingNote - Stave.getDistanceBetweenStaveLines() / 3, ly, StartX + padding + WidthAccidental(Stave.StaveFont) + paddingNote + WidthNote(Stave.StaveFont) + Stave.getDistanceBetweenStaveLines() / 3, ly, Stave.StaveLineColor);
                 }
-            if (offset <= 1.0f)
-                for (int i = 1; i >= offset; i--) {
+            if (offset < 0.0f)
+                for (int i = -1; i >= offset; i--) {
                     ly = StartY1 + i * Stave.getDistanceBetweenStaveLines();
                     canvas.drawLine(StartX + padding + WidthAccidental(Stave.StaveFont) + paddingNote - Stave.getDistanceBetweenStaveLines() / 3, ly, StartX + padding + WidthAccidental(Stave.StaveFont) + paddingNote + WidthNote(Stave.StaveFont) + Stave.getDistanceBetweenStaveLines() / 3, ly, Stave.StaveLineColor);
                 }

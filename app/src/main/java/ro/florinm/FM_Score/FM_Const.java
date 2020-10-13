@@ -92,4 +92,21 @@ public class FM_Const {
     public static float getY2(float slope, float x1, float y1, float x2){
         return y1 + slope * (x2 - x1);
     }
+
+    public static int keyToNote(String key){
+        key = key.replace("\\","").replace("\"","").replace("[","").replace("]","").toLowerCase().trim();
+        if (key.startsWith("c")) return FM_NoteValue.DO;
+        if (key.startsWith("d")) return FM_NoteValue.RE;
+        if (key.startsWith("e")) return FM_NoteValue.MI;
+        if (key.startsWith("f")) return FM_NoteValue.FA;
+        if (key.startsWith("g")) return FM_NoteValue.SOL;
+        if (key.startsWith("a")) return FM_NoteValue.LA;
+        if (key.startsWith("b")) return FM_NoteValue.SI;
+        return FM_NoteValue.DO;
+    }
+
+    public static int keyToOctave(String key){
+        key = key.replace("\\","").replace("\"","").replace("[","").replace("]","").toLowerCase().trim();
+        return Integer.parseInt(key.substring(key.length()-1));
+    }
 }
