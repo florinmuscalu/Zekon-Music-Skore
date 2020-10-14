@@ -5,10 +5,13 @@ package ro.florinm.FM_Score;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.FloatMath;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -181,7 +184,10 @@ public class FM_Score extends View {
         canvas.save();
         canvas.translate(mPosX, mPosY);
         canvas.scale(mScaleFactor, mScaleFactor);
-
+        //float[] val = new float[9];
+        //matrix.getValues(val);
+        //canvas.translate(val[2], val[5]);
+        //canvas.scale(val[0], val[3]);
         float ys1 = getPaddingVertical();
         float ys2;
         float BarYs = 0;
@@ -340,6 +346,79 @@ public class FM_Score extends View {
         requestLayout();
     }
 
+    private float startY;
+    private float startX;
+//    Matrix matrix = new Matrix();
+//    Matrix savedMatrix = new Matrix();
+//    // We can be in one of these 3 states
+//    static final int NONE = 0;
+//    static final int DRAG = 1;
+//    static final int ZOOM = 2;
+//    int mode = NONE;
+
+    // Remember some things for zooming
+//    PointF start = new PointF();
+//    PointF mid = new PointF();
+//    double oldDist = 1f;
+//
+//    private double spacing(MotionEvent event) {
+//        float x = event.getX(0) - event.getX(1);
+//        float y = event.getY(0) - event.getY(1);
+//        return Math.sqrt(x * x + y * y);
+//    }
+//
+//    private void midPoint(PointF point, MotionEvent event) {
+//        float x = event.getX(0) + event.getX(1);
+//        float y = event.getY(0) + event.getY(1);
+//        point.set(x / 2, y / 2);
+//    }
+
+    private boolean isAClick(float startX, float endX, float startY, float endY) {
+        float differenceX = Math.abs(startX - endX);
+        float differenceY = Math.abs(startY - endY);
+        int CLICK_ACTION_THRESHOLD = 10;
+        return !(differenceX > CLICK_ACTION_THRESHOLD || differenceY > CLICK_ACTION_THRESHOLD);
+    }
+
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+//            case MotionEvent.ACTION_DOWN:
+//                savedMatrix.set(matrix);
+//                start.set(event.getX(), event.getY());
+//                mode = DRAG;
+//                break;
+//            case MotionEvent.ACTION_POINTER_DOWN:
+//                oldDist = spacing(event);
+//                if (oldDist > 10f) {
+//                    savedMatrix.set(matrix);
+//                    midPoint(mid, event);
+//                    mode = ZOOM;
+//                }
+//                break;
+//            case MotionEvent.ACTION_UP:
+//            case MotionEvent.ACTION_POINTER_UP:
+//                mode = NONE;
+//                break;
+//            case MotionEvent.ACTION_MOVE:
+//                if (mode == DRAG) {
+//                    // ...
+//                    matrix.set(savedMatrix);
+//                    matrix.postTranslate(event.getX() - start.x,
+//                            event.getY() - start.y);
+//                } else if (mode == ZOOM) {
+//                    double newDist = spacing(event);
+//                    if (newDist > 10f) {
+//                        matrix.set(savedMatrix);
+//                        double scale = newDist / oldDist;
+//                        matrix.postScale((float) scale, (float) scale, mid.x, mid.y);
+//                    }
+//                }
+//                break;
+//        }
+//        return true; // indicate event was handled
+//    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         mScaleDetector.onTouchEvent(event);
@@ -348,7 +427,8 @@ public class FM_Score extends View {
             case MotionEvent.ACTION_DOWN: {
                 final float x = event.getX();
                 final float y = event.getY();
-
+                startX = x;
+                startY = y;
                 mLastTouchX = x;
                 mLastTouchY = y;
                 mActivePointerId = event.getPointerId(0);
@@ -369,8 +449,6 @@ public class FM_Score extends View {
                     mPosY += dy;
 
                     invalidate();
-                } else {
-
                 }
 
                 mLastTouchX = x;
@@ -381,6 +459,11 @@ public class FM_Score extends View {
 
             case MotionEvent.ACTION_UP: {
                 mActivePointerId = INVALID_POINTER_ID;
+                if (isAClick(startX, event.getX(), startY, event.getY())) {
+                    super.callOnClick();
+                    return super.onTouchEvent(event);
+                    //return false;
+                }
                 break;
             }
 
@@ -411,7 +494,6 @@ public class FM_Score extends View {
     @Override
     public boolean performClick() {
         super.performClick();
-
         return true;
     }
 

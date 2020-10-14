@@ -101,9 +101,7 @@ public class FM_Beam {
                 float tmpY = n.get(i).ys + n.get(i).getDisplacement() * stave.getDistanceBetweenStaveLines();
                 float tmpY2 = FM_Const.getY2(slope, x, y, tmpX);
 
-                canvas.drawLine(tmpX, tmpY, tmpX, tmpY2 - stave.getDistanceBetweenStaveLines() / 2, stave.StaveFont);
-                canvas.drawLine(tmpX - 1, tmpY, tmpX - 1, tmpY2 - stave.getDistanceBetweenStaveLines() / 2, stave.StaveFont);
-                canvas.drawLine(tmpX - 2, tmpY, tmpX - 2, tmpY2 - stave.getDistanceBetweenStaveLines() / 2, stave.StaveFont);
+                canvas.drawRect(tmpX, tmpY, tmpX - FM_Const.dpTOpx(stave.getContext(), 1), tmpY2 - stave.getDistanceBetweenStaveLines() / 2, stave.StaveFont);
             }
         } else {
             for (int i = 0; i < n.size(); i++) {
@@ -111,9 +109,7 @@ public class FM_Beam {
                 float tmpY = n.get(i).ys + n.get(i).getDisplacement() * stave.getDistanceBetweenStaveLines();
                 float tmpY2 = FM_Const.getY2(slope, x, y, tmpX);
 
-                canvas.drawLine(tmpX, tmpY, tmpX, tmpY2 - stave.getDistanceBetweenStaveLines() / 2, stave.StaveFont);
-                canvas.drawLine(tmpX + 1, tmpY, tmpX + 1, tmpY2 - stave.getDistanceBetweenStaveLines() / 2, stave.StaveFont);
-                canvas.drawLine(tmpX + 2, tmpY, tmpX + 2, tmpY2 - stave.getDistanceBetweenStaveLines() / 2, stave.StaveFont);
+                canvas.drawRect(tmpX, tmpY, tmpX + FM_Const.dpTOpx(stave.getContext(), 1), tmpY2 - stave.getDistanceBetweenStaveLines() / 2, stave.StaveFont);
             }
         }
 
