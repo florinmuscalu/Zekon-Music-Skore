@@ -494,6 +494,7 @@ public class FM_Score extends View {
         float ys1 = getPaddingVertical();
         float ys2 = getPaddingVertical();
         if (StaffCount == FM_StaffCount._2) ys2 = ys1 + (getDistanceBetweenStaves() + 4 * DistanceBetweenStaveLines);
+        for (int i = 0; i < StaveNotes.size(); i++) StaveNotes.get(i).setVisible(true);
         if (MultiLine && Align == FM_Align.ALIGN_LEFT_NOTES) {
             float X = startX;
             FM_BaseNote last_note = null;
@@ -556,7 +557,6 @@ public class FM_Score extends View {
         }
 
         if (!MultiLine){
-            for (int i = 0; i < StaveNotes.size(); i++) StaveNotes.get(i).setVisible(true);
             //If last note is a bar, hide it
             if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote) StaveNotes.get(StaveNotes.size() - 1).setVisible(false);
         }

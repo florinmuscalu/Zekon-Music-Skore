@@ -15,7 +15,7 @@ public class FM_Const {
     public static final String _1Note = "\ue0a2";
     public static final String _2Note_up = "\ue1d3";
     public static final String _2Note_down = "\ue1d4";
-    public static final String _4Note_up = "\ue1d5";
+    public static final String _4Note_up = "\ueca5";
     public static final String _4Note_down = "\ue1d6";
     public static final String _8Note_up = "\ue1d7";
     public static final String _8Note_down = "\ue1d8";
@@ -25,6 +25,8 @@ public class FM_Const {
     public static final String _32Note_down = "\ue1dc";
     public static final String FillNote = "\ue1af";
     public static final String EmptyNote = "\ue1b0";
+    //public static final String FillNote = "\ue0a4";
+    //public static final String EmptyNote = "\ue0a3";
 
     //clefs
     public static final String TrebleClef = "\uD834\uDD1E";

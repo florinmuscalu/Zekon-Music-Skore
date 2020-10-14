@@ -58,8 +58,8 @@ public class FM_Chord extends FM_BaseNote {
             for (int j = i + 1; j < Notes.size(); j++) {
                 int distance = Math.abs(FM_Const.distanceBetweenNotes(Notes.get(i), Notes.get(j)));
                 if (distance == 1) {
-                    Notes.get(i).setPaddingDot(Notes.get(i).paddingDot + Notes.get(j).WidthNote(font) * 0.7f);      //pad the dot on first note
-                    Notes.get(j).setPaddingNote(Notes.get(j).paddingNote + Notes.get(i).WidthNote(font) * 0.9f);   //pad the note on the second note
+                    Notes.get(i).setPaddingDot(Notes.get(i).paddingDot + Notes.get(j).WidthNote(font) * 0.665f);      //pad the dot on first note
+                    Notes.get(j).setPaddingNote(Notes.get(j).paddingNote + Notes.get(i).WidthNote(font) * 0.855f);   //pad the note on the second note
                     if (Notes.get(i).stem_up == Notes.get(j).stem_up) Notes.get(j).stem = false;
                 }
             }

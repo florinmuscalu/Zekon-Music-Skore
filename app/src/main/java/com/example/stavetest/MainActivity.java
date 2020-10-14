@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         s.setSecondStaveClef(FM_ClefValue.BASS);
         s.setTimeSignature(FM_TimeSignature._4_4);
         s.setKeySignature(FM_KeySignatureValue.DOb);
-        s.setDistanceBetweenStaveLines(10);
+        s.setDistanceBetweenStaveLines(15);
         s.setNoteSpacing(0);
         s.setTimeSignature(FM_TimeSignature._2_4);
         s.setKeySignature(FM_KeySignatureValue.DOsharp);
@@ -44,17 +44,17 @@ public class MainActivity extends AppCompatActivity {
         s.setPaddingT(5);
         s.setCenterVertical(false);
         s.setMultiLine(true);
-        addSimpleMelodic();
-        addRandom();
-        addTestAll();
-/*        List<FM_Note> chord = new ArrayList<>();
+//        addSimpleMelodic();
+//        addRandom();
+//        addTestAll();
+        List<FM_Note> chord = new ArrayList<>();
         List<Integer> clefs = new ArrayList<>();
-        chord.add(new FM_Note(s, FM_NoteValue.SI, 3, FM_Accidental.Flat, FM_DurationValue.NOTE_WHOLE, true, true));
-        chord.add(new FM_Note(s, FM_NoteValue.FA, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, false, false));
+        chord.add(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true, true));
+        chord.add(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE_D, true, true));
         clefs.add(FM_ClefValue.TREBLE);
         clefs.add(FM_ClefValue.TREBLE);
         s.addChord(chord, clefs);
-  */  }
+    }
 
     public void addRandom(){
         FM_Score s = findViewById(R.id.stave);

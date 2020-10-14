@@ -122,19 +122,30 @@ public class FM_Note extends FM_BaseNote {
     }
 
     public float WidthNote(Paint font, boolean all) {
+        float tmp = font.getTextSize();
+        font.setTextSize(tmp * 0.95f);
+
         String s = FM_Const.FillNote;
         if (duration == 1 || duration == 51) s = FM_Const._1Note;
         if (duration == 2 || duration == 52) s = FM_Const.EmptyNote;
         if (all) s = toStringNote();
-        return font.measureText(s);
+
+        float res = font.measureText(s);
+        font.setTextSize(tmp);
+        return res;
     }
 
     public float Height(Paint font, boolean all) {
+        float tmp = font.getTextSize();
+        font.setTextSize(tmp * 0.95f);
+
         boolean tmp_beam = beam;
         if (all) beam = false;
         Rect bounds = new Rect();
         font.getTextBounds(toStringNote(), 0, 1, bounds);
         beam = tmp_beam;
+        font.setTextSize(tmp);
+
         return bounds.height();
     }
 
@@ -176,8 +187,9 @@ public class FM_Note extends FM_BaseNote {
         float tmp = Stave.StaveFont.getTextSize();
         Stave.StaveFont.setTextSize(tmp * 0.8f);
         canvas.drawText(toStringAccidental(), StartX + padding, dy, Stave.StaveFont);
-        Stave.StaveFont.setTextSize(tmp);
+        Stave.StaveFont.setTextSize(tmp * 0.95f);
         canvas.drawText(toStringNote(), StartX + padding + WidthAccidental(Stave.StaveFont) + paddingNote, dy, Stave.StaveFont);
+        Stave.StaveFont.setTextSize(tmp);
         canvas.drawText(toStringDot(),  StartX + padding + WidthAccidental(Stave.StaveFont) + paddingNote + Stave.StaveFont.measureText(toStringNote()) + paddingDot, dy, Stave.StaveFont);
     }
 }
