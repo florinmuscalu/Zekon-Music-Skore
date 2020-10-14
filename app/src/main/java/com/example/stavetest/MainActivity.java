@@ -44,21 +44,21 @@ public class MainActivity extends AppCompatActivity {
         s.setPaddingT(5);
         s.setCenterVertical(true);
         s.setMultiLine(true);
-//        addSimpleMelodic();
-//        addRandom();
-//        addTestAll();
-//        List<FM_Note> chord = new ArrayList<>();
-//        List<Integer> clefs = new ArrayList<>();
-//        chord.add(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE_D, true, true));
-//        chord.add(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE_D, true, true));
-//        clefs.add(FM_ClefValue.TREBLE);
-//        clefs.add(FM_ClefValue.TREBLE);
-//        s.addChord(chord, clefs);
+        addSimpleMelodic();
+        addRandom();
+        addTestAll();
+        List<FM_Note> chord = new ArrayList<>();
+        List<Integer> clefs = new ArrayList<>();
+        chord.add(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE_D, true, true));
+        chord.add(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE_D, true, true));
+        clefs.add(FM_ClefValue.TREBLE);
+        clefs.add(FM_ClefValue.TREBLE);
+        s.addChord(chord, clefs);
 
         s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true, true), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true, true), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true, true), FM_ClefValue.TREBLE);
-        new FM_BarNote(s);
+
         s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true, true), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true, true), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true, true), FM_ClefValue.TREBLE);
@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
         s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true, true), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true, true), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true, true), FM_ClefValue.TREBLE);
-        new FM_BarNote(s);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true, true), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true, true), FM_ClefValue.TREBLE);
     }

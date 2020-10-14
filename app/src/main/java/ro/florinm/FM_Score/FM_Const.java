@@ -2,6 +2,8 @@ package ro.florinm.FM_Score;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.TypedValue;
 
 import androidx.annotation.IntDef;
@@ -11,6 +13,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
 public class FM_Const {
+    public static final int DEFAULT_EXTRA_PADDING = 3;
     //notes
     public static final String _1Note = "\ue0a2";
     public static final String _2Note_up = "\ue1d3";
@@ -186,5 +189,11 @@ public class FM_Const {
         if (s.equals("re#m")) return FM_KeySignatureValue.REsharpm;
         if (s.equals("la#m")) return FM_KeySignatureValue.LAsharpm;
         return FM_KeySignatureValue.DO;
+    }
+
+    static float adjustFontSizePercent(Paint font, String text, float height){
+        Rect bounds = new Rect();
+        font.getTextBounds(text, 0, 1, bounds);
+        return height/bounds.height();
     }
 }

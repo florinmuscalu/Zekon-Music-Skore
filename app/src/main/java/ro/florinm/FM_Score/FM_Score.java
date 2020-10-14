@@ -479,45 +479,61 @@ public class FM_Score extends View {
     }
 
     protected float getClefWidth(){
-        float w = StaveFont.measureText(FM_Const.TrebleClef) + 2 * FM_Const.spTOpx(context, 4);
-        float w1 = StaveFont.measureText(FM_Const.BassClef) + 2 * FM_Const.spTOpx(context, 4);
+        float tmp = StaveFont.getTextSize();
+        StaveFont.setTextSize(tmp * FM_Const.adjustFontSizePercent(StaveFont, FM_Const._4, getDistanceBetweenStaveLines()*2));
+        float w = StaveFont.measureText(FM_Const.TrebleClef) + 2 * FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
+        float w1 = StaveFont.measureText(FM_Const.BassClef) + 2 * FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
+        StaveFont.setTextSize(tmp);
         return Math.max(w, w1);
     }
 
     private void DrawTrebleClef(Canvas canvas, float y){
+        float tmp = StaveFont.getTextSize();
+        StaveFont.setTextSize(tmp * FM_Const.adjustFontSizePercent(StaveFont, FM_Const._4, getDistanceBetweenStaveLines()*2));
         StaveFont.setColor(StaveLineColor.getColor());
-        canvas.drawText(FM_Const.TrebleClef, PaddingS+FM_Const.spTOpx(context, 3), y + 3 * DistanceBetweenStaveLines, StaveFont);
+        canvas.drawText(FM_Const.TrebleClef, PaddingS + FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING), y + 3 * DistanceBetweenStaveLines, StaveFont);
+        StaveFont.setTextSize(tmp);
     }
 
     private void DrawBassClef(Canvas canvas, float y){
+        float tmp = StaveFont.getTextSize();
+        StaveFont.setTextSize(tmp * FM_Const.adjustFontSizePercent(StaveFont, FM_Const._4, getDistanceBetweenStaveLines()*2));
         StaveFont.setColor(StaveLineColor.getColor());
-        canvas.drawText(FM_Const.BassClef, PaddingS+FM_Const.spTOpx(context, 3), y + 1 * DistanceBetweenStaveLines, StaveFont);
+        canvas.drawText(FM_Const.BassClef, PaddingS + FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING), y + 1 * DistanceBetweenStaveLines, StaveFont);
+        StaveFont.setTextSize(tmp);
     }
 
     protected float getTimeSignatureWidth(){
-        float w = 0;
-        if (TimeSignature != FM_TimeSignature.None) w = StaveFont.measureText(FM_Const._4) + 2 * FM_Const.spTOpx(context,4);
+        float w = FM_Const.spTOpx(context,FM_Const.DEFAULT_EXTRA_PADDING);
+        float tmp = StaveFont.getTextSize();
+        StaveFont.setTextSize(tmp * FM_Const.adjustFontSizePercent(StaveFont, FM_Const._4, getDistanceBetweenStaveLines()*2));
+        if (TimeSignature != FM_TimeSignature.None) w = w + StaveFont.measureText(FM_Const._4);
+        StaveFont.setTextSize(tmp);
         return w;
     }
 
     private void DrawTimeSignature(Canvas canvas, float y){
         StaveFont.setColor(StaveLineColor.getColor());
+        float tmp = StaveFont.getTextSize();
+        float pad = PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont);
+        StaveFont.setTextSize(tmp * FM_Const.adjustFontSizePercent(StaveFont, FM_Const._4, getDistanceBetweenStaveLines()*2));
         if (TimeSignature == FM_TimeSignature._4_4) {
-            canvas.drawText(FM_Const._4, PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 1 * DistanceBetweenStaveLines, StaveFont);
-            canvas.drawText(FM_Const._4, PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 3 * DistanceBetweenStaveLines, StaveFont);
+            canvas.drawText(FM_Const._4, pad, y + 1 * DistanceBetweenStaveLines, StaveFont);
+            canvas.drawText(FM_Const._4, pad, y + 3 * DistanceBetweenStaveLines, StaveFont);
         }
         if (TimeSignature == FM_TimeSignature._2_4) {
-            canvas.drawText(FM_Const._2, PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 1 * DistanceBetweenStaveLines, StaveFont);
-            canvas.drawText(FM_Const._4, PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 3 * DistanceBetweenStaveLines, StaveFont);
+            canvas.drawText(FM_Const._2, pad, y + 1 * DistanceBetweenStaveLines, StaveFont);
+            canvas.drawText(FM_Const._4, pad, y + 3 * DistanceBetweenStaveLines, StaveFont);
         }
         if (TimeSignature == FM_TimeSignature._3_4) {
-            canvas.drawText(FM_Const._3, PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 1 * DistanceBetweenStaveLines, StaveFont);
-            canvas.drawText(FM_Const._4, PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 3 * DistanceBetweenStaveLines, StaveFont);
+            canvas.drawText(FM_Const._3, pad, y + 1 * DistanceBetweenStaveLines, StaveFont);
+            canvas.drawText(FM_Const._4, pad, y + 3 * DistanceBetweenStaveLines, StaveFont);
         }
         if (TimeSignature == FM_TimeSignature._3_2) {
-            canvas.drawText(FM_Const._3, PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 1 * DistanceBetweenStaveLines, StaveFont);
-            canvas.drawText(FM_Const._2, PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont), y + 3 * DistanceBetweenStaveLines, StaveFont);
+            canvas.drawText(FM_Const._3, pad, y + 1 * DistanceBetweenStaveLines, StaveFont);
+            canvas.drawText(FM_Const._2, pad, y + 3 * DistanceBetweenStaveLines, StaveFont);
         }
+        StaveFont.setTextSize(tmp);
     }
 
     public void addStaffNote(FM_BaseNote n){
@@ -582,8 +598,8 @@ public class FM_Score extends View {
     private void ComputeLines() {
         if (StaveNotes.size() == 0) return;
         int l = 1;
-        float startX = PaddingS + getClefWidth() + getTimeSignatureWidth() + SecondStaveKey.WidthAll(StaveFont);
-        float endX = width - PaddingE - 15;
+        float startX = PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont) + getTimeSignatureWidth() + 2 * FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
+        float endX = width - PaddingE - 2 * FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
         float ys1 = getPaddingVertical();
         float ys2 = getPaddingVertical();
         if (StaffCount == FM_StaffCount._2) ys2 = ys1 + (getDistanceBetweenStaves() + 4 * DistanceBetweenStaveLines);

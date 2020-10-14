@@ -111,7 +111,7 @@ public class FM_Note extends FM_BaseNote {
 
     public float WidthAccidental(Paint font) {
         float tmp = font.getTextSize();
-        font.setTextSize(tmp * 0.8f);
+        Stave.StaveFont.setTextSize(tmp * FM_Const.adjustFontSizePercent(Stave.StaveFont, FM_Const.Sharp, Stave.getDistanceBetweenStaveLines()*2));
         float res = font.measureText(toStringAccidental());
         font.setTextSize(tmp);
         return res;
@@ -195,7 +195,7 @@ public class FM_Note extends FM_BaseNote {
         float width_accidental = WidthAccidental(Stave.StaveFont);
         Stave.StaveFont.setColor(Color);
         float tmp = Stave.StaveFont.getTextSize();
-        Stave.StaveFont.setTextSize(tmp * 0.8f);
+        Stave.StaveFont.setTextSize(tmp * FM_Const.adjustFontSizePercent(Stave.StaveFont, FM_Const.Sharp, Stave.getDistanceBetweenStaveLines()*2));
         canvas.drawText(toStringAccidental(), StartX + padding, dy, Stave.StaveFont);
         Stave.StaveFont.setTextSize(tmp);
         Stave.StaveFont.setTextSize(tmp * percent(Stave.StaveFont));
