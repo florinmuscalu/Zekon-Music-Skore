@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         s.BeginBeam();
         List<FM_Note> chord = new ArrayList<>();
         List<Integer> clefs = new ArrayList<>();
-        FM_Note n = new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.Flat, FM_DurationValue.NOTE_EIGHT, true, true);
+        FM_Note n = new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.Flat, FM_DurationValue.NOTE_EIGHT, true, false);
         s.AddToTie(n);
         s.AddToBeam(n);
         chord.add(n);
@@ -191,9 +191,9 @@ public class MainActivity extends AppCompatActivity {
         s.addStaffNote(new FM_BarNote(s), FM_ClefValue.BASS);
 
         s.BeginTie();
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true, true), FM_ClefValue.TREBLE, false, false, true);
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true, false), FM_ClefValue.TREBLE, false, false, true);
         s.addStaffNote(new FM_BarNote(s));
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true, true), FM_ClefValue.TREBLE, false, false, true);
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true, false), FM_ClefValue.TREBLE, false, false, true);
         s.EndTie();
 
         s.BeginTie();

@@ -31,49 +31,63 @@ public class FM_Tie {
 
         Paint C = new Paint();
         C.setColor(stave.StaveFont.getColor());
-        //C.setStyle(Paint.Style.STROKE);
-        //C.setStrokeWidth(FM_Const.dpTOpx(stave.getContext(), 2));
         C.setAntiAlias(true);
+        Path p = new Path();
 
-        if (x > xe && ye > y) {
+        if (x > xe && ye > y) {     //if the notes are on different lines
             RectF oval;
             float e = this.s.WidthNote(stave.StaveFont) * 2;
-            if (s.stem_up)
-                oval = new RectF(x, y - stave.getDistanceBetweenStaveLines() / 2, x + e, y + stave.getDistanceBetweenStaveLines() / 2);
-            else
-                oval = new RectF(x, y - stave.getDistanceBetweenStaveLines() * 3 / 2, x + e, y - stave.getDistanceBetweenStaveLines() / 2);
-            if (s.stem_up)
-                canvas.drawArc(oval, 90f, 90f, false, C);
-            else
-                canvas.drawArc(oval, 180f, 90f, false, C);
-
-
-            RectF oval1;
-            float e1 =  this.e.WidthNote(stave.StaveFont) * 2;
-            if (s.stem_up)
-                oval = new RectF(xe - e1, ye - stave.getDistanceBetweenStaveLines() / 2, xe, ye + stave.getDistanceBetweenStaveLines() / 2);
-            else
-                oval = new RectF(xe - e1, ye - stave.getDistanceBetweenStaveLines() * 3 / 2, xe, ye - stave.getDistanceBetweenStaveLines() / 2);
-            if (s.stem_up)
-                canvas.drawArc(oval, 0f, 90f, false, C);
-            else
-                canvas.drawArc(oval, 270f, 90f, false, C);
-        } else {
-            Path p = new Path();
             if (s.stem_up) {
                 p = new Path();
                 p.reset();
                 p.moveTo(x, y);
-                p.cubicTo(x, y, (xe + x) / 2, y + stave.getDistanceBetweenStaveLines() * 2 / 3, xe, ye);
-                p.cubicTo(xe, ye, (xe + x) / 2, y + stave.getDistanceBetweenStaveLines() / 2, x, y);
+                p.cubicTo(x, y, (2 * x + e) / 2, y + stave.getDistanceBetweenStaveLines() / 2, x + e, y + stave.getDistanceBetweenStaveLines() / 2);
+                p.cubicTo(x + e, y + stave.getDistanceBetweenStaveLines() / 2, (2 * x + e) / 2, y + stave.getDistanceBetweenStaveLines(), x, y);
+                canvas.drawPath(p, C);
+            } else {
+                y = y - stave.getDistanceBetweenStaveLines();
+                p = new Path();
+                p.reset();
+                p.moveTo(x, y);
+                p.cubicTo(x, y, (2 * x + e) / 2, y - stave.getDistanceBetweenStaveLines() / 2, x + e, y - stave.getDistanceBetweenStaveLines() / 2);
+                p.cubicTo(x + e, y - stave.getDistanceBetweenStaveLines() / 2, (2 * x + e) / 2, y - stave.getDistanceBetweenStaveLines(), x, y);
+                canvas.drawPath(p, C);
+            }
+
+            RectF oval1;
+            float e1 =  this.e.WidthNote(stave.StaveFont) * 2;
+            if (s.stem_up) {
+                p = new Path();
+                p.reset();
+                p.moveTo(xe, ye);
+                p.cubicTo(xe, ye, (2 * xe - e1) / 2, ye + stave.getDistanceBetweenStaveLines() / 2, xe - e1, ye + stave.getDistanceBetweenStaveLines() / 2);
+                p.cubicTo(xe - e1, ye + stave.getDistanceBetweenStaveLines() / 2, (2 * xe - e1) / 2, ye + stave.getDistanceBetweenStaveLines(), xe, ye);
+                canvas.drawPath(p, C);
+            }
+            else {
+                ye = ye - stave.getDistanceBetweenStaveLines();
+                p = new Path();
+                p.reset();
+                p.moveTo(xe, ye);
+                p.cubicTo(xe, ye, (2 * xe - e1) / 2, ye - stave.getDistanceBetweenStaveLines() / 2, xe - e1, ye - stave.getDistanceBetweenStaveLines() / 2);
+                p.cubicTo(xe - e1, ye - stave.getDistanceBetweenStaveLines() / 2, (2 * xe - e1) / 2, ye - stave.getDistanceBetweenStaveLines(), xe, ye);
+                canvas.drawPath(p, C);
+            }
+        } else {        //if the notes are on the same line
+            if (s.stem_up) {
+                p = new Path();
+                p.reset();
+                p.moveTo(x, y);
+                p.cubicTo(x, y, (xe + x) / 2, y + stave.getDistanceBetweenStaveLines() / 2, xe, ye);
+                p.cubicTo(xe, ye, (xe + x) / 2, y + stave.getDistanceBetweenStaveLines(), x, y);
             } else {
                 p = new Path();
                 y = y - stave.getDistanceBetweenStaveLines();
                 ye = ye - stave.getDistanceBetweenStaveLines();
                 p.reset();
                 p.moveTo(x, y);
-                p.cubicTo(x, y, (xe + x) / 2, y - stave.getDistanceBetweenStaveLines() * 2 / 3, xe, ye);
-                p.cubicTo(xe, ye, (xe + x) / 2, y - stave.getDistanceBetweenStaveLines() / 2, x, y);
+                p.cubicTo(x, y, (xe + x) / 2, y - stave.getDistanceBetweenStaveLines() / 2, xe, ye);
+                p.cubicTo(xe, ye, (xe + x) / 2, y - stave.getDistanceBetweenStaveLines(), x, y);
             }
             canvas.drawPath(p, C);
         }
