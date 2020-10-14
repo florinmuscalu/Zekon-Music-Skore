@@ -174,7 +174,7 @@ public class FM_Score extends View {
             BarYs = ys1;
             BarYe = ys1 + 4 * DistanceBetweenStaveLines;
             //draw stave lines
-            for (int i = 0; i < 5; i++) canvas.drawRect(PaddingS, ys1 + i * DistanceBetweenStaveLines, width - PaddingE, ys1 + i * DistanceBetweenStaveLines + FM_Const.dpTOpx(context, 1), StaveLineColor);
+            for (int i = 0; i < 5; i++) canvas.drawRect(PaddingS, ys1 + i * DistanceBetweenStaveLines - FM_Const.dpTOpx(context, 0.5f), width - PaddingE, ys1 + i * DistanceBetweenStaveLines + FM_Const.dpTOpx(context, 0.5f), StaveLineColor);
             //draw clef
             if (FirstStaveClef == FM_ClefValue.TREBLE) DrawTrebleClef(canvas, ys1);
             else DrawBassClef(canvas, ys1);
@@ -187,7 +187,7 @@ public class FM_Score extends View {
             if (StaffCount == FM_StaffCount._2) {
                 ys2 = ys1 + (getDistanceBetweenStaves() + 4 * DistanceBetweenStaveLines);
                 BarYe = ys2 + 4 * DistanceBetweenStaveLines;
-                for (int i = 0; i < 5; i++) canvas.drawRect(PaddingS, ys2 + i * DistanceBetweenStaveLines, width - PaddingE, ys2 + i * DistanceBetweenStaveLines + FM_Const.dpTOpx(context, 1), StaveLineColor);
+                for (int i = 0; i < 5; i++) canvas.drawRect(PaddingS, ys2 + i * DistanceBetweenStaveLines - FM_Const.dpTOpx(context, 0.5f), width - PaddingE, ys2 + i * DistanceBetweenStaveLines + FM_Const.dpTOpx(context, 0.5f), StaveLineColor);
                 if (SecondStaveClef == FM_ClefValue.TREBLE) DrawTrebleClef(canvas, ys2);
                 else DrawBassClef(canvas, ys2);
                 SecondStaveKey.SetDrawParameters(PaddingS + getClefWidth(), ys2, ys2);
