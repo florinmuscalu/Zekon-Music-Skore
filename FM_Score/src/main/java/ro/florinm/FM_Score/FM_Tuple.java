@@ -88,7 +88,7 @@ public class FM_Tuple {
                 canvas.drawLine(xe, ye, xe, ye + stave.getDistanceBetweenStaveLines(), stave.StaveFont);
             }
         }
-        FM_Const.AdjustFont(stave.StaveFont, text, stave.getDistanceBetweenStaveLines());
+        FM_Const.AdjustFont(stave.getContext(), stave.StaveFont, text, stave.getDistanceBetweenStaveLines(), 1);
         float w = stave.StaveFont.measureText(text);
         float middle1 = (x + xe) / 2 - w / 2 - stave.getDistanceBetweenStaveLines() / 2;
         float middle2 = (x + xe) / 2 + w / 2 + stave.getDistanceBetweenStaveLines() / 2;

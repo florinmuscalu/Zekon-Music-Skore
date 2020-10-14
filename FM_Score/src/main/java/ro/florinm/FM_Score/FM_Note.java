@@ -114,12 +114,12 @@ public class FM_Note extends FM_BaseNote {
     }
 
     public float WidthDot(Paint font) {
-        FM_Const.AdjustFont(font, FM_Const.Sharp, Stave.getDistanceBetweenStaveLines() * 2);
+        FM_Const.AdjustFont(context, font, FM_Const.Sharp, Stave.getDistanceBetweenStaveLines(), 2);
         return font.measureText(toStringDot());
     }
 
     public float WidthAccidental(Paint font) {
-        FM_Const.AdjustFont(font, FM_Const.Sharp, Stave.getDistanceBetweenStaveLines() * 2);
+        FM_Const.AdjustFont(context, font, FM_Const.Sharp, Stave.getDistanceBetweenStaveLines(), 2);
         return font.measureText(toStringAccidental());
     }
 
@@ -137,12 +137,12 @@ public class FM_Note extends FM_BaseNote {
 //    }
 
     public float WidthNote(Paint font, boolean stem) {
-        FM_Const.AdjustFont(font, toStringNote(false), Stave.getDistanceBetweenStaveLines());
+        FM_Const.AdjustFont(context, font, toStringNote(false), Stave.getDistanceBetweenStaveLines(), 1);
         return font.measureText(toStringNote(stem));
     }
 
     public float Height(Paint font, boolean all) {
-        FM_Const.AdjustFont(font, toStringNote(false), Stave.getDistanceBetweenStaveLines());
+        FM_Const.AdjustFont(context, font, toStringNote(false), Stave.getDistanceBetweenStaveLines(), 1);
         boolean tmp_beam = beam;
         if (all) beam = false;
         Rect bounds = new Rect();
@@ -194,13 +194,13 @@ public class FM_Note extends FM_BaseNote {
         float width_dot = WidthDot(Stave.StaveFont);
         Stave.StaveFont.setColor(Color);
 
-        FM_Const.AdjustFont(Stave.StaveFont, FM_Const.Sharp, Stave.getDistanceBetweenStaveLines() * 2);
+        FM_Const.AdjustFont(context, Stave.StaveFont, FM_Const.Sharp, Stave.getDistanceBetweenStaveLines(),2);
         canvas.drawText(toStringAccidental(), StartX + padding, dy, Stave.StaveFont);
 
-        FM_Const.AdjustFont(Stave.StaveFont, toStringNote(false), Stave.getDistanceBetweenStaveLines());
+        FM_Const.AdjustFont(context, Stave.StaveFont, toStringNote(false), Stave.getDistanceBetweenStaveLines(), 1);
         canvas.drawText(toStringNote(), StartX + padding + width_accidental + paddingNote, dy, Stave.StaveFont);
 
-        FM_Const.AdjustFont(Stave.StaveFont, toStringAccidental(), Stave.getDistanceBetweenStaveLines() * 2);
+        FM_Const.AdjustFont(context, Stave.StaveFont, FM_Const.Sharp, Stave.getDistanceBetweenStaveLines(), 2);
         canvas.drawText(toStringDot(),  StartX + padding + width_accidental + paddingNote + width_note_no_stem + paddingDot, dy, Stave.StaveFont);
 
         if (DrawBoundingBox) {

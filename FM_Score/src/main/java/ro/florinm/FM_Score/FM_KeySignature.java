@@ -112,7 +112,7 @@ class FM_KeySignature extends FM_BaseNote {
     }
 
     public float WidthAll(Paint font) {
-        FM_Const.AdjustFont(font, toString(), Stave.getDistanceBetweenStaveLines() * 2);
+        FM_Const.AdjustFont(context, font, toString(), Stave.getDistanceBetweenStaveLines(), 2);
         return padding + font.measureText(toString()) + (accidental.size() - 1) * FM_Const.dpTOpx(context, 2) + paddingExtra + FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
     }
 
@@ -135,7 +135,7 @@ class FM_KeySignature extends FM_BaseNote {
             float offset = displacement.get(i);
             float dy = StartY1 + offset * Stave.getDistanceBetweenStaveLines();
 
-            FM_Const.AdjustFont(Stave.StaveFont, toString(), Stave.getDistanceBetweenStaveLines() * 2);
+            FM_Const.AdjustFont(context, Stave.StaveFont, toString(), Stave.getDistanceBetweenStaveLines(), 2);
             if (accidental.get(i) == FM_Accidental.Sharp) {
                 canvas.drawText(FM_Const.Sharp, dx, dy, Stave.StaveFont);
                 dx = dx + Stave.StaveFont.measureText(FM_Const.Sharp) + FM_Const.dpTOpx(context, 2);

@@ -191,16 +191,17 @@ public class FM_Const {
         return FM_KeySignatureValue.DO;
     }
 
-    static void AdjustFont(Paint font, String text, float height) {
-        font.setTextSize(FM_Const.adjustFontSizePercent(font, text, height));
+    static void AdjustFont(Context context, Paint font, String text, float line_height, int cnt) {
+        font.setTextSize(FM_Const.adjustFontSizePercent(context, font, text, line_height, cnt));
     }
 
-    static float getFontSize(Paint font, String text, float height) {
-        return FM_Const.adjustFontSizePercent(font, text, height);
+    static float getFontSize(Context context, Paint font, String text, float line_height, int cnt) {
+        return FM_Const.adjustFontSizePercent(context, font, text, line_height, cnt);
     }
 
-    static float adjustFontSizePercent(Paint font, String text, float height){
+    static float adjustFontSizePercent(Context context, Paint font, String text, float line_height, int cnt){
         if (text.equals("")) return 1;
+        float height = line_height * cnt + dpTOpx(context, 1);
         font.setTextSize(100f);
         Rect bounds = new Rect();
         font.getTextBounds(text, 0, text.length(), bounds);

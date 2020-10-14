@@ -479,27 +479,27 @@ public class FM_Score extends View {
     }
 
     protected float getClefWidth(){
-        FM_Const.AdjustFont(StaveFont, FM_Const._4, 2 * getDistanceBetweenStaveLines());
+        FM_Const.AdjustFont(context,StaveFont, FM_Const._4, getDistanceBetweenStaveLines(), 2);
         float w = StaveFont.measureText(FM_Const.TrebleClef) + 2 * FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
         float w1 = StaveFont.measureText(FM_Const.BassClef) + 2 * FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
         return Math.max(w, w1);
     }
 
     private void DrawTrebleClef(Canvas canvas, float y){
-        FM_Const.AdjustFont(StaveFont, FM_Const._4, 2 * getDistanceBetweenStaveLines());
+        FM_Const.AdjustFont(context, StaveFont, FM_Const._4, getDistanceBetweenStaveLines(), 2);
         StaveFont.setColor(StaveLineColor.getColor());
         canvas.drawText(FM_Const.TrebleClef, PaddingS + FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING), y + 3 * DistanceBetweenStaveLines, StaveFont);
     }
 
     private void DrawBassClef(Canvas canvas, float y){
-        FM_Const.AdjustFont(StaveFont, FM_Const._4, 2 * getDistanceBetweenStaveLines());
+        FM_Const.AdjustFont(context, StaveFont, FM_Const._4, getDistanceBetweenStaveLines(), 2);
         StaveFont.setColor(StaveLineColor.getColor());
         canvas.drawText(FM_Const.BassClef, PaddingS + FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING), y + 1 * DistanceBetweenStaveLines, StaveFont);
     }
 
     protected float getTimeSignatureWidth(){
         float w = FM_Const.spTOpx(context,FM_Const.DEFAULT_EXTRA_PADDING);
-        FM_Const.AdjustFont(StaveFont, FM_Const._4, 2 * getDistanceBetweenStaveLines());
+        FM_Const.AdjustFont(context, StaveFont, FM_Const._4, getDistanceBetweenStaveLines(), 2);
         if (TimeSignature != FM_TimeSignature.None) w = w + StaveFont.measureText(FM_Const._4);
         return w;
     }
@@ -507,7 +507,7 @@ public class FM_Score extends View {
     private void DrawTimeSignature(Canvas canvas, float y){
         StaveFont.setColor(StaveLineColor.getColor());
         float pad = PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont);
-        FM_Const.AdjustFont(StaveFont, FM_Const._4, 2 * getDistanceBetweenStaveLines());
+        FM_Const.AdjustFont(context, StaveFont, FM_Const._4, getDistanceBetweenStaveLines(), 2);
         if (TimeSignature == FM_TimeSignature._4_4) {
             canvas.drawText(FM_Const._4, pad, y + 1 * DistanceBetweenStaveLines, StaveFont);
             canvas.drawText(FM_Const._4, pad, y + 3 * DistanceBetweenStaveLines, StaveFont);
