@@ -44,12 +44,12 @@ public class MainActivity extends AppCompatActivity {
         s.setPaddingT(5);
         s.setCenterVertical(false);
         s.setMultiLine(true);
-//        addSimpleMelodic();
-//        addRandom();
-//        addTestAll();
+        addSimpleMelodic();
+        addRandom();
+        addTestAll();
         List<FM_Note> chord = new ArrayList<>();
         List<Integer> clefs = new ArrayList<>();
-        chord.add(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true, true));
+        chord.add(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE_D, true, true));
         chord.add(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE_D, true, true));
         clefs.add(FM_ClefValue.TREBLE);
         clefs.add(FM_ClefValue.TREBLE);

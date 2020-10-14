@@ -2,6 +2,7 @@ package ro.florinm.FM_Score;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 
 public class FM_Pause extends FM_BaseNote {
     @FM_DurationValue
@@ -52,6 +53,13 @@ public class FM_Pause extends FM_BaseNote {
     public void DrawNote(Canvas canvas) {
         if (!isVisible()) return;
         Stave.StaveFont.setColor(Color);
+        float tmp = Stave.StaveFont.getTextSize();
+
+
+        Rect bounds = new Rect();
+        Stave.StaveFont.getTextBounds(FM_Const.Pause_8, 0, 1, bounds);
+        Stave.StaveFont.setTextSize(tmp * 1.8f * Stave.getDistanceBetweenStaveLines()/bounds.height());
         canvas.drawText(toString(), StartX + padding, StartY1 + getDisplacement() * Stave.getDistanceBetweenStaveLines(), Stave.StaveFont);
+        Stave.StaveFont.setTextSize(tmp);
     }
 }

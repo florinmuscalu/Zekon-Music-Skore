@@ -70,7 +70,7 @@ public class FM_Note extends FM_BaseNote {
 
     public String toStringDot(){
         String s2 = "";
-        if (duration>50) s2 = " " + FM_Const.Dot;
+        if (duration>50) s2 = "" + FM_Const.Dot;
         return s2;
     }
 
@@ -121,9 +121,18 @@ public class FM_Note extends FM_BaseNote {
         return WidthNote(font, false);
     }
 
+    float percent(Paint font){
+        boolean tmp_stem = stem;
+        stem = false;
+        Rect bounds = new Rect();
+        font.getTextBounds(toStringNote(), 0, 1, bounds);
+        stem = tmp_stem;
+        return Stave.getDistanceBetweenStaveLines()/bounds.height();
+    }
+
     public float WidthNote(Paint font, boolean all) {
         float tmp = font.getTextSize();
-        font.setTextSize(tmp * 0.95f);
+        font.setTextSize(tmp * percent(font));
 
         String s = FM_Const.FillNote;
         if (duration == 1 || duration == 51) s = FM_Const._1Note;
@@ -137,7 +146,7 @@ public class FM_Note extends FM_BaseNote {
 
     public float Height(Paint font, boolean all) {
         float tmp = font.getTextSize();
-        font.setTextSize(tmp * 0.95f);
+        font.setTextSize(tmp * percent(font));
 
         boolean tmp_beam = beam;
         if (all) beam = false;
@@ -183,13 +192,15 @@ public class FM_Note extends FM_BaseNote {
                     canvas.drawRect(tX, tY,tXe, tYe, Stave.StaveLineColor);
                 }
         }
+        float width_accidental = WidthAccidental(Stave.StaveFont);
         Stave.StaveFont.setColor(Color);
         float tmp = Stave.StaveFont.getTextSize();
         Stave.StaveFont.setTextSize(tmp * 0.8f);
         canvas.drawText(toStringAccidental(), StartX + padding, dy, Stave.StaveFont);
-        Stave.StaveFont.setTextSize(tmp * 0.95f);
-        canvas.drawText(toStringNote(), StartX + padding + WidthAccidental(Stave.StaveFont) + paddingNote, dy, Stave.StaveFont);
         Stave.StaveFont.setTextSize(tmp);
-        canvas.drawText(toStringDot(),  StartX + padding + WidthAccidental(Stave.StaveFont) + paddingNote + Stave.StaveFont.measureText(toStringNote()) + paddingDot, dy, Stave.StaveFont);
+        Stave.StaveFont.setTextSize(tmp * percent(Stave.StaveFont));
+        canvas.drawText(toStringNote(), StartX + padding + width_accidental + paddingNote, dy, Stave.StaveFont);
+        Stave.StaveFont.setTextSize(tmp);
+        canvas.drawText(toStringDot(),  StartX + padding + width_accidental + paddingNote + WidthNote(Stave.StaveFont) + paddingDot, dy, Stave.StaveFont);
     }
 }
