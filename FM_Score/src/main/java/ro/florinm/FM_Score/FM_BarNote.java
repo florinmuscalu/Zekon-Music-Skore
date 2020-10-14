@@ -18,6 +18,11 @@ public class FM_BarNote extends FM_BaseNote {
         return "";
     }
 
+    @Override
+    public float WidthAll(Paint font, boolean all) {
+        return WidthAll(font);
+    }
+
     public float WidthAll(Paint font) {
         return padding + paddingExtra;
     }

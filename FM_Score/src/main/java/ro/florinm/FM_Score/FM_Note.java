@@ -63,18 +63,22 @@ public class FM_Note extends FM_BaseNote {
         if (Accidental == FM_Accidental.Sharp) s1 = FM_Const.Sharp+" ";
         if (Accidental == FM_Accidental.DoubleSharp) s1 = FM_Const.DoubleSharp+" ";
         if (Accidental == FM_Accidental.DoubleFlat) s1 = FM_Const.DoubleFlat+" ";
-        if (Accidental == FM_Accidental.TripleSharp) s1 = FM_Const.TripleSharp+" ";
+        if (Accidental == FM_Accidental.TripleSharp) s1 = FM_Const.Sharp+" "+FM_Const.DoubleSharp+" ";
         if (Accidental == FM_Accidental.TripleFlat) s1 = FM_Const.TripleFlat+" ";
         return s1;
     }
 
     public String toStringDot(){
         String s2 = "";
-        if (duration>50) s2 = "" + FM_Const.Dot;
+        if (duration>50) s2 = " " + FM_Const.Dot;
         return s2;
     }
 
-    public String toStringNote(){
+    public String toStringNote() {
+        return toStringNote(stem);
+    }
+
+    public String toStringNote(boolean stem){
         if (duration == 1 || duration == 51) return FM_Const._1Note;
         if (stem && !beam) {
             if (stem_up) {
@@ -105,61 +109,54 @@ public class FM_Note extends FM_BaseNote {
         return WidthAll(font, false);
     }
 
-    public float WidthAll(Paint font, boolean all) {
-        return padding + WidthAccidental(font) + paddingNote + WidthNote(font, all) + paddingDot + font.measureText(toStringDot()) + paddingExtra;
+    public float WidthAll(Paint font, boolean stem) {
+        return padding + WidthAccidental(font) + paddingNote + WidthNote(font, stem) + paddingDot + WidthDot(font) + paddingExtra;
+    }
+
+    public float WidthDot(Paint font) {
+        FM_Const.AdjustFont(font, FM_Const.Sharp, Stave.getDistanceBetweenStaveLines() * 2);
+        return font.measureText(toStringDot());
     }
 
     public float WidthAccidental(Paint font) {
-        float tmp = font.getTextSize();
-        Stave.StaveFont.setTextSize(tmp * FM_Const.adjustFontSizePercent(Stave.StaveFont, FM_Const.Sharp, Stave.getDistanceBetweenStaveLines()*2));
-        float res = font.measureText(toStringAccidental());
-        font.setTextSize(tmp);
-        return res;
+        FM_Const.AdjustFont(font, FM_Const.Sharp, Stave.getDistanceBetweenStaveLines() * 2);
+        return font.measureText(toStringAccidental());
     }
 
     public float WidthNote(Paint font) {
         return WidthNote(font, false);
     }
+//
+//    float percent(Paint font){
+//        boolean tmp_stem = stem;
+//        stem = false;
+//        Rect bounds = new Rect();
+//        font.getTextBounds(toStringNote(), 0, 1, bounds);
+//        stem = tmp_stem;
+//        return Stave.getDistanceBetweenStaveLines()/bounds.height();
+//    }
 
-    float percent(Paint font){
-        boolean tmp_stem = stem;
-        stem = false;
-        Rect bounds = new Rect();
-        font.getTextBounds(toStringNote(), 0, 1, bounds);
-        stem = tmp_stem;
-        return Stave.getDistanceBetweenStaveLines()/bounds.height();
-    }
-
-    public float WidthNote(Paint font, boolean all) {
-        float tmp = font.getTextSize();
-        font.setTextSize(tmp * percent(font));
-
+    public float WidthNote(Paint font, boolean stem) {
+        FM_Const.AdjustFont(font, toStringNote(stem), Stave.getDistanceBetweenStaveLines());
         String s = FM_Const.FillNote;
         if (duration == 1 || duration == 51) s = FM_Const._1Note;
         if (duration == 2 || duration == 52) s = FM_Const.EmptyNote;
-        if (all) s = toStringNote();
-
-        float res = font.measureText(s);
-        font.setTextSize(tmp);
-        return res;
+        if (stem) s = toStringNote();
+        return font.measureText(s);
     }
 
     public float Height(Paint font, boolean all) {
-        float tmp = font.getTextSize();
-        font.setTextSize(tmp * percent(font));
-
+        FM_Const.AdjustFont(font, toStringNote(false), Stave.getDistanceBetweenStaveLines());
         boolean tmp_beam = beam;
         if (all) beam = false;
         Rect bounds = new Rect();
         font.getTextBounds(toStringNote(), 0, 1, bounds);
         beam = tmp_beam;
-        font.setTextSize(tmp);
-
         return bounds.height();
     }
 
     public float WidthAllNoDot(Paint font) {
-        return WidthAll(font, false) - font.measureText(toStringDot()) - paddingDot;
+        return WidthAll(font) - WidthDot(font) - paddingDot;
     }
 
     public void DrawNote(Canvas canvas) {
@@ -194,13 +191,14 @@ public class FM_Note extends FM_BaseNote {
         }
         float width_accidental = WidthAccidental(Stave.StaveFont);
         Stave.StaveFont.setColor(Color);
-        float tmp = Stave.StaveFont.getTextSize();
-        Stave.StaveFont.setTextSize(tmp * FM_Const.adjustFontSizePercent(Stave.StaveFont, FM_Const.Sharp, Stave.getDistanceBetweenStaveLines()*2));
+
+        FM_Const.AdjustFont(Stave.StaveFont, FM_Const.Sharp, Stave.getDistanceBetweenStaveLines() * 2);
         canvas.drawText(toStringAccidental(), StartX + padding, dy, Stave.StaveFont);
-        Stave.StaveFont.setTextSize(tmp);
-        Stave.StaveFont.setTextSize(tmp * percent(Stave.StaveFont));
+
+        FM_Const.AdjustFont(Stave.StaveFont, toStringNote(false), Stave.getDistanceBetweenStaveLines());
         canvas.drawText(toStringNote(), StartX + padding + width_accidental + paddingNote, dy, Stave.StaveFont);
-        Stave.StaveFont.setTextSize(tmp);
+
+        FM_Const.AdjustFont(Stave.StaveFont, toStringAccidental(), Stave.getDistanceBetweenStaveLines() * 2);
         canvas.drawText(toStringDot(),  StartX + padding + width_accidental + paddingNote + WidthNote(Stave.StaveFont) + paddingDot, dy, Stave.StaveFont);
     }
 }

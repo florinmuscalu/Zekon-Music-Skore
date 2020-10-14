@@ -106,12 +106,14 @@ class FM_KeySignature extends FM_BaseNote {
         return s;
     }
 
+    @Override
+    public float WidthAll(Paint font, boolean all) {
+        return WidthAll(font);
+    }
+
     public float WidthAll(Paint font) {
-        float tmp = font.getTextSize();
-        font.setTextSize(tmp * FM_Const.adjustFontSizePercent(Stave.StaveFont, FM_Const.Sharp, Stave.getDistanceBetweenStaveLines()*2));
-        float res = padding + font.measureText(toString()) + (accidental.size() - 1) * FM_Const.dpTOpx(context, 2) + paddingExtra + FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
-        font.setTextSize(tmp);
-        return res;
+        FM_Const.AdjustFont(font, toString(), Stave.getDistanceBetweenStaveLines() * 2);
+        return padding + font.measureText(toString()) + (accidental.size() - 1) * FM_Const.dpTOpx(context, 2) + paddingExtra + FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
     }
 
     public float WidthAccidental(Paint font) {
@@ -132,8 +134,8 @@ class FM_KeySignature extends FM_BaseNote {
         for (int i = 0; i < accidental.size(); i++) {
             float offset = displacement.get(i);
             float dy = StartY1 + offset * Stave.getDistanceBetweenStaveLines();
-            float tmp = Stave.StaveFont.getTextSize();
-            Stave.StaveFont.setTextSize(tmp * FM_Const.adjustFontSizePercent(Stave.StaveFont, FM_Const.Sharp, Stave.getDistanceBetweenStaveLines()*2));
+
+            FM_Const.AdjustFont(Stave.StaveFont, toString(), Stave.getDistanceBetweenStaveLines() * 2);
             if (accidental.get(i) == FM_Accidental.Sharp) {
                 canvas.drawText(FM_Const.Sharp, dx, dy, Stave.StaveFont);
                 dx = dx + Stave.StaveFont.measureText(FM_Const.Sharp)+ + FM_Const.dpTOpx(context, 2);
@@ -142,7 +144,6 @@ class FM_KeySignature extends FM_BaseNote {
                 canvas.drawText(FM_Const.Flat, dx, dy, Stave.StaveFont);
                 dx = dx + Stave.StaveFont.measureText(FM_Const.Flat) + FM_Const.dpTOpx(context, 2);
             }
-            Stave.StaveFont.setTextSize(tmp);
         }
     }
 

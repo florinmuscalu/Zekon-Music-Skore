@@ -71,19 +71,23 @@ public class FM_Beam {
 
             y = n.get(0).ys +
                     n.get(0).getDisplacement() * stave.getDistanceBetweenStaveLines() +
-                    n.get(0).Height(stave.StaveFont, true) * 2 / 3;
+                    n.get(0).Height(stave.StaveFont, true) * 2 / 3 +
+                    n.get(0).Height(stave.StaveFont, false) - 0.5f * stave.getDistanceBetweenStaveLines();
             ye = n.get(n.size() - 1).ys +
                     n.get(n.size() - 1).getDisplacement() * stave.getDistanceBetweenStaveLines() +
-                    n.get(n.size() - 1).Height(stave.StaveFont, true) * 2 / 3;
+                    n.get(n.size() - 1).Height(stave.StaveFont, true) * 2 / 3 +
+                    n.get(n.size() - 1).Height(stave.StaveFont, false) - 0.5f * stave.getDistanceBetweenStaveLines();
 
             float yMiddleMin = n.get(1).ys +
                     n.get(1).getDisplacement() * stave.getDistanceBetweenStaveLines() +
-                    n.get(1).Height(stave.StaveFont, true) * 2 / 3;
+                    n.get(1).Height(stave.StaveFont, true) * 2 / 3  +
+                    n.get(1).Height(stave.StaveFont, false) - 0.5f * stave.getDistanceBetweenStaveLines();
 
             for (int i = 2; i < n.size() - 1; i++) {
                 float yMiddle = n.get(i).ys +
                         n.get(i).getDisplacement() * stave.getDistanceBetweenStaveLines() +
-                        n.get(i).Height(stave.StaveFont, true) * 2 / 3;
+                        n.get(i).Height(stave.StaveFont, true) * 2 / 3 +
+                        n.get(i).Height(stave.StaveFont, false) - 0.5f * stave.getDistanceBetweenStaveLines();
                 if (yMiddle > yMiddleMin) yMiddleMin = yMiddle;
             }
             if ((y + ye) / 2 < yMiddleMin) {

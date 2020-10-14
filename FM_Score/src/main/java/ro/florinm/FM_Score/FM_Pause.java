@@ -35,7 +35,13 @@ public class FM_Pause extends FM_BaseNote {
         return s;
     }
 
+    @Override
+    public float WidthAll(Paint font, boolean all) {
+        return WidthAll(font);
+    }
+
     public float WidthAll(Paint font) {
+        FM_Const.AdjustFont(font, FM_Const.Pause_8, Stave.getDistanceBetweenStaveLines() * 2);
         return padding + font.measureText(toString()) + paddingExtra;
     }
 
@@ -53,13 +59,7 @@ public class FM_Pause extends FM_BaseNote {
     public void DrawNote(Canvas canvas) {
         if (!isVisible()) return;
         Stave.StaveFont.setColor(Color);
-        float tmp = Stave.StaveFont.getTextSize();
-
-
-        Rect bounds = new Rect();
-        Stave.StaveFont.getTextBounds(FM_Const.Pause_8, 0, 1, bounds);
-        Stave.StaveFont.setTextSize(tmp * 1.8f * Stave.getDistanceBetweenStaveLines()/bounds.height());
+        FM_Const.AdjustFont(Stave.StaveFont, FM_Const.Pause_8, Stave.getDistanceBetweenStaveLines() * 2);
         canvas.drawText(toString(), StartX + padding, StartY1 + getDisplacement() * Stave.getDistanceBetweenStaveLines(), Stave.StaveFont);
-        Stave.StaveFont.setTextSize(tmp);
     }
 }

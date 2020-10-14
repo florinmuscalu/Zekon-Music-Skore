@@ -89,6 +89,11 @@ public class FM_Chord extends FM_BaseNote {
         return "";
     }
 
+    @Override
+    public float WidthAll(Paint font, boolean all) {
+        return WidthAll(font);
+    }
+
     public float WidthAll(Paint font) {
         int i = 0;
         float w = 0;

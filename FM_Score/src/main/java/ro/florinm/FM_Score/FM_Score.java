@@ -479,44 +479,35 @@ public class FM_Score extends View {
     }
 
     protected float getClefWidth(){
-        float tmp = StaveFont.getTextSize();
-        StaveFont.setTextSize(tmp * FM_Const.adjustFontSizePercent(StaveFont, FM_Const._4, getDistanceBetweenStaveLines()*2));
+        FM_Const.AdjustFont(StaveFont, FM_Const._4, 2 * getDistanceBetweenStaveLines());
         float w = StaveFont.measureText(FM_Const.TrebleClef) + 2 * FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
         float w1 = StaveFont.measureText(FM_Const.BassClef) + 2 * FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
-        StaveFont.setTextSize(tmp);
         return Math.max(w, w1);
     }
 
     private void DrawTrebleClef(Canvas canvas, float y){
-        float tmp = StaveFont.getTextSize();
-        StaveFont.setTextSize(tmp * FM_Const.adjustFontSizePercent(StaveFont, FM_Const._4, getDistanceBetweenStaveLines()*2));
+        FM_Const.AdjustFont(StaveFont, FM_Const._4, 2 * getDistanceBetweenStaveLines());
         StaveFont.setColor(StaveLineColor.getColor());
         canvas.drawText(FM_Const.TrebleClef, PaddingS + FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING), y + 3 * DistanceBetweenStaveLines, StaveFont);
-        StaveFont.setTextSize(tmp);
     }
 
     private void DrawBassClef(Canvas canvas, float y){
-        float tmp = StaveFont.getTextSize();
-        StaveFont.setTextSize(tmp * FM_Const.adjustFontSizePercent(StaveFont, FM_Const._4, getDistanceBetweenStaveLines()*2));
+        FM_Const.AdjustFont(StaveFont, FM_Const._4, 2 * getDistanceBetweenStaveLines());
         StaveFont.setColor(StaveLineColor.getColor());
         canvas.drawText(FM_Const.BassClef, PaddingS + FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING), y + 1 * DistanceBetweenStaveLines, StaveFont);
-        StaveFont.setTextSize(tmp);
     }
 
     protected float getTimeSignatureWidth(){
         float w = FM_Const.spTOpx(context,FM_Const.DEFAULT_EXTRA_PADDING);
-        float tmp = StaveFont.getTextSize();
-        StaveFont.setTextSize(tmp * FM_Const.adjustFontSizePercent(StaveFont, FM_Const._4, getDistanceBetweenStaveLines()*2));
+        FM_Const.AdjustFont(StaveFont, FM_Const._4, 2 * getDistanceBetweenStaveLines());
         if (TimeSignature != FM_TimeSignature.None) w = w + StaveFont.measureText(FM_Const._4);
-        StaveFont.setTextSize(tmp);
         return w;
     }
 
     private void DrawTimeSignature(Canvas canvas, float y){
         StaveFont.setColor(StaveLineColor.getColor());
-        float tmp = StaveFont.getTextSize();
         float pad = PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont);
-        StaveFont.setTextSize(tmp * FM_Const.adjustFontSizePercent(StaveFont, FM_Const._4, getDistanceBetweenStaveLines()*2));
+        FM_Const.AdjustFont(StaveFont, FM_Const._4, 2 * getDistanceBetweenStaveLines());
         if (TimeSignature == FM_TimeSignature._4_4) {
             canvas.drawText(FM_Const._4, pad, y + 1 * DistanceBetweenStaveLines, StaveFont);
             canvas.drawText(FM_Const._4, pad, y + 3 * DistanceBetweenStaveLines, StaveFont);
@@ -533,7 +524,6 @@ public class FM_Score extends View {
             canvas.drawText(FM_Const._3, pad, y + 1 * DistanceBetweenStaveLines, StaveFont);
             canvas.drawText(FM_Const._2, pad, y + 3 * DistanceBetweenStaveLines, StaveFont);
         }
-        StaveFont.setTextSize(tmp);
     }
 
     public void addStaffNote(FM_BaseNote n){

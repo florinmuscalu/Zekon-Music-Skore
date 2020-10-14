@@ -88,8 +88,7 @@ public class FM_Tuple {
                 canvas.drawLine(xe, ye, xe, ye + stave.getDistanceBetweenStaveLines(), stave.StaveFont);
             }
         }
-        float tmp = stave.StaveFont.getTextSize();
-        stave.StaveFont.setTextSize(tmp / 2);
+        FM_Const.AdjustFont(stave.StaveFont, text, stave.getDistanceBetweenStaveLines());
         float w = stave.StaveFont.measureText(text);
         float middle1 = (x + xe) / 2 - w / 2 - stave.getDistanceBetweenStaveLines() / 2;
         float middle2 = (x + xe) / 2 + w / 2 + stave.getDistanceBetweenStaveLines() / 2;
@@ -117,11 +116,7 @@ public class FM_Tuple {
             }
         }
         //canvas.drawLine(x, y - stave.getDistanceBetweenStaveLines(), xe,ye - stave.getDistanceBetweenStaveLines() , stave.StaveFont);
-        if (n.get(0).stem_up) {
-            canvas.drawText(text, (x + xe) / 2 - w / 2, (y + ye) / 2 - stave.getDistanceBetweenStaveLines(), stave.StaveFont);
-        } else {
-            canvas.drawText(text, (x + xe) / 2 - w / 2, (y + ye) / 2 + stave.getDistanceBetweenStaveLines(), stave.StaveFont);
-        }
-        stave.StaveFont.setTextSize(tmp);
+        if (n.get(0).stem_up) canvas.drawText(text, (x + xe) / 2 - w / 2, (y + ye) / 2 - stave.getDistanceBetweenStaveLines(), stave.StaveFont);
+        else canvas.drawText(text, (x + xe) / 2 - w / 2, (y + ye) / 2 + stave.getDistanceBetweenStaveLines(), stave.StaveFont);
     }
 }

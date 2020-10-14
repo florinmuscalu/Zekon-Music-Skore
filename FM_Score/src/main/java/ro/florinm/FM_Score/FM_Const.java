@@ -18,7 +18,7 @@ public class FM_Const {
     public static final String _1Note = "\ue0a2";
     public static final String _2Note_up = "\ue1d3";
     public static final String _2Note_down = "\ue1d4";
-    public static final String _4Note_up = "\ueca5";
+    public static final String _4Note_up = "\ue1D5";
     public static final String _4Note_down = "\ue1d6";
     public static final String _8Note_up = "\ue1d7";
     public static final String _8Note_down = "\ue1d8";
@@ -191,7 +191,11 @@ public class FM_Const {
         return FM_KeySignatureValue.DO;
     }
 
+    static void AdjustFont(Paint font, String text, float height) {
+        font.setTextSize(font.getTextSize() * FM_Const.adjustFontSizePercent(font, text, height));
+    }
     static float adjustFontSizePercent(Paint font, String text, float height){
+        if (text.equals("")) return 1;
         Rect bounds = new Rect();
         font.getTextBounds(text, 0, 1, bounds);
         return height/bounds.height();
