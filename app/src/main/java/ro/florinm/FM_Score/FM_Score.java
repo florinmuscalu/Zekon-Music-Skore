@@ -624,7 +624,8 @@ public class FM_Score extends View {
                 if (StaveNotes.get(i) instanceof FM_BarNote) {
                     last_bar = i;
                     bar_cnt++;
-                } else if (X + w > endX) {
+                }
+                if (bar_cnt > 0 && X + w > endX) {
                     l++;
                     X = startX;
                     ys1 = ys2 + (getDistanceBetweenRows() + 4 * DistanceBetweenStaveLines);
