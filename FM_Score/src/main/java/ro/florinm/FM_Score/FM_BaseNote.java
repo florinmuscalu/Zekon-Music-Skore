@@ -20,6 +20,7 @@ public abstract class FM_BaseNote{
     float StartX;
     float StartY1, StartY2;
     int line;
+    protected boolean DrawBoundingBox;
 
     public FM_BaseNote(@FM_NoteType int type, FM_Score Stave) {
         this.type = type;
@@ -31,6 +32,15 @@ public abstract class FM_BaseNote{
         this.Stave = Stave;
         this.Visible = true;
         this.line = 1;
+        this.DrawBoundingBox = false;
+    }
+
+    public void setDrawBoundigBox(boolean on){
+        DrawBoundingBox = on;
+    }
+
+    public boolean getDrawBoundingBox(){
+        return DrawBoundingBox;
     }
 
     protected void setClef(@FM_ClefValue int Clef){
@@ -48,7 +58,9 @@ public abstract class FM_BaseNote{
         StartY1 = ys1;
         StartY2 = ys2;
     }
-    public abstract void DrawNote(Canvas canvas);
+    public void DrawNote(Canvas canvas){
+
+    };
     public abstract float getDisplacement();
     public abstract String toString();
     public abstract float WidthAll(Paint font, boolean all);

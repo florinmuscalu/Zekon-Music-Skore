@@ -120,7 +120,7 @@ public class FM_Score extends View {
 
     public void setTimeSignature(@FM_TimeSignature int timeSignature ) {
         TimeSignature = timeSignature;
-        invalidate();
+        //invalidate();
         requestLayout();
     }
 
@@ -133,8 +133,8 @@ public class FM_Score extends View {
 
     public void setVoiceCount(int voiceCount) {
         VoiceCount = voiceCount;
-        invalidate();
-        requestLayout();
+        //invalidate();
+        //requestLayout();
     }
 
     public boolean isShowBrace() {
@@ -143,8 +143,8 @@ public class FM_Score extends View {
 
     public void setShowBrace(boolean showBrace) {
         ShowBrace = showBrace;
-        invalidate();
-        requestLayout();
+        //invalidate();
+       // requestLayout();
     }
 
     private float getDrawHeight(){
@@ -178,8 +178,8 @@ public class FM_Score extends View {
         PaddingS = PaddingS_p * width / 100.f;
         PaddingE = PaddingE_p * width / 100.f;
         ComputeLines();
-        invalidate();
-        requestLayout();
+        //invalidate();
+        //requestLayout();
     }
 
     @SuppressLint("DrawAllocation")
@@ -266,8 +266,8 @@ public class FM_Score extends View {
 
     public void setStartBar(boolean b) {
         StartBar = b;
-        invalidate();
-        requestLayout();
+        //invalidate();
+        //requestLayout();
     }
 
     public int getLines() {
@@ -280,8 +280,8 @@ public class FM_Score extends View {
 
     public void setEndBar(boolean b) {
         EndBar = b;
-        invalidate();
-        requestLayout();
+        //invalidate();
+        //requestLayout();
     }
 
     public float getPaddingS() {
@@ -292,8 +292,8 @@ public class FM_Score extends View {
         PaddingS_p = percent;
         if (width < 100) width = 100;
         PaddingS = percent * width / 100.f;
-        invalidate();
-        requestLayout();
+        //invalidate();
+        //requestLayout();
     }
 
     public float getPaddingVertical() {
@@ -303,8 +303,8 @@ public class FM_Score extends View {
 
     public void setPaddingT(float count) {
         PaddingV_cnt = count;
-        invalidate();
-        requestLayout();
+        //invalidate();
+        //requestLayout();
     }
 
     public float getPaddingE() {
@@ -315,8 +315,8 @@ public class FM_Score extends View {
         PaddingE_p = percent;
         if (width < 100) width = 100;
         PaddingE = percent * width / 100.f;;
-        invalidate();
-        requestLayout();
+        //invalidate();
+        //requestLayout();
     }
 
     public float getDistanceBetweenStaveLines() {
@@ -326,8 +326,8 @@ public class FM_Score extends View {
     public void setDistanceBetweenStaveLines(float d) {
         DistanceBetweenStaveLines = FM_Const.dpTOpx(context, d);
         StaveFont.setTextSize(FM_Const.spTOpx(context, 5 * d));
-        invalidate();
-        requestLayout();
+        //invalidate();
+        //requestLayout();
     }
 
     public float getDistanceBetweenRows() {
@@ -336,8 +336,8 @@ public class FM_Score extends View {
 
     public void setDistanceBetweenRows(float d) {
         DistanceBetweenRows_cnt = d;
-        invalidate();
-        requestLayout();
+        //invalidate();
+        //requestLayout();
     }
 
     public float getDistanceBetweenStaves() {
@@ -346,8 +346,8 @@ public class FM_Score extends View {
 
     public void setDistanceBetweenStaves(float d) {
         DistanceBetweenStaves_cnt = d;
-        invalidate();
-        requestLayout();
+        //invalidate();
+        //requestLayout();
     }
 
     private float startY;
@@ -462,8 +462,8 @@ public class FM_Score extends View {
         StaveLineColor.setColor(color);
         FirstStaveKey.setColor(color);
         SecondStaveKey.setColor(color);
-        invalidate();
-        requestLayout();
+        //invalidate();
+        //requestLayout();
     }
 
     public Integer getKeySignature() {
@@ -474,8 +474,8 @@ public class FM_Score extends View {
         KeySignature = keySignature;
         FirstStaveKey = new FM_KeySignature(context, FirstStaveClef, keySignature, Color, this);
         SecondStaveKey = new FM_KeySignature(context, SecondStaveClef, keySignature, Color, this);
-        invalidate();
-        requestLayout();
+        //invalidate();
+        //requestLayout();
     }
 
     protected float getClefWidth(){

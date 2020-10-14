@@ -192,12 +192,18 @@ public class FM_Const {
     }
 
     static void AdjustFont(Paint font, String text, float height) {
-        font.setTextSize(font.getTextSize() * FM_Const.adjustFontSizePercent(font, text, height));
+        font.setTextSize(FM_Const.adjustFontSizePercent(font, text, height));
     }
+
+    static float getFontSize(Paint font, String text, float height) {
+        return FM_Const.adjustFontSizePercent(font, text, height);
+    }
+
     static float adjustFontSizePercent(Paint font, String text, float height){
         if (text.equals("")) return 1;
+        font.setTextSize(100f);
         Rect bounds = new Rect();
         font.getTextBounds(text, 0, text.length(), bounds);
-        return height/bounds.height();
+        return 100f * height/bounds.height();
     }
 }

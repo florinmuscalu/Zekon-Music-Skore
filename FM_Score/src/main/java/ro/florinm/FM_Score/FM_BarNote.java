@@ -40,6 +40,8 @@ public class FM_BarNote extends FM_BaseNote {
 
     public void DrawNote(Canvas canvas) {
         if (!isVisible()) return;
+        super.DrawNote(canvas);
+
         float BarYs = StartY1;
         float BarYe = 0;
         if (StartY2 == 0)  BarYe = StartY1 + 4 * Stave.getDistanceBetweenStaveLines();

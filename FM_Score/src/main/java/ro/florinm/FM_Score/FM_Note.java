@@ -137,12 +137,8 @@ public class FM_Note extends FM_BaseNote {
 //    }
 
     public float WidthNote(Paint font, boolean stem) {
-        FM_Const.AdjustFont(font, toStringNote(stem), Stave.getDistanceBetweenStaveLines());
-        String s = FM_Const.FillNote;
-        if (duration == 1 || duration == 51) s = FM_Const._1Note;
-        if (duration == 2 || duration == 52) s = FM_Const.EmptyNote;
-        if (stem) s = toStringNote();
-        return font.measureText(s);
+        FM_Const.AdjustFont(font, toStringNote(false), Stave.getDistanceBetweenStaveLines());
+        return font.measureText(toStringNote(stem));
     }
 
     public float Height(Paint font, boolean all) {
@@ -162,6 +158,8 @@ public class FM_Note extends FM_BaseNote {
 
     public void DrawNote(Canvas canvas) {
         if (!isVisible()) return;
+        super.DrawNote(canvas);
+
         ys = StartY1;
         startX = StartX;
         float ly;
@@ -191,6 +189,9 @@ public class FM_Note extends FM_BaseNote {
                 }
         }
         float width_accidental = WidthAccidental(Stave.StaveFont);
+        float width_note_no_stem = WidthNote(Stave.StaveFont, false);
+        float width_note_stem = WidthNote(Stave.StaveFont, stem);
+        float width_dot = WidthDot(Stave.StaveFont);
         Stave.StaveFont.setColor(Color);
 
         FM_Const.AdjustFont(Stave.StaveFont, FM_Const.Sharp, Stave.getDistanceBetweenStaveLines() * 2);
@@ -200,6 +201,26 @@ public class FM_Note extends FM_BaseNote {
         canvas.drawText(toStringNote(), StartX + padding + width_accidental + paddingNote, dy, Stave.StaveFont);
 
         FM_Const.AdjustFont(Stave.StaveFont, toStringAccidental(), Stave.getDistanceBetweenStaveLines() * 2);
-        canvas.drawText(toStringDot(),  StartX + padding + width_accidental + paddingNote + WidthNote(Stave.StaveFont) + paddingDot, dy, Stave.StaveFont);
+        canvas.drawText(toStringDot(),  StartX + padding + width_accidental + paddingNote + width_note_no_stem + paddingDot, dy, Stave.StaveFont);
+
+        if (DrawBoundingBox) {
+            Paint p = new Paint();
+            p.setColor(android.graphics.Color.argb(255, 255, 0, 0));
+            float bx = StartX + padding;
+            float tx = StartX + padding + width_accidental + paddingNote + width_note_stem + paddingDot + width_dot;
+            float by;
+            float ty;
+            if (stem_up) {
+                by = dy + 0.5f * Stave.getDistanceBetweenStaveLines();
+                ty = by - Height(Stave.StaveFont, stem);
+            } else {
+                by = dy - 0.5f * Stave.getDistanceBetweenStaveLines();
+                ty = by + Height(Stave.StaveFont, stem);
+            }
+            canvas.drawLine(bx, by, bx, ty, p);
+            canvas.drawLine(bx, ty, tx, ty, p);
+            canvas.drawLine(tx, ty, tx, by, p);
+            canvas.drawLine(tx, by, bx, by, p);
+        }
     }
 }

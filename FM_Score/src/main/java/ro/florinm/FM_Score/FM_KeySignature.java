@@ -138,7 +138,7 @@ class FM_KeySignature extends FM_BaseNote {
             FM_Const.AdjustFont(Stave.StaveFont, toString(), Stave.getDistanceBetweenStaveLines() * 2);
             if (accidental.get(i) == FM_Accidental.Sharp) {
                 canvas.drawText(FM_Const.Sharp, dx, dy, Stave.StaveFont);
-                dx = dx + Stave.StaveFont.measureText(FM_Const.Sharp)+ + FM_Const.dpTOpx(context, 2);
+                dx = dx + Stave.StaveFont.measureText(FM_Const.Sharp) + FM_Const.dpTOpx(context, 2);
             }
             if (accidental.get(i) == FM_Accidental.Flat) {
                 canvas.drawText(FM_Const.Flat, dx, dy, Stave.StaveFont);

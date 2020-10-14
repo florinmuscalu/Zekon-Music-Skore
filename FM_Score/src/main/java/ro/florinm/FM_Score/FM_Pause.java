@@ -58,6 +58,8 @@ public class FM_Pause extends FM_BaseNote {
 
     public void DrawNote(Canvas canvas) {
         if (!isVisible()) return;
+        super.DrawNote(canvas);
+
         Stave.StaveFont.setColor(Color);
         FM_Const.AdjustFont(Stave.StaveFont, FM_Const.Pause_8, Stave.getDistanceBetweenStaveLines() * 2);
         canvas.drawText(toString(), StartX + padding, StartY1 + getDisplacement() * Stave.getDistanceBetweenStaveLines(), Stave.StaveFont);

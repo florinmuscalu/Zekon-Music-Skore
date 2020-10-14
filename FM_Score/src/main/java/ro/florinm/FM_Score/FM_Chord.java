@@ -133,6 +133,8 @@ public class FM_Chord extends FM_BaseNote {
 
     public void DrawNote(Canvas canvas) {
         if (!isVisible()) return;
+        super.DrawNote(canvas);
+
         for (int i = 0; i< Notes.size(); i++) {
             if (Notes.get(i).clef == Stave.getFirstStaveClef()) Notes.get(i).DrawNote(canvas);
             if (Notes.get(i).clef == Stave.getSecondStaveClef()) Notes.get(i).DrawNote(canvas);
