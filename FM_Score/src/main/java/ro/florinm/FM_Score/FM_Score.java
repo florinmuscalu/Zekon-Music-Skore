@@ -231,7 +231,7 @@ public class FM_Score extends View {
                     int height = bounds.height();
                     f.setTextSize(f.getTextSize() * (BarYe - BarYs) / height);
                     f.setColor(StaveFont.getColor());
-                    canvas.drawText(FM_Const.Bracket, PaddingS - f.measureText(FM_Const.Bracket) - 2, ys2 + 4 * DistanceBetweenStaveLines, f);
+                    canvas.drawText(FM_Const.Bracket, PaddingS - f.measureText(FM_Const.Bracket) - FM_Const.dpTOpx(context,2), ys2 + 4 * DistanceBetweenStaveLines, f);
                 }
                 //End Draw Bracket
             }

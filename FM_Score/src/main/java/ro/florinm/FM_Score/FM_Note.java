@@ -150,7 +150,8 @@ public class FM_Note extends FM_BaseNote {
         boolean tmp_beam = beam;
         if (all) beam = false;
         Rect bounds = new Rect();
-        font.getTextBounds(toStringNote(), 0, 1, bounds);
+        String s = toStringNote();
+        font.getTextBounds(s, 0, s.length(), bounds);
         beam = tmp_beam;
         return bounds.height();
     }

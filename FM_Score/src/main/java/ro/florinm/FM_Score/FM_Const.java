@@ -197,7 +197,7 @@ public class FM_Const {
     static float adjustFontSizePercent(Paint font, String text, float height){
         if (text.equals("")) return 1;
         Rect bounds = new Rect();
-        font.getTextBounds(text, 0, 1, bounds);
+        font.getTextBounds(text, 0, text.length(), bounds);
         return height/bounds.height();
     }
 }
