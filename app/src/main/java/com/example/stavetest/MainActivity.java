@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         s.setKeySignature(FM_KeySignatureValue.DOsharp);
         s.setAlign(FM_Align.CENTER);
         s.setPaddingT(5);
-        s.setCenterVertical(false);
+        s.setCenterVertical(true);
         s.setMultiLine(true);
         addSimpleMelodic();
         addRandom();

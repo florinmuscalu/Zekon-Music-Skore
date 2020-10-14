@@ -10,10 +10,13 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.view.MotionEvent.INVALID_POINTER_ID;
 
 public class FM_Score extends View {
     private int ID;
@@ -49,9 +52,18 @@ public class FM_Score extends View {
     private List<FM_Tuple> Tuples = new ArrayList<>();
     private List<FM_Beam> Beams = new ArrayList<>();
 
+    private ScaleGestureDetector mScaleDetector;
+    private float mScaleFactor = 1.f;
+    private float mPosX;
+    private float mPosY;
+    private float mLastTouchX;
+    private float mLastTouchY;
+    private int mActivePointerId = INVALID_POINTER_ID;
+
     public FM_Score(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
+        mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         ID = 0;
         VoiceCount = 1;
         NoteSpacing = 0;
@@ -165,6 +177,11 @@ public class FM_Score extends View {
     @SuppressLint("DrawAllocation")
     @Override
     protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        canvas.save();
+        canvas.translate(mPosX, mPosY);
+        canvas.scale(mScaleFactor, mScaleFactor);
+
         float ys1 = getPaddingVertical();
         float ys2;
         float BarYs = 0;
@@ -226,8 +243,7 @@ public class FM_Score extends View {
             //canvas.drawLine(width - PaddingE - 10, BarYs, width - PaddingE - 10, BarYe, StaveLineColor);
             //canvas.drawLine(width - PaddingE - 11, BarYs, width - PaddingE - 11, BarYe, StaveLineColor);
         }
-        invalidate();
-        requestLayout();
+        canvas.restore();
     }
 
     public int getColor() {
@@ -326,17 +342,70 @@ public class FM_Score extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        return super.onTouchEvent(event);
-//
-//        switch (event.getAction()) {
-//            case MotionEvent.ACTION_DOWN:
-//                return true;
-//
-//            case MotionEvent.ACTION_UP:
-//                performClick();
-//                return true;
-//        }
-//        return false;
+        mScaleDetector.onTouchEvent(event);
+        final int action = event.getAction();
+        switch (action & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_DOWN: {
+                final float x = event.getX();
+                final float y = event.getY();
+
+                mLastTouchX = x;
+                mLastTouchY = y;
+                mActivePointerId = event.getPointerId(0);
+                break;
+            }
+
+            case MotionEvent.ACTION_MOVE: {
+                final int pointerIndex = event.findPointerIndex(mActivePointerId);
+                float x = event.getX(pointerIndex);
+                float y = event.getY(pointerIndex);
+
+                // Only move if the ScaleGestureDetector isn't processing a gesture.
+                if (!mScaleDetector.isInProgress()) {
+                    final float dx = x - mLastTouchX;
+                    final float dy = y - mLastTouchY;
+
+                    mPosX += dx;
+                    mPosY += dy;
+
+                    invalidate();
+                } else {
+
+                }
+
+                mLastTouchX = x;
+                mLastTouchY = y;
+
+                break;
+            }
+
+            case MotionEvent.ACTION_UP: {
+                mActivePointerId = INVALID_POINTER_ID;
+                break;
+            }
+
+            case MotionEvent.ACTION_CANCEL: {
+                mActivePointerId = INVALID_POINTER_ID;
+                break;
+            }
+
+            case MotionEvent.ACTION_POINTER_UP: {
+                final int pointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK)
+                        >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+                final int pointerId = event.getPointerId(pointerIndex);
+                if (pointerId == mActivePointerId) {
+                    // This was our active pointer going up. Choose a new
+                    // active pointer and adjust accordingly.
+                    final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
+                    mLastTouchX = event.getX(newPointerIndex);
+                    mLastTouchY = event.getY(newPointerIndex);
+                    mActivePointerId = event.getPointerId(newPointerIndex);
+                }
+                break;
+            }
+        }
+
+        return true;
     }
 
     @Override
@@ -714,5 +783,19 @@ public class FM_Score extends View {
     public void setMultiLine(boolean multiLine) {
         MultiLine = multiLine;
         ComputeLines();
+    }
+
+    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            mScaleFactor *= detector.getScaleFactor();
+            //mPosX = mScaleDetector.getFocusX();
+            //mPosY = mScaleDetector.getFocusX();
+            // Don't let the object get too small or too large.
+            mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));
+
+            invalidate();
+            return true;
+        }
     }
 }
