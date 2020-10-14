@@ -149,4 +149,39 @@ public class FM_Const {
         if (key.contains("n")) return FM_Accidental.Natural;
         return FM_Accidental.None;
     }
+
+    public static int StringToKeySignature(String s){
+        s = s.toLowerCase().trim();
+        if (s.equals("do")) return FM_KeySignatureValue.DO;
+        if (s.equals("fa")) return FM_KeySignatureValue.FA;
+        if (s.equals("sib")) return FM_KeySignatureValue.SIb;
+        if (s.equals("mib")) return FM_KeySignatureValue.MIb;
+        if (s.equals("lab")) return FM_KeySignatureValue.LAb;
+        if (s.equals("reb")) return FM_KeySignatureValue.REb;
+        if (s.equals("solb")) return FM_KeySignatureValue.SOLb;
+        if (s.equals("dob")) return FM_KeySignatureValue.DOb;
+        if (s.equals("sol")) return FM_KeySignatureValue.SOL;
+        if (s.equals("re")) return FM_KeySignatureValue.RE;
+        if (s.equals("la")) return FM_KeySignatureValue.LA;
+        if (s.equals("mi")) return FM_KeySignatureValue.MI;
+        if (s.equals("si")) return FM_KeySignatureValue.SI;
+        if (s.equals("fa#")) return FM_KeySignatureValue.FAsharp;
+        if (s.equals("do#")) return FM_KeySignatureValue.DOsharp;
+        if (s.equals("lam")) return FM_KeySignatureValue.LAm;
+        if (s.equals("rem")) return FM_KeySignatureValue.REm;
+        if (s.equals("solm")) return FM_KeySignatureValue.SOLm;
+        if (s.equals("dom")) return FM_KeySignatureValue.DOm;
+        if (s.equals("fam")) return FM_KeySignatureValue.FAm;
+        if (s.equals("sibm")) return FM_KeySignatureValue.SIbm;
+        if (s.equals("mibm")) return FM_KeySignatureValue.MIbm;
+        if (s.equals("labm")) return FM_KeySignatureValue.LAbm;
+        if (s.equals("mim")) return FM_KeySignatureValue.MIm;
+        if (s.equals("sim")) return FM_KeySignatureValue.SIm;
+        if (s.equals("fa#m")) return FM_KeySignatureValue.FAsharpm;
+        if (s.equals("do#m")) return FM_KeySignatureValue.DOsharpm;
+        if (s.equals("sol#m")) return FM_KeySignatureValue.SOLsharpm;
+        if (s.equals("re#m")) return FM_KeySignatureValue.REsharpm;
+        if (s.equals("la#m")) return FM_KeySignatureValue.LAsharpm;
+        return FM_KeySignatureValue.DO;
+    }
 }

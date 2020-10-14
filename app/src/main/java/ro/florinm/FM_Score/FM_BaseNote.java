@@ -89,7 +89,8 @@ public abstract class FM_BaseNote{
     }
 
     public void setVisible(boolean visible) {
-        line = -1;
+        if (!visible) line = -1;
+        else line = 1;
         Visible = visible;
     }
 }

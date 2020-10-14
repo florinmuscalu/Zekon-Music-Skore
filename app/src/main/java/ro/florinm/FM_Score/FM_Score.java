@@ -494,12 +494,10 @@ public class FM_Score extends View {
         float ys1 = getPaddingVertical();
         float ys2 = getPaddingVertical();
         if (StaffCount == FM_StaffCount._2) ys2 = ys1 + (getDistanceBetweenStaves() + 4 * DistanceBetweenStaveLines);
-
         if (MultiLine && Align == FM_Align.ALIGN_LEFT_NOTES) {
             float X = startX;
             FM_BaseNote last_note = null;
             for (int i = 0; i < StaveNotes.size(); i++) {
-                StaveNotes.get(i).setVisible(true);
                 float w = StaveNotes.get(i).WidthAll(StaveFont, true) + NoteSpacing;
                 if (X + w > endX) {
                     if (last_note instanceof FM_BarNote) last_note.setVisible(false);
@@ -519,8 +517,7 @@ public class FM_Score extends View {
                 last_note = StaveNotes.get(i);
             }
             //If last note is a bar, hide it
-            if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote)
-                StaveNotes.get(StaveNotes.size() - 1).setVisible(false);
+            if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote) StaveNotes.get(StaveNotes.size() - 1).setVisible(false);
         }
 
 
@@ -529,7 +526,6 @@ public class FM_Score extends View {
             int last_bar = 0;
             int bar_cnt = 0;
             for (int i = 0; i < StaveNotes.size(); i++) {
-                StaveNotes.get(i).setVisible(true);
                 float w = StaveNotes.get(i).WidthAll(StaveFont, true) + NoteSpacing;
                 if (StaveNotes.get(i) instanceof FM_BarNote) {
                     last_bar = i;
@@ -556,14 +552,13 @@ public class FM_Score extends View {
                 X = X + w;
             }
             //If last note is a bar, hide it
-            if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote)
-                StaveNotes.get(StaveNotes.size() - 1).setVisible(false);
+            if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote) StaveNotes.get(StaveNotes.size() - 1).setVisible(false);
         }
 
         if (!MultiLine){
+            for (int i = 0; i < StaveNotes.size(); i++) StaveNotes.get(i).setVisible(true);
             //If last note is a bar, hide it
-            if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote)
-                StaveNotes.get(StaveNotes.size() - 1).setVisible(false);
+            if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote) StaveNotes.get(StaveNotes.size() - 1).setVisible(false);
         }
         Lines = l;
 
