@@ -30,6 +30,7 @@ public abstract class FM_BaseNote{
         clef = FM_ClefValue.TREBLE;
         this.Stave = Stave;
         this.Visible = true;
+        this.line = 1;
     }
 
     protected void setClef(@FM_ClefValue int Clef){

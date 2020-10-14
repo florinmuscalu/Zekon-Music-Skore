@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         s.setAlign(FM_Align.CENTER);
         s.setPaddingT(5);
         s.setCenterVertical(false);
+        s.setMultiLine(true);
         addSimpleMelodic();
         addRandom();
         addTestAll();

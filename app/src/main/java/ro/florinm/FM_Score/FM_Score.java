@@ -42,6 +42,7 @@ public class FM_Score extends View {
     @FM_Align private int Align;
 
     private boolean CenterVertical = true;
+    private boolean MultiLine = false;
 
     private List<FM_BaseNote> StaveNotes = new ArrayList<>();
     private List<FM_Tie> Ties = new ArrayList<>();
@@ -73,6 +74,7 @@ public class FM_Score extends View {
         setPaddingE(5);
         setStartBar(true);
         setEndBar(true);
+        setMultiLine(false);
         StaffCount = FM_StaffCount._1;
         setFirstStaveClef(FM_ClefValue.TREBLE);
         setSecondStaveClef(FM_ClefValue.BASS);
@@ -493,7 +495,7 @@ public class FM_Score extends View {
         float ys2 = getPaddingVertical();
         if (StaffCount == FM_StaffCount._2) ys2 = ys1 + (getDistanceBetweenStaves() + 4 * DistanceBetweenStaveLines);
 
-        if (Align == FM_Align.ALIGN_LEFT_NOTES) {
+        if (MultiLine && Align == FM_Align.ALIGN_LEFT_NOTES) {
             float X = startX;
             FM_BaseNote last_note = null;
             for (int i = 0; i < StaveNotes.size(); i++) {
@@ -522,7 +524,7 @@ public class FM_Score extends View {
         }
 
 
-        if (Align == FM_Align.ALIGN_LEFT_MEASURES || Align == FM_Align.CENTER) {
+        if (MultiLine && (Align == FM_Align.ALIGN_LEFT_MEASURES || Align == FM_Align.CENTER)) {
             float X = startX;
             int last_bar = 0;
             int bar_cnt = 0;
@@ -558,7 +560,13 @@ public class FM_Score extends View {
                 StaveNotes.get(StaveNotes.size() - 1).setVisible(false);
         }
 
+        if (!MultiLine){
+            //If last note is a bar, hide it
+            if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote)
+                StaveNotes.get(StaveNotes.size() - 1).setVisible(false);
+        }
         Lines = l;
+
         if (Align == FM_Align.CENTER) {
             for (int i = 1; i <= Lines; i++) {
                 float X = startX;
@@ -702,5 +710,14 @@ public class FM_Score extends View {
 
     public void setNoteSpacing(float noteSpacing) {
         NoteSpacing = FM_Const.dpTOpx(context, noteSpacing);
+    }
+
+    public boolean isMultiLine() {
+        return MultiLine;
+    }
+
+    public void setMultiLine(boolean multiLine) {
+        MultiLine = multiLine;
+        ComputeLines();
     }
 }
