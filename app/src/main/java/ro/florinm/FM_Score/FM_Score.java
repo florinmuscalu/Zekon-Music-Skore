@@ -63,6 +63,9 @@ public class FM_Score extends View {
     private float mLastTouchY;
     private int mActivePointerId = INVALID_POINTER_ID;
 
+    float pivotPointX = 0f;
+    float pivotPointY = 0f;
+
     public FM_Score(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
@@ -96,6 +99,8 @@ public class FM_Score extends View {
         setTimeSignature(FM_TimeSignature.None);
         setKeySignature(FM_KeySignatureValue.DO);
         setAlign(FM_Align.ALIGN_LEFT_MEASURES);
+
+
     }
 
     public boolean getCenterVertical() { return CenterVertical; };
@@ -182,12 +187,11 @@ public class FM_Score extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.save();
-        canvas.translate(mPosX, mPosY);
-        canvas.scale(mScaleFactor, mScaleFactor);
-        //float[] val = new float[9];
-        //matrix.getValues(val);
-        //canvas.translate(val[2], val[5]);
-        //canvas.scale(val[0], val[3]);
+        Matrix matrix = new Matrix();
+        matrix.postScale(mScaleFactor, mScaleFactor, 0, 0);
+        matrix.postTranslate(mPosX, mPosY);
+        canvas.setMatrix(matrix);
+
         float ys1 = getPaddingVertical();
         float ys2;
         float BarYs = 0;
@@ -348,30 +352,6 @@ public class FM_Score extends View {
 
     private float startY;
     private float startX;
-//    Matrix matrix = new Matrix();
-//    Matrix savedMatrix = new Matrix();
-//    // We can be in one of these 3 states
-//    static final int NONE = 0;
-//    static final int DRAG = 1;
-//    static final int ZOOM = 2;
-//    int mode = NONE;
-
-    // Remember some things for zooming
-//    PointF start = new PointF();
-//    PointF mid = new PointF();
-//    double oldDist = 1f;
-//
-//    private double spacing(MotionEvent event) {
-//        float x = event.getX(0) - event.getX(1);
-//        float y = event.getY(0) - event.getY(1);
-//        return Math.sqrt(x * x + y * y);
-//    }
-//
-//    private void midPoint(PointF point, MotionEvent event) {
-//        float x = event.getX(0) + event.getX(1);
-//        float y = event.getY(0) + event.getY(1);
-//        point.set(x / 2, y / 2);
-//    }
 
     private boolean isAClick(float startX, float endX, float startY, float endY) {
         float differenceX = Math.abs(startX - endX);
@@ -379,45 +359,6 @@ public class FM_Score extends View {
         int CLICK_ACTION_THRESHOLD = 10;
         return !(differenceX > CLICK_ACTION_THRESHOLD || differenceY > CLICK_ACTION_THRESHOLD);
     }
-
-//    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
-//        switch (event.getAction() & MotionEvent.ACTION_MASK) {
-//            case MotionEvent.ACTION_DOWN:
-//                savedMatrix.set(matrix);
-//                start.set(event.getX(), event.getY());
-//                mode = DRAG;
-//                break;
-//            case MotionEvent.ACTION_POINTER_DOWN:
-//                oldDist = spacing(event);
-//                if (oldDist > 10f) {
-//                    savedMatrix.set(matrix);
-//                    midPoint(mid, event);
-//                    mode = ZOOM;
-//                }
-//                break;
-//            case MotionEvent.ACTION_UP:
-//            case MotionEvent.ACTION_POINTER_UP:
-//                mode = NONE;
-//                break;
-//            case MotionEvent.ACTION_MOVE:
-//                if (mode == DRAG) {
-//                    // ...
-//                    matrix.set(savedMatrix);
-//                    matrix.postTranslate(event.getX() - start.x,
-//                            event.getY() - start.y);
-//                } else if (mode == ZOOM) {
-//                    double newDist = spacing(event);
-//                    if (newDist > 10f) {
-//                        matrix.set(savedMatrix);
-//                        double scale = newDist / oldDist;
-//                        matrix.postScale((float) scale, (float) scale, mid.x, mid.y);
-//                    }
-//                }
-//                break;
-//        }
-//        return true; // indicate event was handled
-//    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -460,9 +401,8 @@ public class FM_Score extends View {
             case MotionEvent.ACTION_UP: {
                 mActivePointerId = INVALID_POINTER_ID;
                 if (isAClick(startX, event.getX(), startY, event.getY())) {
-                    super.callOnClick();
+                    super.performClick();
                     return super.onTouchEvent(event);
-                    //return false;
                 }
                 break;
             }
@@ -482,6 +422,8 @@ public class FM_Score extends View {
                     final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
                     mLastTouchX = event.getX(newPointerIndex);
                     mLastTouchY = event.getY(newPointerIndex);
+                    mLastTouchX = pivotPointX;
+                    mLastTouchY = pivotPointY;
                     mActivePointerId = event.getPointerId(newPointerIndex);
                 }
                 break;
@@ -870,12 +812,16 @@ public class FM_Score extends View {
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
+            float prevScale = mScaleFactor;
             mScaleFactor *= detector.getScaleFactor();
-            //mPosX = mScaleDetector.getFocusX();
-            //mPosY = mScaleDetector.getFocusX();
             // Don't let the object get too small or too large.
             mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));
 
+            float adjustedScaleFactor = mScaleFactor / prevScale;
+            pivotPointX = detector.getFocusX();
+            pivotPointY = detector.getFocusY();
+            mPosX += (mPosX - pivotPointX) * (adjustedScaleFactor - 1);
+            mPosY += (mPosY - pivotPointY) * (adjustedScaleFactor - 1);
             invalidate();
             return true;
         }
