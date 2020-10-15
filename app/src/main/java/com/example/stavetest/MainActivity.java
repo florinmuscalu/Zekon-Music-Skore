@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
         s.setShowBrace(true);
         s.setAllowZoomPan(true);
         s.setDrawBoundigBox(false);
-        s.setUseAspectRatio(false);
 
         //addRandom();
         //addTestAll();

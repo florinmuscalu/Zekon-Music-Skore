@@ -40,8 +40,8 @@ public abstract class FM_BaseNote{
 
     protected void setContext(Context context){
         this.context = context;
-        padding = FM_Const.spTOpx(context, 4);
-        paddingExtra = FM_Const.spTOpx(context, 8);
+        padding = FM_Const.dpTOpx(context, 4);
+        paddingExtra = FM_Const.dpTOpx(context, 8);
     }
 
     public void SetDrawParameters(float x, float ys1, float ys2){

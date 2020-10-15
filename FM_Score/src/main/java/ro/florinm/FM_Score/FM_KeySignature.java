@@ -114,7 +114,7 @@ class FM_KeySignature extends FM_BaseNote {
 
     public float WidthAll(Paint font) {
         FM_Const.AdjustFont(context, font, toString(), Stave.getDistanceBetweenStaveLines(), 2);
-        return padding + font.measureText(toString()) + (accidental.size() - 1) * FM_Const.dpTOpx(context, 2) + paddingExtra + FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
+        return padding + font.measureText(toString()) + (accidental.size() - 1) * FM_Const.dpTOpx(context, 2) + paddingExtra + FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
     }
 
     public float WidthAccidental(Paint font) {

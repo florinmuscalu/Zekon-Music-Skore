@@ -67,7 +67,6 @@ public class FM_Score extends View {
     float pivotPointY = 0f;
 
     private boolean DrawBoundingBox;
-    private boolean UseAspectRatio = true;
 
     public FM_Score(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -323,14 +322,12 @@ public class FM_Score extends View {
     }
 
     public float getDistanceBetweenStaveLines() {
-        if (!UseAspectRatio) return _DistanceBetweenStaveLines;
-        if (height == 0 || width == 0) return _DistanceBetweenStaveLines;
-        return _DistanceBetweenStaveLines * ((1f * width) / (height * 1f));
+        return _DistanceBetweenStaveLines;
     }
 
     public void setDistanceBetweenStaveLines(float d) {
         _DistanceBetweenStaveLines = FM_Const.dpTOpx(context, d);
-        StaveFont.setTextSize(FM_Const.spTOpx(context, 5 * d));
+        StaveFont.setTextSize(FM_Const.dpTOpx(context, 5 * d));
         invalidate();
         //requestLayout();
     }
@@ -419,8 +416,7 @@ public class FM_Score extends View {
             }
 
             case MotionEvent.ACTION_POINTER_UP: {
-                final int pointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK)
-                        >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+                final int pointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
                 final int pointerId = event.getPointerId(pointerIndex);
                 if (pointerId == mActivePointerId) {
                     // This was our active pointer going up. Choose a new
@@ -428,8 +424,8 @@ public class FM_Score extends View {
                     final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
                     mLastTouchX = event.getX(newPointerIndex);
                     mLastTouchY = event.getY(newPointerIndex);
-                    mLastTouchX = pivotPointX;
-                    mLastTouchY = pivotPointY;
+                    //mLastTouchX = pivotPointX;
+                    //mLastTouchY = pivotPointY;
                     mActivePointerId = event.getPointerId(newPointerIndex);
                 }
                 break;
@@ -486,25 +482,25 @@ public class FM_Score extends View {
 
     protected float getClefWidth(){
         FM_Const.AdjustFont(context,StaveFont, FM_Const._4, getDistanceBetweenStaveLines(), 2);
-        float w = StaveFont.measureText(FM_Const.TrebleClef) + 2 * FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
-        float w1 = StaveFont.measureText(FM_Const.BassClef) + 2 * FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
+        float w = StaveFont.measureText(FM_Const.TrebleClef) + 2 * FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
+        float w1 = StaveFont.measureText(FM_Const.BassClef) + 2 * FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
         return Math.max(w, w1);
     }
 
     private void DrawTrebleClef(Canvas canvas, float y){
         FM_Const.AdjustFont(context, StaveFont, FM_Const._4, getDistanceBetweenStaveLines(), 2);
         StaveFont.setColor(StaveLineColor.getColor());
-        canvas.drawText(FM_Const.TrebleClef, PaddingS + FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING), y + 3 * getDistanceBetweenStaveLines(), StaveFont);
+        canvas.drawText(FM_Const.TrebleClef, PaddingS + FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING), y + 3 * getDistanceBetweenStaveLines(), StaveFont);
     }
 
     private void DrawBassClef(Canvas canvas, float y){
         FM_Const.AdjustFont(context, StaveFont, FM_Const._4, getDistanceBetweenStaveLines(), 2);
         StaveFont.setColor(StaveLineColor.getColor());
-        canvas.drawText(FM_Const.BassClef, PaddingS + FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING), y + 1 * getDistanceBetweenStaveLines(), StaveFont);
+        canvas.drawText(FM_Const.BassClef, PaddingS + FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING), y + 1 * getDistanceBetweenStaveLines(), StaveFont);
     }
 
     protected float getTimeSignatureWidth(){
-        float w = FM_Const.spTOpx(context,FM_Const.DEFAULT_EXTRA_PADDING);
+        float w = FM_Const.dpTOpx(context,FM_Const.DEFAULT_EXTRA_PADDING);
         FM_Const.AdjustFont(context, StaveFont, FM_Const._4, getDistanceBetweenStaveLines(), 2);
         if (TimeSignature != FM_TimeSignature.None) w = w + StaveFont.measureText(FM_Const._4);
         return w;
@@ -594,8 +590,8 @@ public class FM_Score extends View {
     private void ComputeLines() {
         if (StaveNotes.size() == 0) return;
         int l = 1;
-        float startX = PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont) + getTimeSignatureWidth() + 2 * FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
-        float endX = width - PaddingE - 2 * FM_Const.spTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
+        float startX = PaddingS + getClefWidth() + FirstStaveKey.WidthAll(StaveFont) + getTimeSignatureWidth() + 2 * FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
+        float endX = width - PaddingE - 2 * FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
         float ys1 = getPaddingVertical();
         float ys2 = getPaddingVertical();
         if (StaffCount == FM_StaffCount._2) ys2 = ys1 + (getDistanceBetweenStaves() + 4 * getDistanceBetweenStaveLines());
@@ -828,14 +824,6 @@ public class FM_Score extends View {
 
     public void setAllowZoomPan(boolean allowZoomPan) {
         AllowZoomPan = allowZoomPan;
-    }
-
-    public boolean isUseAspectRatio() {
-        return UseAspectRatio;
-    }
-
-    public void setUseAspectRatio(boolean useAspectRatio) {
-        UseAspectRatio = useAspectRatio;
     }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {

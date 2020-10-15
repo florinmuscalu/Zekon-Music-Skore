@@ -77,14 +77,8 @@ public class FM_Const {
     //Tuplet
 
     public static float dpTOpx(Context context, float dp){
-        return spTOpx(context, dp);
-        //Resources r = context.getResources();
-        //return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
-    }
-
-    public static float spTOpx(Context context, float sp){
         Resources r = context.getResources();
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, r.getDisplayMetrics());
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
     }
 
     public static int distanceBetweenNotes(FM_Note n1, FM_Note n2){
