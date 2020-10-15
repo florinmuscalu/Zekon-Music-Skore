@@ -20,7 +20,7 @@ public abstract class FM_BaseNote{
     float StartX;
     float StartY1, StartY2;
     int line;
-    protected boolean DrawBoundingBox;
+
 
     public FM_BaseNote(@FM_NoteType int type, FM_Score Stave) {
         this.type = type;
@@ -32,15 +32,6 @@ public abstract class FM_BaseNote{
         this.Stave = Stave;
         this.Visible = true;
         this.line = 1;
-        this.DrawBoundingBox = false;
-    }
-
-    public void setDrawBoundigBox(boolean on){
-        DrawBoundingBox = on;
-    }
-
-    public boolean getDrawBoundingBox(){
-        return DrawBoundingBox;
     }
 
     protected void setClef(@FM_ClefValue int Clef){
@@ -59,7 +50,18 @@ public abstract class FM_BaseNote{
         StartY2 = ys2;
     }
     public void DrawNote(Canvas canvas){
-
+        if (Stave.getDrawBoundingBox()) {
+            Paint p = new Paint();
+            p.setColor(android.graphics.Color.argb(255, 255, 0, 0));
+            float bx = Left();
+            float tx = Right();
+            float by = Bottom();
+            float ty = Top();
+            canvas.drawLine(bx, by, bx, ty, p);
+            canvas.drawLine(bx, ty, tx, ty, p);
+            canvas.drawLine(tx, ty, tx, by, p);
+            canvas.drawLine(tx, by, bx, by, p);
+        }
     };
     public abstract float getDisplacement();
     public abstract String toString();
@@ -103,4 +105,9 @@ public abstract class FM_BaseNote{
         else line = 1;
         Visible = visible;
     }
+
+    public abstract float Left();
+    public abstract float Bottom();
+    public abstract float Right();
+    public abstract float Top();
 }

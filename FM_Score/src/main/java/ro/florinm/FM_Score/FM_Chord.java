@@ -145,4 +145,16 @@ public class FM_Chord extends FM_BaseNote {
     public float getDisplacement() {
         return 0;
     }
+    public float Left(){
+        return 0;
+    };
+    public float Bottom() {
+        return 0;
+    }
+    public float Right() {
+        return 0;
+    }
+    public float Top(){
+        return 0;
+    }
 }

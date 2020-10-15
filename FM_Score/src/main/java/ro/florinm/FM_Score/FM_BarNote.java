@@ -54,4 +54,20 @@ public class FM_BarNote extends FM_BaseNote {
         //canvas.drawLine(StartX + padding - 1, BarYs, StartX + padding - 1, BarYe, C);
         //canvas.drawLine(StartX + padding + 1, BarYs, StartX + padding + 1, BarYe, C);
     }
+
+    public float Left(){
+        return StartX + padding;
+    };
+    public float Bottom() {
+        return StartY1;
+    }
+    public float Right() {
+        return StartX + padding + FM_Const.dpTOpx(context,1);
+    }
+    public float Top(){
+        float BarYe = 0;
+        if (StartY2 == 0)  BarYe = StartY1 + 4 * Stave.getDistanceBetweenStaveLines();
+        else BarYe = StartY2 + 4 * Stave.getDistanceBetweenStaveLines();
+        return BarYe;
+    }
 }

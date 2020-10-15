@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
         s.setMultiLine(true);
         addSimpleMelodic();
         s.setShowBrace(true);
+        s.setAllowZoomPan(true);
+        s.setDrawBoundigBox(true);
         addRandom();
         addTestAll();
         List<FM_Note> chord = new ArrayList<>();

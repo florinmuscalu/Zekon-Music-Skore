@@ -3,6 +3,7 @@ package ro.florinm.FM_Score;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,6 +130,8 @@ class FM_KeySignature extends FM_BaseNote {
 
     public void DrawNote(Canvas canvas) {
         if (!isVisible()) return;
+        super.DrawNote(canvas);
+
         Stave.StaveFont.setColor(Color);
         float dx = StartX;
         for (int i = 0; i < accidental.size(); i++) {
@@ -147,4 +150,38 @@ class FM_KeySignature extends FM_BaseNote {
         }
     }
 
+    public float Left(){
+        return StartX;
+    };
+    public float Bottom() {
+        float dy = 0;
+        float maxdy = -100000;
+        for (int i = 0; i < accidental.size(); i++) {
+            float offset = displacement.get(i);
+            dy = StartY1 + offset * Stave.getDistanceBetweenStaveLines();
+            if (dy > maxdy) maxdy = dy;
+        }
+        return maxdy + Height(Stave.StaveFont);
+    }
+    public float Right() {
+        return StartX + WidthAll(Stave.StaveFont);
+    }
+    public float Top(){
+        float mindy = Bottom();
+        float dy = 0;
+        for (int i = 0; i < accidental.size(); i++) {
+            float offset = displacement.get(i);
+            dy = StartY1 + offset * Stave.getDistanceBetweenStaveLines();
+            if (dy < mindy) mindy = dy;
+        }
+        return mindy - Height(Stave.StaveFont);
+    }
+
+    private float Height(Paint font) {
+        FM_Const.AdjustFont(context, font, toString(), Stave.getDistanceBetweenStaveLines(), 1);
+        Rect bounds = new Rect();
+        String s = toString();
+        font.getTextBounds(s, 0, s.length(), bounds);
+        return bounds.height();
+    }
 }

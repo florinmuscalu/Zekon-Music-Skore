@@ -49,6 +49,7 @@ public class FM_Score extends View {
 
     private boolean CenterVertical = true;
     private boolean MultiLine = false;
+    private boolean AllowZoomPan = false;
 
     private List<FM_BaseNote> StaveNotes = new ArrayList<>();
     private List<FM_Tie> Ties = new ArrayList<>();
@@ -65,6 +66,8 @@ public class FM_Score extends View {
 
     float pivotPointX = 0f;
     float pivotPointY = 0f;
+
+    private boolean DrawBoundingBox;
 
     public FM_Score(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -99,8 +102,16 @@ public class FM_Score extends View {
         setTimeSignature(FM_TimeSignature.None);
         setKeySignature(FM_KeySignatureValue.DO);
         setAlign(FM_Align.ALIGN_LEFT_MEASURES);
+        DrawBoundingBox = false;
 
+    }
 
+    public void setDrawBoundigBox(boolean on){
+        DrawBoundingBox = on;
+    }
+
+    public boolean getDrawBoundingBox(){
+        return DrawBoundingBox;
     }
 
     public boolean getCenterVertical() { return CenterVertical; };
@@ -362,6 +373,7 @@ public class FM_Score extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (!AllowZoomPan) return super.onTouchEvent(event);
         mScaleDetector.onTouchEvent(event);
         final int action = event.getAction();
         switch (action & MotionEvent.ACTION_MASK) {
@@ -814,6 +826,14 @@ public class FM_Score extends View {
     public void setMultiLine(boolean multiLine) {
         MultiLine = multiLine;
         ComputeLines();
+    }
+
+    public boolean isAllowZoomPan() {
+        return AllowZoomPan;
+    }
+
+    public void setAllowZoomPan(boolean allowZoomPan) {
+        AllowZoomPan = allowZoomPan;
     }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {

@@ -35,6 +35,17 @@ public class FM_Pause extends FM_BaseNote {
         return s;
     }
 
+    private int lineSpan() {
+        int s = 0;
+        if (duration == 1 || duration == 51) return 1;
+        if (duration == 2 || duration == 52) return 1;
+        if (duration == 4 || duration == 54) return 3;
+        if (duration == 8 || duration == 58) return 2;
+        if (duration == 16 || duration == 516) return 3;
+        if (duration == 32 || duration == 532) return 4;
+        return s;
+    }
+
     @Override
     public float WidthAll(Paint font, boolean all) {
         return WidthAll(font);
@@ -56,6 +67,22 @@ public class FM_Pause extends FM_BaseNote {
         return WidthAll(font);
     }
 
+    private float BottomMargin(Paint font) {
+        FM_Const.AdjustFont(context, font, toString(), Stave.getDistanceBetweenStaveLines(), lineSpan());
+        Rect bounds = new Rect();
+        String s = toString();
+        font.getTextBounds(s, 0, s.length(), bounds);
+        return bounds.bottom;
+    }
+
+    private float TopMargin(Paint font) {
+        FM_Const.AdjustFont(context, font, toString(), Stave.getDistanceBetweenStaveLines(), lineSpan());
+        Rect bounds = new Rect();
+        String s = toString();
+        font.getTextBounds(s, 0, s.length(), bounds);
+        return bounds.top;
+    }
+
     public void DrawNote(Canvas canvas) {
         if (!isVisible()) return;
         super.DrawNote(canvas);
@@ -63,5 +90,17 @@ public class FM_Pause extends FM_BaseNote {
         Stave.StaveFont.setColor(Color);
         FM_Const.AdjustFont(context, Stave.StaveFont, FM_Const.Pause_8, Stave.getDistanceBetweenStaveLines(),2);
         canvas.drawText(toString(), StartX + padding, StartY1 + getDisplacement() * Stave.getDistanceBetweenStaveLines(), Stave.StaveFont);
+    }
+    public float Left(){
+        return StartX + padding;
+    };
+    public float Bottom() {
+        return StartY1 + getDisplacement() * Stave.getDistanceBetweenStaveLines() + BottomMargin(Stave.StaveFont);
+    }
+    public float Right() {
+        return StartX + WidthAll(Stave.StaveFont);
+    }
+    public float Top(){
+        return StartY1 + getDisplacement() * Stave.getDistanceBetweenStaveLines() + TopMargin(Stave.StaveFont);
     }
 }

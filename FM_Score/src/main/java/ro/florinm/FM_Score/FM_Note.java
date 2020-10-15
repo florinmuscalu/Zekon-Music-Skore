@@ -202,25 +202,31 @@ public class FM_Note extends FM_BaseNote {
 
         FM_Const.AdjustFont(context, Stave.StaveFont, FM_Const.Sharp, Stave.getDistanceBetweenStaveLines(), 2);
         canvas.drawText(toStringDot(),  StartX + padding + width_accidental + paddingNote + width_note_no_stem + paddingDot, dy, Stave.StaveFont);
-
-        if (DrawBoundingBox) {
-            Paint p = new Paint();
-            p.setColor(android.graphics.Color.argb(255, 255, 0, 0));
-            float bx = StartX + padding;
-            float tx = StartX + padding + width_accidental + paddingNote + width_note_stem + paddingDot + width_dot;
-            float by;
-            float ty;
-            if (stem_up) {
-                by = dy + 0.5f * Stave.getDistanceBetweenStaveLines();
-                ty = by - Height(Stave.StaveFont, stem);
-            } else {
-                by = dy - 0.5f * Stave.getDistanceBetweenStaveLines();
-                ty = by + Height(Stave.StaveFont, stem);
-            }
-            canvas.drawLine(bx, by, bx, ty, p);
-            canvas.drawLine(bx, ty, tx, ty, p);
-            canvas.drawLine(tx, ty, tx, by, p);
-            canvas.drawLine(tx, by, bx, by, p);
+    }
+    public float Left(){
+        return  StartX + padding;
+    };
+    public float Bottom() {
+        float offset = getDisplacement();
+        float dy = StartY1 + offset * Stave.getDistanceBetweenStaveLines();
+        if (stem_up) {
+            return dy + 0.5f * Stave.getDistanceBetweenStaveLines();
+        } else {
+            return dy - 0.5f * Stave.getDistanceBetweenStaveLines();
+        }
+    }
+    public float Right() {
+        float width_accidental = WidthAccidental(Stave.StaveFont);
+        float width_note_stem = WidthNote(Stave.StaveFont, stem);
+        float width_dot = WidthDot(Stave.StaveFont);
+        return StartX + padding + width_accidental + paddingNote + width_note_stem + paddingDot + width_dot;
+    }
+    public float Top(){
+        float by = Bottom();
+        if (stem_up) {
+            return by - Height(Stave.StaveFont, stem);
+        } else {
+            return by + Height(Stave.StaveFont, stem);
         }
     }
 }
