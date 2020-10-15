@@ -6,12 +6,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.TypedValue;
 
-import androidx.annotation.IntDef;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.List;
-
 public class FM_Const {
     public static final int DEFAULT_EXTRA_PADDING = 3;
     //notes
@@ -76,21 +70,21 @@ public class FM_Const {
 
     //Tuplet
 
-    public static float dpTOpx(Context context, float dp){
+    public static float dpTOpx(Context context, float dp) {
         Resources r = context.getResources();
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
     }
 
-    public static int distanceBetweenNotes(FM_Note n1, FM_Note n2){
+    public static int distanceBetweenNotes(FM_Note n1, FM_Note n2) {
         if (!n1.clef.equals(n2.clef)) return 10;
         return (n1.Note - n2.Note) + ((n1.Octave - n2.Octave) * 7);
     }
 
-    public static float slope(float x1, float y1, float x2, float y2){
+    public static float slope(float x1, float y1, float x2, float y2) {
         return (y2 - y1) / (x2 - x1);
     }
 
-    public static float getY2(float slope, float x1, float y1, float x2){
+    public static float getY2(float slope, float x1, float y1, float x2) {
         return y1 + slope * (x2 - x1);
     }
 
@@ -98,14 +92,14 @@ public class FM_Const {
         return keyToNote(key, 0);
     }
 
-    public static int keyCount(String key){
-            key = key.replace("\\","").replace("\"","").replace("[","").replace("]","").toLowerCase().trim();
-            String[] s = key.split(",");
-            return s.length;
+    public static int keyCount(String key) {
+        key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
+        String[] s = key.split(",");
+        return s.length;
     }
 
-    public static int keyToNote(String key, int pos){
-        key = key.replace("\\","").replace("\"","").replace("[","").replace("]","").toLowerCase().trim();
+    public static int keyToNote(String key, int pos) {
+        key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
         key = s[pos];
         if (key.startsWith("do")) return FM_NoteValue.DO;
@@ -129,15 +123,15 @@ public class FM_Const {
         return keyToOctave(key, 0);
     }
 
-    public static int keyToOctave(String key, int pos){
-        key = key.replace("\\","").replace("\"","").replace("[","").replace("]","").toLowerCase().trim();
+    public static int keyToOctave(String key, int pos) {
+        key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
         key = s[pos];
-        return Integer.parseInt(key.substring(key.length()-1));
+        return Integer.parseInt(key.substring(key.length() - 1));
     }
 
-    public static int keyToAccidental(String key, int pos){
-        key = key.replace("\\","").replace("\"","").replace("[","").replace("]","").toLowerCase().trim();
+    public static int keyToAccidental(String key, int pos) {
+        key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
         key = s[pos].substring(1);
         if (key.contains("###")) return FM_Accidental.TripleSharp;
@@ -150,7 +144,7 @@ public class FM_Const {
         return FM_Accidental.None;
     }
 
-    public static int StringToKeySignature(String s){
+    public static int StringToKeySignature(String s) {
         s = s.toLowerCase().trim();
         if (s.equals("do")) return FM_KeySignatureValue.DO;
         if (s.equals("fa")) return FM_KeySignatureValue.FA;
@@ -185,20 +179,15 @@ public class FM_Const {
         return FM_KeySignatureValue.DO;
     }
 
-    static void AdjustFont(Context context, Paint font, String text, float line_height, int cnt) {
-        font.setTextSize(FM_Const.adjustFontSizePercent(context, font, text, line_height, cnt));
-    }
-
-    static float getFontSize(Context context, Paint font, String text, float line_height, int cnt) {
-        return FM_Const.adjustFontSizePercent(context, font, text, line_height, cnt);
-    }
-
-    static float adjustFontSizePercent(Context context, Paint font, String text, float line_height, int cnt){
-        if (text.equals("")) return 1;
-        float height = line_height * cnt + dpTOpx(context, 1);
+    static void AdjustFont(Context context, Paint font, String text, float stave_line_height, int stave_lines_cnt) {
+        if (text.equals("")) {
+            font.setTextSize(10);
+            return;
+        }
+        float height = stave_line_height * stave_lines_cnt + dpTOpx(context, 1);
         font.setTextSize(100f);
         Rect bounds = new Rect();
         font.getTextBounds(text, 0, text.length(), bounds);
-        return 100f * height/bounds.height();
+        font.setTextSize(100f * height / bounds.height());
     }
 }

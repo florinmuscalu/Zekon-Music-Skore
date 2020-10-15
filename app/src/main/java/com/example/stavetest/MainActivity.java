@@ -1,9 +1,9 @@
 package com.example.stavetest;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.graphics.Color;
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,6 @@ import java.util.List;
 import ro.florinm.FM_Score.FM_Accidental;
 import ro.florinm.FM_Score.FM_Align;
 import ro.florinm.FM_Score.FM_BarNote;
-import ro.florinm.FM_Score.FM_BaseNote;
 import ro.florinm.FM_Score.FM_ClefValue;
 import ro.florinm.FM_Score.FM_DurationValue;
 import ro.florinm.FM_Score.FM_KeySignatureValue;
@@ -19,7 +18,6 @@ import ro.florinm.FM_Score.FM_Note;
 import ro.florinm.FM_Score.FM_NoteValue;
 import ro.florinm.FM_Score.FM_Pause;
 import ro.florinm.FM_Score.FM_Score;
-import ro.florinm.FM_Score.FM_StaffCount;
 import ro.florinm.FM_Score.FM_TimeSignature;
 
 public class MainActivity extends AppCompatActivity {
