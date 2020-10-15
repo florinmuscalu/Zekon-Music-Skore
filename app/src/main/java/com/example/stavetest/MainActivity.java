@@ -41,12 +41,13 @@ public class MainActivity extends AppCompatActivity {
         s.setTimeSignature(FM_TimeSignature._2_4);
         s.setKeySignature(FM_KeySignatureValue.DOsharp);
         s.setAlign(FM_Align.ALIGN_LEFT_NOTES);
-        s.setPaddingT(5);
+        s.setPaddingT(15);
         s.setCenterVertical(true);
         s.setMultiLine(true);
         s.setShowBrace(true);
         s.setAllowZoomPan(true);
         s.setDrawBoundigBox(false);
+        s.setUseAspectRatio(false);
 
         //addRandom();
         //addTestAll();
