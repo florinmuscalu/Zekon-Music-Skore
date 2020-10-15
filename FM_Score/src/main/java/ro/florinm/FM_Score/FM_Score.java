@@ -22,7 +22,6 @@ import java.util.List;
 import static android.view.MotionEvent.INVALID_POINTER_ID;
 
 public class FM_Score extends View {
-    private int ID;
     @FM_TimeSignature private int TimeSignature;
     @FM_KeySignatureValue private int KeySignature;
     @FM_StaffCount
@@ -73,10 +72,6 @@ public class FM_Score extends View {
         super(context, attrs);
         this.context = context;
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
-        ID = 0;
-        VoiceCount = 1;
-        NoteSpacing = 0;
-        ShowBrace = false;
         Color = 0;
         StaveLineColor = new Paint();
         StaveLineColor.setColor(Color);
@@ -87,6 +82,10 @@ public class FM_Score extends View {
         StaveFont.setTypeface(bravura);
         StaveFont.setColor(Color);
         Lines = 1;
+        StaffCount = FM_StaffCount._1;
+        setVoiceCount(1);
+        setNoteSpacing(0);
+        setShowBrace(false);
         setDistanceBetweenStaveLines(10);
         setDistanceBetweenStaves(5);
         setDistanceBetweenRows(10);
@@ -96,13 +95,12 @@ public class FM_Score extends View {
         setStartBar(true);
         setEndBar(true);
         setMultiLine(false);
-        StaffCount = FM_StaffCount._1;
         setFirstStaveClef(FM_ClefValue.TREBLE);
         setSecondStaveClef(FM_ClefValue.BASS);
         setTimeSignature(FM_TimeSignature.None);
         setKeySignature(FM_KeySignatureValue.DO);
         setAlign(FM_Align.ALIGN_LEFT_MEASURES);
-        DrawBoundingBox = false;
+        setDrawBoundigBox(false);
 
     }
 
@@ -116,14 +114,6 @@ public class FM_Score extends View {
 
     public boolean getCenterVertical() { return CenterVertical; };
     public void setCenterVertical(boolean center) { CenterVertical = center; };
-
-    public int getID() {
-        return ID;
-    }
-
-    public void setID(int ID) {
-        this.ID = ID;
-    }
 
     public int getTimeSignature() {
         return TimeSignature;

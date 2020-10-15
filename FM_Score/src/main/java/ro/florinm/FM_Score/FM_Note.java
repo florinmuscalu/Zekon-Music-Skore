@@ -11,7 +11,7 @@ public class FM_Note extends FM_BaseNote {
     @FM_DurationValue
     final int duration;
     @FM_Accidental
-    private final int Accidental;
+    private int Accidental;
     boolean stem;
     boolean stem_up, beam, tuple;
     float ys, startX;
@@ -26,6 +26,14 @@ public class FM_Note extends FM_BaseNote {
         this.stem_up = stem_up;
         this.beam = false;
         this.tuple = false;
+    }
+
+    public int getAccidental() {
+        return Accidental;
+    }
+
+    public void setAccidental(@FM_Accidental int a) {
+        Accidental = a;
     }
 
     public int getOctave() {
@@ -110,7 +118,7 @@ public class FM_Note extends FM_BaseNote {
     }
 
     public float WidthAll(Paint font, boolean stem) {
-        return padding + WidthAccidental(font) + paddingNote + WidthNote(font, stem) + paddingDot + WidthDot(font) + paddingExtra;
+        return WidthAccidental(font) + paddingNote + WidthNote(font, stem) + paddingDot + WidthDot(font) + paddingExtra;
     }
 
     public float WidthDot(Paint font) {
@@ -174,8 +182,8 @@ public class FM_Note extends FM_BaseNote {
                     ly = StartY1 + i * Stave.getDistanceBetweenStaveLines();
                     float tX = StartX + padding + WidthAccidental(Stave.StaveFont) + paddingNote - Stave.getDistanceBetweenStaveLines() / 3;
                     float tXe = StartX + padding + WidthAccidental(Stave.StaveFont) + paddingNote + WidthNote(Stave.StaveFont) + Stave.getDistanceBetweenStaveLines() / 3;
-                    float tY = ly;
-                    float tYe = ly + FM_Const.dpTOpx(context,1);
+                    float tY = ly - FM_Const.dpTOpx(context,0.5f);
+                    float tYe = ly + FM_Const.dpTOpx(context,0.5f);
                     canvas.drawRect(tX, tY,tXe, tYe, Stave.StaveLineColor);
                 }
             if (offset < 0.0f)
@@ -183,8 +191,8 @@ public class FM_Note extends FM_BaseNote {
                     ly = StartY1 + i * Stave.getDistanceBetweenStaveLines();
                     float tX = StartX + padding + WidthAccidental(Stave.StaveFont) + paddingNote - Stave.getDistanceBetweenStaveLines() / 3;
                     float tXe = StartX + padding + WidthAccidental(Stave.StaveFont) + paddingNote + WidthNote(Stave.StaveFont) + Stave.getDistanceBetweenStaveLines() / 3;
-                    float tY = ly;
-                    float tYe = ly + FM_Const.dpTOpx(context,1);
+                    float tY = ly - FM_Const.dpTOpx(context,0.5f);
+                    float tYe = ly + FM_Const.dpTOpx(context,0.5f);
                     canvas.drawRect(tX, tY,tXe, tYe, Stave.StaveLineColor);
                 }
         }

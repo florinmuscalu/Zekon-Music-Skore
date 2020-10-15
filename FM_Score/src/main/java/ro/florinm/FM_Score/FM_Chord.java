@@ -26,7 +26,7 @@ public class FM_Chord extends FM_BaseNote {
         FM_Note tmp;
         for (int i = 0; i < Notes.size() - 1; i++)
             for (int j = i + 1; j < Notes.size(); j++) {
-                if (Notes.get(i).clef > Notes.get(j).clef) {
+                if (Notes.get(i).clef >= Notes.get(j).clef) {
                     tmp = Notes.get(i);
                     Notes.set(i, Notes.get(j));
                     Notes.set(j, tmp);
@@ -35,14 +35,22 @@ public class FM_Chord extends FM_BaseNote {
         //Sort them by displacement
         for (int i = 0; i < Notes.size() - 1; i++)
             for (int j = i + 1; j < Notes.size(); j++) {
-                if (Notes.get(i).clef.equals(Notes.get(j).clef) && Notes.get(i).getDisplacement() < Notes.get(j).getDisplacement()) {
+                if (Notes.get(i).clef.equals(Notes.get(j).clef) && Notes.get(i).getDisplacement() <= Notes.get(j).getDisplacement()) {
                     tmp = Notes.get(i);
                     Notes.set(i, Notes.get(j));
                     Notes.set(j, tmp);
                 }
             }
+        //if the distance between the notes is 0, remove accidental from second note
+        for (int i = 0; i < Notes.size(); i++)
+            for (int j = i + 1; j < Notes.size(); j++) {
+                int distance = Math.abs(FM_Const.distanceBetweenNotes(Notes.get(i), Notes.get(j)));
+                if (distance == 0) {
+                    Notes.get(j).setAccidental(FM_Accidental.None);      //remove accidental
+                }
+            }
         //Get the maximum width without the DOT
-        float maxW = 0;
+        float maxW = -10000;
         float w = 0;
         for (int i = 0; i < Notes.size(); i++) {
             w = Notes.get(i).WidthAllNoDot(font);
@@ -53,6 +61,18 @@ public class FM_Chord extends FM_BaseNote {
             w = Notes.get(i).WidthAllNoDot(font);
             Notes.get(i).setPadding(maxW - w);
         }
+        //if the distance between the notes is 0, and notes
+        for (int i = 0; i < Notes.size(); i++)
+            for (int j = i + 1; j < Notes.size(); j++) {
+                int distance = Math.abs(FM_Const.distanceBetweenNotes(Notes.get(i), Notes.get(j)));
+                if (distance == 0)
+                if ((Notes.get(i).duration == FM_DurationValue.NOTE_WHOLE || Notes.get(i).duration == FM_DurationValue.NOTE_WHOLE_D) || (Notes.get(i).duration!=Notes.get(j).duration)) {
+                        float all_width = (Notes.get(i).WidthAll(font) - Notes.get(i).WidthAccidental(font) + Notes.get(j).WidthAll(font)) / 2f;
+                        Notes.get(i).setPadding(Notes.get(i).getPadding() - all_width * 0.5f);      //pad the dot on first note
+                        Notes.get(j).setPadding(Notes.get(j).getPadding() + all_width * 0.5f);    //pad the note on the second note
+                        if (Notes.get(i).stem_up == Notes.get(j).stem_up) Notes.get(j).stem = false;
+                    }
+            }
         //if the distance between the notes is 1, displace one of the notes
         for (int i = 0; i < Notes.size(); i++)
             for (int j = i + 1; j < Notes.size(); j++) {
@@ -67,7 +87,7 @@ public class FM_Chord extends FM_BaseNote {
         for (int i = 0; i < Notes.size(); i++)
             for (int j = i + 1; j < Notes.size(); j++) {
                 int distance = Math.abs(FM_Const.distanceBetweenNotes(Notes.get(i), Notes.get(j)));
-                if (distance <= 3 && Notes.get(i).paddingNote == 0) {
+                if (distance <= 3 && distance!= 0 && Notes.get(i).paddingNote == 0) {
                     Notes.get(j).setPadding(Notes.get(j).padding - Notes.get(i).paddingNote - Notes.get(i).WidthAccidental(font));
                     Notes.get(j).setPaddingNote(Notes.get(j).paddingNote + Notes.get(i).paddingNote + Notes.get(i).WidthAccidental(font));
                 }
@@ -99,7 +119,7 @@ public class FM_Chord extends FM_BaseNote {
         float w = 0;
         float maxW = 0;
         while (i < Notes.size()) {
-            w = Notes.get(i).WidthAll(font);
+            w = Notes.get(i).padding + Notes.get(i).WidthAll(font);
             if (w > maxW) maxW = w;
             i++;
         }
