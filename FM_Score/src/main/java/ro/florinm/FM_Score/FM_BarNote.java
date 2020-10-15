@@ -5,36 +5,36 @@ import android.graphics.Paint;
 
 public class FM_BarNote extends FM_BaseNote {
 
-    public FM_BarNote(FM_Score Stave) {
-        super(FM_NoteType.BAR, Stave);
-        Stave.addStaffNote(this, clef);
+    public FM_BarNote(FM_Score score) {
+        super(FM_NoteType.BAR, score);
+        //Stave.addStaffNote(this, clef);
     }
 
     public float getDisplacement() {
         return 0.0f;
     }
 
-    public String toString() {
+    public String asString() {
         return "";
     }
 
     @Override
-    public float WidthAll(Paint font, boolean all) {
-        return WidthAll(font);
+    public float WidthAll(boolean all) {
+        return WidthAll();
     }
 
-    public float WidthAll(Paint font) {
-        return padding + paddingExtra;
+    public float WidthAll() {
+        return paddingLeft + paddingRight;
     }
 
-    public float WidthAccidental(Paint font) {
+    public float WidthAccidental() {
         return 0;
     }
 
-    public float WidthAllNoDot(Paint font) {
-        return WidthAll(font);
+    public float WidthAllNoDot() {
+        return WidthAll();
     }
-    public float WidthNote(Paint font) {
+    public float WidthNote() {
         return 0;
     }
 
@@ -44,30 +44,27 @@ public class FM_BarNote extends FM_BaseNote {
 
         float BarYs = StartY1;
         float BarYe = 0;
-        if (StartY2 == 0)  BarYe = StartY1 + 4 * Stave.getDistanceBetweenStaveLines();
-        else BarYe = StartY2 + 4 * Stave.getDistanceBetweenStaveLines();
+        if (StartY2 == 0)  BarYe = StartY1 + 4 * score.getDistanceBetweenStaveLines();
+        else BarYe = StartY2 + 4 * score.getDistanceBetweenStaveLines();
         Paint C = new Paint();
         C.setAntiAlias(true);
-        C.setColor(Color);
-        canvas.drawRect(StartX + padding, BarYs, StartX + padding + FM_Const.dpTOpx(context,1), BarYe, C);
-        //canvas.drawLine(StartX + padding, BarYs, StartX + padding, BarYe, C);
-        //canvas.drawLine(StartX + padding - 1, BarYs, StartX + padding - 1, BarYe, C);
-        //canvas.drawLine(StartX + padding + 1, BarYs, StartX + padding + 1, BarYe, C);
+        C.setColor(color);
+        canvas.drawRect(StartX + paddingLeft, BarYs, StartX + paddingLeft + FM_Const.dpTOpx(score.getContext(),1), BarYe, C);
     }
 
     public float Left(){
-        return StartX + padding;
+        return StartX + paddingLeft;
     };
     public float Bottom() {
         return StartY1;
     }
     public float Right() {
-        return StartX + padding + FM_Const.dpTOpx(context,1);
+        return StartX + paddingLeft + FM_Const.dpTOpx(score.getContext(),1);
     }
     public float Top(){
         float BarYe = 0;
-        if (StartY2 == 0)  BarYe = StartY1 + 4 * Stave.getDistanceBetweenStaveLines();
-        else BarYe = StartY2 + 4 * Stave.getDistanceBetweenStaveLines();
+        if (StartY2 == 0)  BarYe = StartY1 + 4 * score.getDistanceBetweenStaveLines();
+        else BarYe = StartY2 + 4 * score.getDistanceBetweenStaveLines();
         return BarYe;
     }
 }

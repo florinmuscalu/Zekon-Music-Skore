@@ -6,10 +6,10 @@ import android.graphics.Rect;
 
 public class FM_Pause extends FM_BaseNote {
     @FM_DurationValue
-    private int duration;
+    private final int duration;
 
-    public FM_Pause(FM_Score Stave, @FM_DurationValue int duration) {
-        super(FM_NoteType.PAUSE, Stave);
+    public FM_Pause(FM_Score Score, @FM_DurationValue int duration) {
+        super(FM_NoteType.PAUSE, Score);
         this.duration = duration;
     }
 
@@ -24,7 +24,7 @@ public class FM_Pause extends FM_BaseNote {
         return 2.0f;
     }
 
-    public String toString() {
+    public String asString() {
         String s = "";
         if (duration == 1 || duration == 51) return FM_Const.Pause_1;
         if (duration == 2 || duration == 52) return FM_Const.Pause_2;
@@ -47,39 +47,39 @@ public class FM_Pause extends FM_BaseNote {
     }
 
     @Override
-    public float WidthAll(Paint font, boolean all) {
-        return WidthAll(font);
+    public float WidthAll(boolean all) {
+        return WidthAll();
     }
 
-    public float WidthAll(Paint font) {
-        FM_Const.AdjustFont(context, font, FM_Const.Pause_8, Stave.getDistanceBetweenStaveLines(), 2);
-        return padding + font.measureText(toString()) + paddingExtra;
+    public float WidthAll() {
+        FM_Const.AdjustFont(score, FM_Const.Pause_8, 2);
+        return paddingLeft + score.Font.measureText(asString()) + paddingRight;
     }
 
-    public float WidthAccidental(Paint font) {
+    public float WidthAccidental() {
         return 0;
     }
 
-    public float WidthAllNoDot(Paint font) {
-        return WidthAll(font);
+    public float WidthAllNoDot() {
+        return WidthAll();
     }
-    public float WidthNote(Paint font) {
-        return WidthAll(font);
+    public float WidthNote() {
+        return WidthAll();
     }
 
-    private float BottomMargin(Paint font) {
-        FM_Const.AdjustFont(context, font, toString(), Stave.getDistanceBetweenStaveLines(), lineSpan());
+    private float BottomMargin() {
+        FM_Const.AdjustFont(score, asString(), lineSpan());
         Rect bounds = new Rect();
-        String s = toString();
-        font.getTextBounds(s, 0, s.length(), bounds);
+        String s = asString();
+        score.Font.getTextBounds(s, 0, s.length(), bounds);
         return bounds.bottom;
     }
 
-    private float TopMargin(Paint font) {
-        FM_Const.AdjustFont(context, font, toString(), Stave.getDistanceBetweenStaveLines(), lineSpan());
+    private float TopMargin() {
+        FM_Const.AdjustFont(score, asString(), lineSpan());
         Rect bounds = new Rect();
-        String s = toString();
-        font.getTextBounds(s, 0, s.length(), bounds);
+        String s = asString();
+        score.Font.getTextBounds(s, 0, s.length(), bounds);
         return bounds.top;
     }
 
@@ -87,20 +87,19 @@ public class FM_Pause extends FM_BaseNote {
         if (!isVisible()) return;
         super.DrawNote(canvas);
 
-        Stave.StaveFont.setColor(Color);
-        FM_Const.AdjustFont(context, Stave.StaveFont, FM_Const.Pause_8, Stave.getDistanceBetweenStaveLines(),2);
-        canvas.drawText(toString(), StartX + padding, StartY1 + getDisplacement() * Stave.getDistanceBetweenStaveLines(), Stave.StaveFont);
+        FM_Const.AdjustFont(score, FM_Const.Pause_8, 2);
+        canvas.drawText(asString(), StartX + paddingLeft, StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines(), score.Font);
     }
     public float Left(){
-        return StartX + padding;
+        return StartX + paddingLeft;
     };
     public float Bottom() {
-        return StartY1 + getDisplacement() * Stave.getDistanceBetweenStaveLines() + BottomMargin(Stave.StaveFont);
+        return StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines() + BottomMargin();
     }
     public float Right() {
-        return StartX + WidthAll(Stave.StaveFont);
+        return StartX + WidthAll();
     }
     public float Top(){
-        return StartY1 + getDisplacement() * Stave.getDistanceBetweenStaveLines() + TopMargin(Stave.StaveFont);
+        return StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines() + TopMargin();
     }
 }

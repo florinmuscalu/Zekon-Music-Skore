@@ -77,7 +77,7 @@ public class FM_Const {
 
     public static int distanceBetweenNotes(FM_Note n1, FM_Note n2) {
         if (!n1.clef.equals(n2.clef)) return 10;
-        return (n1.Note - n2.Note) + ((n1.Octave - n2.Octave) * 7);
+        return (n1.note - n2.note) + ((n1.octave - n2.octave) * 7);
     }
 
     public static float slope(float x1, float y1, float x2, float y2) {
@@ -179,15 +179,15 @@ public class FM_Const {
         return FM_KeySignatureValue.DO;
     }
 
-    static void AdjustFont(Context context, Paint font, String text, float stave_line_height, int stave_lines_cnt) {
+    static void AdjustFont(FM_Score Score, String text, int stave_lines_cnt) {
         if (text.equals("")) {
-            font.setTextSize(10);
+            Score.Font.setTextSize(10);
             return;
         }
-        float height = stave_line_height * stave_lines_cnt + dpTOpx(context, 1);
-        font.setTextSize(100f);
+        float height = Score.getDistanceBetweenStaveLines() * stave_lines_cnt + dpTOpx(Score.getContext(), 1);
+        Score.Font.setTextSize(100f);
         Rect bounds = new Rect();
-        font.getTextBounds(text, 0, text.length(), bounds);
-        font.setTextSize(100f * height / bounds.height());
+        Score.Font.getTextBounds(text, 0, text.length(), bounds);
+        Score.Font.setTextSize(100f * height / bounds.height());
     }
 }

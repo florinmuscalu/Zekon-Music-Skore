@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 class FM_KeySignature extends FM_BaseNote {
-    private final Context context;
     @FM_KeySignatureValue
     private final int value;
     @FM_ClefValue
@@ -18,12 +17,11 @@ class FM_KeySignature extends FM_BaseNote {
     List<Float> displacement = new ArrayList<>();
     List<Integer> accidental = new ArrayList<>();
 
-    public FM_KeySignature(Context context, @FM_ClefValue int clef, @FM_KeySignatureValue int key, int Color, FM_Score Stave) {
-        super(FM_NoteType.KEY_SIGNATURE, Stave);
-        this.context = context;
+    public FM_KeySignature(Context context, @FM_ClefValue int clef, @FM_KeySignatureValue int key, int Color, FM_Score Score) {
+        super(FM_NoteType.KEY_SIGNATURE, Score);
         this.value = key;
         this.clef = clef;
-        this.Color = Color;
+        this.color = Color;
         Build();
     }
 
@@ -98,7 +96,7 @@ class FM_KeySignature extends FM_BaseNote {
         return 0.0f;
     }
 
-    public String toString() {
+    public String asString() {
         String s = "";
         for (int i = 0; i < accidental.size(); i++) {
             if (accidental.get(i) == FM_Accidental.Sharp) s = s + FM_Const.Sharp;
@@ -108,23 +106,23 @@ class FM_KeySignature extends FM_BaseNote {
     }
 
     @Override
-    public float WidthAll(Paint font, boolean all) {
-        return WidthAll(font);
+    public float WidthAll(boolean all) {
+        return WidthAll();
     }
 
-    public float WidthAll(Paint font) {
-        FM_Const.AdjustFont(context, font, toString(), Stave.getDistanceBetweenStaveLines(), 2);
-        return padding + font.measureText(toString()) + (accidental.size() - 1) * FM_Const.dpTOpx(context, 2) + paddingExtra + FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
+    public float WidthAll() {
+        FM_Const.AdjustFont(score, asString(), 2);
+        return paddingLeft + score.Font.measureText(asString()) + (accidental.size() - 1) * FM_Const.dpTOpx(score.getContext(), 2) + paddingRight + FM_Const.dpTOpx(score.getContext(), FM_Const.DEFAULT_EXTRA_PADDING);
     }
 
-    public float WidthAccidental(Paint font) {
+    public float WidthAccidental() {
         return 0;
     }
 
-    public float WidthAllNoDot(Paint font) {
-        return WidthAll(font);
+    public float WidthAllNoDot() {
+        return WidthAll();
     }
-    public float WidthNote(Paint font) {
+    public float WidthNote() {
         return 0;
     }
 
@@ -132,20 +130,20 @@ class FM_KeySignature extends FM_BaseNote {
         if (!isVisible()) return;
         super.DrawNote(canvas);
 
-        Stave.StaveFont.setColor(Color);
+        score.Font.setColor(color);
         float dx = StartX;
         for (int i = 0; i < accidental.size(); i++) {
             float offset = displacement.get(i);
-            float dy = StartY1 + offset * Stave.getDistanceBetweenStaveLines();
+            float dy = StartY1 + offset * score.getDistanceBetweenStaveLines();
 
-            FM_Const.AdjustFont(context, Stave.StaveFont, toString(), Stave.getDistanceBetweenStaveLines(), 2);
+            FM_Const.AdjustFont(score, asString(), 2);
             if (accidental.get(i) == FM_Accidental.Sharp) {
-                canvas.drawText(FM_Const.Sharp, dx, dy, Stave.StaveFont);
-                dx = dx + Stave.StaveFont.measureText(FM_Const.Sharp) + FM_Const.dpTOpx(context, 2);
+                canvas.drawText(FM_Const.Sharp, dx, dy, score.Font);
+                dx = dx + score.Font.measureText(FM_Const.Sharp) + FM_Const.dpTOpx(score.getContext(), 2);
             }
             if (accidental.get(i) == FM_Accidental.Flat) {
-                canvas.drawText(FM_Const.Flat, dx, dy, Stave.StaveFont);
-                dx = dx + Stave.StaveFont.measureText(FM_Const.Flat) + FM_Const.dpTOpx(context, 2);
+                canvas.drawText(FM_Const.Flat, dx, dy, score.Font);
+                dx = dx + score.Font.measureText(FM_Const.Flat) + FM_Const.dpTOpx(score.getContext(), 2);
             }
         }
     }
@@ -158,30 +156,30 @@ class FM_KeySignature extends FM_BaseNote {
         float maxdy = -100000;
         for (int i = 0; i < accidental.size(); i++) {
             float offset = displacement.get(i);
-            dy = StartY1 + offset * Stave.getDistanceBetweenStaveLines();
+            dy = StartY1 + offset * score.getDistanceBetweenStaveLines();
             if (dy > maxdy) maxdy = dy;
         }
-        return maxdy + Height(Stave.StaveFont);
+        return maxdy + Height();
     }
     public float Right() {
-        return StartX + WidthAll(Stave.StaveFont);
+        return StartX + WidthAll();
     }
     public float Top(){
         float mindy = Bottom();
         float dy = 0;
         for (int i = 0; i < accidental.size(); i++) {
             float offset = displacement.get(i);
-            dy = StartY1 + offset * Stave.getDistanceBetweenStaveLines();
+            dy = StartY1 + offset * score.getDistanceBetweenStaveLines();
             if (dy < mindy) mindy = dy;
         }
-        return mindy - Height(Stave.StaveFont);
+        return mindy - Height();
     }
 
-    private float Height(Paint font) {
-        FM_Const.AdjustFont(context, font, toString(), Stave.getDistanceBetweenStaveLines(), 1);
+    private float Height() {
+        FM_Const.AdjustFont(score, asString(), 1);
         Rect bounds = new Rect();
-        String s = toString();
-        font.getTextBounds(s, 0, s.length(), bounds);
+        String s = asString();
+        score.Font.getTextBounds(s, 0, s.length(), bounds);
         return bounds.height();
     }
 }

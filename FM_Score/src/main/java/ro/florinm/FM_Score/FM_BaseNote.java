@@ -7,30 +7,29 @@ import android.graphics.Paint;
 public abstract class FM_BaseNote{
     @FM_NoteType
     private final int type;
-    protected int Color;
+    protected int color;
     @FM_ClefValue
     Integer clef;
-    Context context;
-    Float padding;
+    Float paddingLeft;
     Float paddingNote;
     Float paddingDot;
-    Float paddingExtra;
-    private boolean Visible;
-    FM_Score Stave;
+    Float paddingRight;
+    private boolean visible;
+    FM_Score score;
     float StartX;
     float StartY1, StartY2;
     int line;
 
 
-    public FM_BaseNote(@FM_NoteType int type, FM_Score Stave) {
+    public FM_BaseNote(@FM_NoteType int type, FM_Score score) {
         this.type = type;
         paddingDot = 0f;
         paddingNote = 0f;
-        padding = 0f;
-        paddingExtra = 0f;
+        paddingLeft = FM_Const.dpTOpx(score.getContext(), 4);
+        paddingRight = FM_Const.dpTOpx(score.getContext(), 8);
         clef = FM_ClefValue.TREBLE;
-        this.Stave = Stave;
-        this.Visible = true;
+        this.score = score;
+        this.visible = true;
         this.line = 1;
     }
 
@@ -38,19 +37,14 @@ public abstract class FM_BaseNote{
         this.clef = Clef;
     }
 
-    protected void setContext(Context context){
-        this.context = context;
-        padding = FM_Const.dpTOpx(context, 4);
-        paddingExtra = FM_Const.dpTOpx(context, 8);
-    }
-
-    public void SetDrawParameters(float x, float ys1, float ys2){
-        StartX = x;
-        StartY1 = ys1;
-        StartY2 = ys2;
+    public void SetDrawParameters(float StartX, float StartY1, float StartY2){
+        this.StartX = StartX;
+        this.StartY1 = StartY1;
+        this.StartY2 = StartY2;
     }
     public void DrawNote(Canvas canvas){
-        if (Stave.getDrawBoundingBox()) {
+        score.Font.setColor(color);
+        if (score.getDrawBoundingBox()) {
             Paint p = new Paint();
             p.setColor(android.graphics.Color.argb(255, 255, 0, 0));
             float bx = Left();
@@ -64,24 +58,25 @@ public abstract class FM_BaseNote{
         }
     };
     public abstract float getDisplacement();
-    public abstract String toString();
-    public abstract float WidthAll(Paint font, boolean all);
-    public abstract float WidthAll(Paint font);
-    public abstract float WidthAccidental(Paint font);
-    public abstract float WidthNote(Paint font);
-    public abstract float WidthAllNoDot(Paint font);
+    public abstract String asString();
+    public abstract float WidthAll(boolean Stem);
+    public abstract float WidthAll();
+    public abstract float WidthAccidental();
+    public abstract float WidthNote();
+    public abstract float WidthAllNoDot();
+
     public int getColor() {
-        return Color;
+        return color;
     }
     public void setColor(int color) {
-        Color = color;
+        this.color = color;
     }
 
-    public float getPadding() {
-        return padding;
+    public float getPaddingLeft() {
+        return paddingLeft;
     }
-    public void setPadding(float p) {
-        padding = p;
+    public void setPaddingLeft(float p) {
+        paddingLeft = p;
     }
 
     public void setPaddingNote(float p) {
@@ -92,18 +87,18 @@ public abstract class FM_BaseNote{
         paddingDot = p;
     }
 
-    public void setPaddingExtra(float p) {
-        paddingExtra = p;
+    public void setPaddingRight(float p) {
+        paddingRight = p;
     }
 
     public boolean isVisible() {
-        return Visible;
+        return visible;
     }
 
     public void setVisible(boolean visible) {
         if (!visible) line = -1;
         else line = 1;
-        Visible = visible;
+        this.visible = visible;
     }
 
     public abstract float Left();
