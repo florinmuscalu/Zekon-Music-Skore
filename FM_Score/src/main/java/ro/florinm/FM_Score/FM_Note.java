@@ -16,6 +16,31 @@ public class FM_Note extends FM_BaseNote {
     boolean stem_up, beam, tuple;
     float ys, startX;
 
+    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration) {
+        super(FM_NoteType.NOTE, Score);
+        this.note = Note;
+        this.accidental = Accidental;
+        this.octave = Octave;
+        this.duration = Duration;
+        this.stem = true;
+        this.stem_up = true;
+        this.beam = false;
+        this.tuple = false;
+    }
+
+    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration, int Color) {
+        super(FM_NoteType.NOTE, Score);
+        this.note = Note;
+        this.accidental = Accidental;
+        this.octave = Octave;
+        this.duration = Duration;
+        this.stem = true;
+        this.stem_up = true;
+        this.beam = false;
+        this.tuple = false;
+        this.color = Color;
+    }
+
     public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration, boolean Stem, boolean StemUp) {
         super(FM_NoteType.NOTE, Score);
         this.note = Note;
@@ -26,6 +51,19 @@ public class FM_Note extends FM_BaseNote {
         this.stem_up = StemUp;
         this.beam = false;
         this.tuple = false;
+    }
+
+    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration, boolean Stem, boolean StemUp, int Color) {
+        super(FM_NoteType.NOTE, Score);
+        this.note = Note;
+        this.accidental = Accidental;
+        this.octave = Octave;
+        this.duration = Duration;
+        this.stem = Stem;
+        this.stem_up = StemUp;
+        this.beam = false;
+        this.tuple = false;
+        this.color = Color;
     }
 
     public int getAccidental() {
@@ -157,6 +195,7 @@ public class FM_Note extends FM_BaseNote {
         if (!isVisible()) return;
         super.DrawNote(canvas);
 
+        score.Font.setColor(score.getColor());
         ys = StartY1;
         startX = StartX;
         float ly;
@@ -189,6 +228,7 @@ public class FM_Note extends FM_BaseNote {
         float width_note_no_stem = WidthNote(false);
         float width_note_stem = WidthNote(stem);
         float width_dot = WidthDot();
+
         score.Font.setColor(color);
 
         FM_Const.AdjustFont(score, FM_Const.Sharp, 2);
@@ -199,6 +239,8 @@ public class FM_Note extends FM_BaseNote {
 
         FM_Const.AdjustFont(score, FM_Const.Sharp, 2);
         canvas.drawText(asStringDot(),  StartX + paddingLeft + width_accidental + paddingNote + width_note_no_stem + paddingDot, dy, score.Font);
+
+        score.Font.setColor(score.getColor());
     }
     public float Left(){
         return  StartX + paddingLeft;

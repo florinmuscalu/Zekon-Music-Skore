@@ -53,9 +53,10 @@ public class MainActivity extends AppCompatActivity {
         List<FM_Note> chord = new ArrayList<>();
         List<Integer> clefs = new ArrayList<>();
         chord.add(new FM_Note(s, FM_NoteValue.DO, 5, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true, true));
-        chord.add(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.TripleFlat, FM_DurationValue.NOTE_WHOLE, true, true));
-        chord.add(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.TripleFlat, FM_DurationValue.NOTE_WHOLE, true, false));
+        chord.add(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.TripleFlat, FM_DurationValue.NOTE_WHOLE, true, true, Color.argb(255, 255, 0,0)));
+        chord.add(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.TripleFlat, FM_DurationValue.NOTE_WHOLE, true, false, Color.argb(255, 0, 0, 255)));
         chord.add(new FM_Note(s, FM_NoteValue.FA, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true, false));
+
         clefs.add(FM_ClefValue.TREBLE);
         clefs.add(FM_ClefValue.TREBLE);
         clefs.add(FM_ClefValue.TREBLE);

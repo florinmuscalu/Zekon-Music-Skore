@@ -13,6 +13,12 @@ public class FM_Pause extends FM_BaseNote {
         this.duration = duration;
     }
 
+    public FM_Pause(FM_Score Score, @FM_DurationValue int duration, int Color) {
+        super(FM_NoteType.PAUSE, Score);
+        this.duration = duration;
+        this.color = Color;
+    }
+
     public float getDisplacement() {
         if (duration == 1 || duration == 51) return 1.0f;
         if (duration == 2 || duration == 52) return 2.0f;
@@ -89,6 +95,7 @@ public class FM_Pause extends FM_BaseNote {
 
         FM_Const.AdjustFont(score, FM_Const.Pause_8, 2);
         canvas.drawText(asString(), StartX + paddingLeft, StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines(), score.Font);
+        score.Font.setColor(score.getColor());
     }
     public float Left(){
         return StartX + paddingLeft;

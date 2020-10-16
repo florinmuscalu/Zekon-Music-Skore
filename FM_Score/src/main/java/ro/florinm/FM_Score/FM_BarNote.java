@@ -1,13 +1,18 @@
 package ro.florinm.FM_Score;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 
 public class FM_BarNote extends FM_BaseNote {
 
     public FM_BarNote(FM_Score score) {
         super(FM_NoteType.BAR, score);
-        //Stave.addStaffNote(this, clef);
+    }
+
+    public FM_BarNote(FM_Score score, int Color) {
+        super(FM_NoteType.BAR, score);
+        this.color = Color;
     }
 
     public float getDisplacement() {
@@ -41,15 +46,12 @@ public class FM_BarNote extends FM_BaseNote {
     public void DrawNote(Canvas canvas) {
         if (!isVisible()) return;
         super.DrawNote(canvas);
-
         float BarYs = StartY1;
         float BarYe = 0;
         if (StartY2 == 0)  BarYe = StartY1 + 4 * score.getDistanceBetweenStaveLines();
         else BarYe = StartY2 + 4 * score.getDistanceBetweenStaveLines();
-        Paint C = new Paint();
-        C.setAntiAlias(true);
-        C.setColor(color);
-        canvas.drawRect(StartX + paddingLeft, BarYs, StartX + paddingLeft + FM_Const.dpTOpx(score.getContext(),1), BarYe, C);
+        canvas.drawRect(StartX + paddingLeft, BarYs, StartX + paddingLeft + FM_Const.dpTOpx(score.getContext(),1), BarYe, score.Font);
+        score.Font.setColor(score.getColor());
     }
 
     public float Left(){

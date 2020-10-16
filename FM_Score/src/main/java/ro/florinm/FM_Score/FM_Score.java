@@ -465,8 +465,8 @@ public class FM_Score extends View {
 
     public void setKeySignature(Integer keySignature) {
         KeySignature = keySignature;
-        FirstStaveKey = new FM_KeySignature(context, FirstStaveClef, keySignature, Color, this);
-        SecondStaveKey = new FM_KeySignature(context, SecondStaveClef, keySignature, Color, this);
+        FirstStaveKey = new FM_KeySignature(context, FirstStaveClef, keySignature, this);
+        SecondStaveKey = new FM_KeySignature(context, SecondStaveClef, keySignature, this);
         //invalidate();
         //requestLayout();
     }
@@ -555,7 +555,6 @@ public class FM_Score extends View {
         if (n instanceof FM_BarNote) clef = FirstStaveClef;
         if (clef != FirstStaveClef && clef == SecondStaveClef) StaffCount = FM_StaffCount._2;
         n.setClef(clef);
-        n.setColor(Color);
         StaveNotes.add(n);
         if (n instanceof FM_Note && addToBeam) AddToBeam((FM_Note)n);
         if (n instanceof FM_Note && addToTuple) AddToTuple((FM_Note)n);
@@ -568,7 +567,6 @@ public class FM_Score extends View {
         for (int i = 0; i < n.size(); i++) {
             if (clef.get(i) != FirstStaveClef && clef.get(i) == SecondStaveClef) StaffCount = FM_StaffCount._2;
             n.get(i).setClef(clef.get(i));
-            n.get(i).setColor(Color);
             C.addNote(n.get(i));
         }
         C.Compute();
@@ -831,5 +829,15 @@ public class FM_Score extends View {
             invalidate();
             return true;
         }
+    }
+
+    public int getNoteCount() {
+        return StaveNotes.size();
+    }
+    
+    public FM_BaseNote getNote(int index){
+        if (index < 0) return null;
+        if (index > StaveNotes.size() - 1) return null;
+        return StaveNotes.get(index);
     }
 }

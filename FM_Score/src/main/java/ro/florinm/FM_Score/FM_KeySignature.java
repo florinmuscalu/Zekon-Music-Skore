@@ -17,11 +17,10 @@ class FM_KeySignature extends FM_BaseNote {
     List<Float> displacement = new ArrayList<>();
     List<Integer> accidental = new ArrayList<>();
 
-    public FM_KeySignature(Context context, @FM_ClefValue int clef, @FM_KeySignatureValue int key, int Color, FM_Score Score) {
+    public FM_KeySignature(Context context, @FM_ClefValue int clef, @FM_KeySignatureValue int key, FM_Score Score) {
         super(FM_NoteType.KEY_SIGNATURE, Score);
         this.value = key;
         this.clef = clef;
-        this.color = Color;
         Build();
     }
 
@@ -130,7 +129,6 @@ class FM_KeySignature extends FM_BaseNote {
         if (!isVisible()) return;
         super.DrawNote(canvas);
 
-        score.Font.setColor(color);
         float dx = StartX;
         for (int i = 0; i < accidental.size(); i++) {
             float offset = displacement.get(i);

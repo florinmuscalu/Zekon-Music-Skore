@@ -31,6 +31,7 @@ public abstract class FM_BaseNote{
         this.score = score;
         this.visible = true;
         this.line = 1;
+        color = score.getColor();
     }
 
     protected void setClef(@FM_ClefValue int Clef){
