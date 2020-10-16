@@ -47,12 +47,12 @@ public class FM_Score extends View {
     private boolean MultiLine = false;
     private boolean AllowZoomPan = false;
 
-    private List<FM_BaseNote> StaveNotes = new ArrayList<>();
-    private List<FM_Tie> Ties = new ArrayList<>();
-    private List<FM_Tuple> Tuples = new ArrayList<>();
-    private List<FM_Beam> Beams = new ArrayList<>();
+    private final List<FM_BaseNote> StaveNotes = new ArrayList<>();
+    private final List<FM_Tie> Ties = new ArrayList<>();
+    private final List<FM_Tuple> Tuples = new ArrayList<>();
+    private final List<FM_Beam> Beams = new ArrayList<>();
 
-    private ScaleGestureDetector mScaleDetector;
+    private final ScaleGestureDetector mScaleDetector;
     private float mScaleFactor = 1.f;
     private float mPosX;
     private float mPosY;
@@ -106,8 +106,8 @@ public class FM_Score extends View {
         return DrawBoundingBox;
     }
 
-    public boolean getCenterVertical() { return CenterVertical; };
-    public void setCenterVertical(boolean center) { CenterVertical = center; };
+    public boolean getCenterVertical() { return CenterVertical; }
+    public void setCenterVertical(boolean center) { CenterVertical = center; }
 
     public int getTimeSignature() {
         return TimeSignature;
@@ -172,7 +172,6 @@ public class FM_Score extends View {
         this.height = height;
         PaddingS = PaddingS_p * width / 100.f;
         PaddingE = PaddingE_p * width / 100.f;
-        //for (int i = 0; i < StaveNotes.size(); i++) if (StaveNotes.get(i) instanceof FM_Chord) ((FM_Chord)StaveNotes.get(i)).Compute();
         ComputeLines();
         invalidate();
         //requestLayout();
@@ -307,7 +306,7 @@ public class FM_Score extends View {
     public void setPaddingE(float percent) {
         PaddingE_p = percent;
         if (width < 100) width = 100;
-        PaddingE = percent * width / 100.f;;
+        PaddingE = percent * width / 100.f;
         //invalidate();
         //requestLayout();
     }
@@ -599,12 +598,10 @@ public class FM_Score extends View {
                     X = startX;
                     ys1 = ys2 + (getDistanceBetweenRows() + 4 * getDistanceBetweenStaveLines());
                     ys2 = ys1;
-                    if (bar_cnt > 0) {
-                        bar_cnt = 0;
-                        i = last_bar;
-                        StaveNotes.get(last_bar).setVisible(false);
-                        continue;
-                    }
+                    bar_cnt = 0;
+                    i = last_bar;
+                    StaveNotes.get(last_bar).setVisible(false);
+                    continue;
                 }
                 if (StaffCount == FM_StaffCount._2)
                     ys2 = ys1 + (getDistanceBetweenStaves() + 4 * getDistanceBetweenStaveLines());
@@ -629,7 +626,7 @@ public class FM_Score extends View {
             for (int i = 1; i <= Lines; i++) {
                 float X = startX;
                 int cnt = 0;
-                float diff = 0;
+                float diff;
                 for (int j = 0; j < StaveNotes.size(); j++)
                     if (StaveNotes.get(j).line == i) {
                         float w = StaveNotes.get(j).WidthAll(true);
@@ -749,7 +746,6 @@ public class FM_Score extends View {
         if (BeamNotes.size() == 0) return;
         for (int i = 0; i < BeamNotes.size(); i++)
             if (!(BeamNotes.get(i) instanceof FM_Note)) return;
-        int clef = BeamNotes.get(0).clef;
         for (int i = 0; i < BeamNotes.size(); i++) {
             int d = ((FM_Note) BeamNotes.get(i)).duration;
             if (d == FM_DurationValue.NOTE_WHOLE) return;
