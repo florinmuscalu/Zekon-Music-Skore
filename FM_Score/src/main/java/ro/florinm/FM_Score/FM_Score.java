@@ -369,14 +369,19 @@ public class FM_Score extends View {
         if (mPosX < width * (1 - mScaleFactor)) mPosX = width * (1 - mScaleFactor);
 
         float adjustY = 0;
-        if (CenterVertical) adjustY = height / 2f - getDrawHeight() / 2f;
-        //mPosY += adjustY;
-        if (mPosY < -adjustY+(height - mScaleFactor * Math.max(getMeasuredHeight_FM(), getDrawHeight()))) {
-            mPosY = -adjustY+(height - mScaleFactor * Math.max(getMeasuredHeight_FM(), getDrawHeight()));
-            return;
+        if (CenterVertical) {
+            adjustY = height / 2f - getDrawHeight() / 2f;
+            if (adjustY >= 0) {
+                mPosY = -(mScaleFactor - 1) * getDrawHeight() / 2f;
+                return;
+            }
         }
-        if (mPosY > -adjustY) mPosY = -adjustY;
-        //mPosY -= adjustY;
+        mPosY += adjustY;
+        if (mPosY < (height - mScaleFactor * getDrawHeight())) {
+            mPosY = (height - mScaleFactor * getDrawHeight());
+        }
+        if (mPosY > 0) mPosY = 0;
+        mPosY -= adjustY;
     }
 
     @Override
