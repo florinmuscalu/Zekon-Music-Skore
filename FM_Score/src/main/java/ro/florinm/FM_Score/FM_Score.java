@@ -519,46 +519,20 @@ public class FM_Score extends View {
         }
     }
 
-    public void addStaffNote(FM_BaseNote n){
-        addStaffNote(n, FirstStaveClef,false, false, false);
-    }
-
     public void clearStaffNotes(){
         StaveNotes.clear();
     }
 
+
+    public void addStaffNote(FM_BaseNote n) {
+        addStaffNote(n, FirstStaveClef);
+    }
+
     public void addStaffNote(FM_BaseNote n, @FM_ClefValue int clef){
-        addStaffNote(n, clef,false, false, false);
-    }
-
-    public void addStaffNote(FM_BaseNote n, boolean addToBeam) {
-        addStaffNote(n, FirstStaveClef, addToBeam, false, false);
-    }
-
-    public void addStaffNote(FM_BaseNote n, @FM_ClefValue int clef, boolean addToBeam) {
-        addStaffNote(n, clef, addToBeam, false, false);
-    }
-
-    public void addStaffNote(FM_BaseNote n, boolean addToBeam, boolean addToTuple) {
-        addStaffNote(n, FirstStaveClef, addToBeam, addToTuple, false);
-    }
-
-    public void addStaffNote(FM_BaseNote n, @FM_ClefValue int clef, boolean addToBeam, boolean addToTuple) {
-        addStaffNote(n, clef, addToBeam, addToTuple, false);
-    }
-
-    public void addStaffNote(FM_BaseNote n, boolean addToBeam, boolean addToTuple, boolean addToTie) {
-        addStaffNote(n, FirstStaveClef, addToBeam, addToTuple, addToTie);
-    }
-
-    public void addStaffNote(FM_BaseNote n, @FM_ClefValue int clef, boolean addToBeam, boolean addToTuple, boolean addToTie){
         if (n instanceof FM_BarNote) clef = FirstStaveClef;
         if (clef != FirstStaveClef && clef == SecondStaveClef) StaffCount = FM_StaffCount._2;
         n.setClef(clef);
         StaveNotes.add(n);
-        if (n instanceof FM_Note && addToBeam) AddToBeam((FM_Note)n);
-        if (n instanceof FM_Note && addToTuple) AddToTuple((FM_Note)n);
-        if (n instanceof FM_Note && addToTie) AddToTie((FM_Note)n);
         ComputeLines();
     }
 
@@ -651,7 +625,7 @@ public class FM_Score extends View {
         }
         Lines = l;
 
-        if (Align == FM_Align.CENTER) {
+        if (Align == FM_Align.ALIGN_LEFT_MEASURES || Align == FM_Align.CENTER) {
             for (int i = 1; i <= Lines; i++) {
                 float X = startX;
                 int cnt = 0;
@@ -707,6 +681,10 @@ public class FM_Score extends View {
         TieNotes = new ArrayList<>();
     }
 
+    public void AddToTie(FM_Note n){
+        if (inTie) TieNotes.add(n);
+    }
+
     public void EndTie(){
         inTie = false;
         if (TieNotes.size() != 2) return;
@@ -728,6 +706,10 @@ public class FM_Score extends View {
         inTuple = true;
         inTuple_size = size;
         TupleNotes = new ArrayList<>();
+    }
+
+    public void AddToTuple(FM_Note n){
+        if (inTuple) TupleNotes.add(n);
     }
 
     public void EndTuple() {
@@ -758,6 +740,10 @@ public class FM_Score extends View {
         BeamNotes = new ArrayList<>();
     }
 
+    public void AddToBeam(FM_Note n){
+        if (inBeam) BeamNotes.add(n);
+    }
+
     public void EndBeam() {
         inBeam = false;
         if (BeamNotes.size() == 0) return;
@@ -780,16 +766,6 @@ public class FM_Score extends View {
             t.AddNote((FM_Note) BeamNotes.get(i));
         }
         Beams.add(t);
-    }
-
-    public void AddToTie(FM_Note n){
-        if (inTie) TieNotes.add(n);
-    }
-    public void AddToTuple(FM_Note n){
-        if (inTuple) TupleNotes.add(n);
-    }
-    public void AddToBeam(FM_Note n){
-        if (inBeam) BeamNotes.add(n);
     }
 
     public void setNoteSpacing(float noteSpacing) {
@@ -839,5 +815,10 @@ public class FM_Score extends View {
         if (index < 0) return null;
         if (index > StaveNotes.size() - 1) return null;
         return StaveNotes.get(index);
+    }
+
+    public FM_BaseNote getLastNote(){
+        if (getNoteCount() == 0) return null;
+        return StaveNotes.get(StaveNotes.size()-1);
     }
 }
