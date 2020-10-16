@@ -250,7 +250,7 @@ public class FM_Note extends FM_BaseNote {
     public float Left(){
         return  StartX + paddingLeft;
     }
-    
+
     public float Bottom() {
         float offset = getDisplacement();
         float dy = StartY1 + offset * score.getDistanceBetweenStaveLines();

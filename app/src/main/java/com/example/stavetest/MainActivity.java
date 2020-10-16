@@ -2,6 +2,7 @@ package com.example.stavetest;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         FM_Score s = findViewById(R.id.stave);
-        s.setBackgroundColor(Color.argb(255, 200, 200, 100));
+        s.setBackgroundColor(Color.argb(255, 255, 255, 255));
         s.setColor(Color.argb(255, 0, 0, 0));
         s.setFirstStaveClef(FM_ClefValue.TREBLE);
         s.setSecondStaveClef(FM_ClefValue.BASS);
@@ -43,16 +44,16 @@ public class MainActivity extends AppCompatActivity {
         s.setTimeSignature(FM_TimeSignature._2_4);
         s.setKeySignature(FM_KeySignatureValue.DOsharp);
         s.setAlign(FM_Align.ALIGN_LEFT_MEASURES);
-        s.setPaddingT(15);
+        s.setPaddingT(5);
         s.setCenterVertical(true);
         s.setMultiLine(true);
         s.setShowBrace(true);
         s.setAllowZoomPan(true);
         s.setDrawBoundigBox(false);
 
-        addRandom();
+        //addRandom();
         addTestAll();
-        addSimpleMelodic();
+    //    addSimpleMelodic();
         s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true, true), FM_ClefValue.TREBLE);
         List<FM_Note> chord = new ArrayList<>();
         List<Integer> clefs = new ArrayList<>();
@@ -430,5 +431,10 @@ public class MainActivity extends AppCompatActivity {
         s.addStaffNote(new FM_BarNote(s), FM_ClefValue.TREBLE);
 
         s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.None, FM_DurationValue.NOTE_HALF, true, true), FM_ClefValue.TREBLE);
+    }
+
+    public void OnClick(View v){
+        FM_Score s = findViewById(R.id.stave);
+        s.setCenterVertical(!s.getCenterVertical());
     }
 }

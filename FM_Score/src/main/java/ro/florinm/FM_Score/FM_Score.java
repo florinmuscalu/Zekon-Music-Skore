@@ -5,6 +5,7 @@ package ro.florinm.FM_Score;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -26,6 +27,7 @@ public class FM_Score extends View {
     private int StaffCount;
     private int VoiceCount;
     private int Color;
+    private int StaveLineColor;
     private boolean ShowBrace;
     private float NoteSpacing;
     int width, height;
@@ -54,8 +56,8 @@ public class FM_Score extends View {
 
     private final ScaleGestureDetector mScaleDetector;
     private float mScaleFactor = 1.f;
-    private float mPosX;
-    private float mPosY;
+    private float mPosX = 0;
+    private float mPosY = 0;
     private float mLastTouchX;
     private float mLastTouchY;
     private int mActivePointerId = INVALID_POINTER_ID;
@@ -69,7 +71,8 @@ public class FM_Score extends View {
         super(context, attrs);
         this.context = context;
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
-        Color = 0;
+        Color = android.graphics.Color.argb(255, 0,0,0);
+        setStaveLineColor(android.graphics.Color.argb(255, 100, 100, 100));
         Typeface bravura = Typeface.createFromAsset(context.getAssets(), "bravura.otf");
         Font = new Paint();
         Font.setAntiAlias(true);
@@ -107,7 +110,11 @@ public class FM_Score extends View {
     }
 
     public boolean getCenterVertical() { return CenterVertical; }
-    public void setCenterVertical(boolean center) { CenterVertical = center; }
+    public void setCenterVertical(boolean center) {
+        CenterVertical = center;
+        CapTranslateVars();
+        invalidate();
+    }
 
     public int getTimeSignature() {
         return TimeSignature;
@@ -143,22 +150,21 @@ public class FM_Score extends View {
     }
 
     private float getDrawHeight(){
-        float MaxHeight = Lines * (4 * getDistanceBetweenStaveLines()) + (Lines - 1) * + getDistanceBetweenRows();
+        float MaxHeight = Lines * (4 * getDistanceBetweenStaveLines()) + (Lines - 1) * + getDistanceBetweenRows() + 2 * PaddingV_cnt * getDistanceBetweenStaveLines();
         if (StaffCount == FM_StaffCount._2) MaxHeight = MaxHeight + Lines * (getDistanceBetweenStaves() + 4 * getDistanceBetweenStaveLines());
-        if (!CenterVertical) {
-            MaxHeight = MaxHeight + 2 * (int) getPaddingVertical();
-        }
+        //if (MaxHeight < height) return height;
         return  MaxHeight;
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         try {
-            if (!CenterVertical) {
+            /*if (!CenterVertical) {
                 int MaxHeight = (int) getDrawHeight();
+                if (MaxHeight < height) MaxHeight = height;
                 heightMeasureSpec = MeasureSpec.makeMeasureSpec(MaxHeight, MeasureSpec.AT_MOST);
                 getLayoutParams().height = MaxHeight;
-            }
+            }*/
         } catch (Exception ignored) {
         } finally {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -184,7 +190,9 @@ public class FM_Score extends View {
         canvas.save();
         Matrix matrix = new Matrix();
         matrix.postScale(mScaleFactor, mScaleFactor, 0, 0);
-        matrix.postTranslate(mPosX, mPosY);
+        float adjustY = 0;
+        if (CenterVertical) adjustY = height / 2f - getDrawHeight() / 2f;
+        matrix.postTranslate(mPosX, mPosY + adjustY);
         canvas.setMatrix(matrix);
 
         float ys1 = getPaddingVertical();
@@ -196,7 +204,9 @@ public class FM_Score extends View {
             BarYs = ys1;
             BarYe = ys1 + 4 * getDistanceBetweenStaveLines();
             //draw stave lines
+            Font.setColor(StaveLineColor);
             for (int i = 0; i < 5; i++) canvas.drawRect(PaddingS, ys1 + i * getDistanceBetweenStaveLines() - FM_Const.dpTOpx(context, 0.5f), width - PaddingE, ys1 + i * getDistanceBetweenStaveLines() + FM_Const.dpTOpx(context, 0.5f), Font);
+            Font.setColor(Color);
             //draw clef
             if (FirstStaveClef == FM_ClefValue.TREBLE) DrawTrebleClef(canvas, ys1);
             else DrawBassClef(canvas, ys1);
@@ -209,7 +219,9 @@ public class FM_Score extends View {
             if (StaffCount == FM_StaffCount._2) {
                 ys2 = ys1 + (getDistanceBetweenStaves() + 4 * getDistanceBetweenStaveLines());
                 BarYe = ys2 + 4 * getDistanceBetweenStaveLines();
+                Font.setColor(StaveLineColor);
                 for (int i = 0; i < 5; i++) canvas.drawRect(PaddingS, ys2 + i * getDistanceBetweenStaveLines() - FM_Const.dpTOpx(context, 0.5f), width - PaddingE, ys2 + i * getDistanceBetweenStaveLines() + FM_Const.dpTOpx(context, 0.5f), Font);
+                Font.setColor(Color);
                 if (SecondStaveClef == FM_ClefValue.TREBLE) DrawTrebleClef(canvas, ys2);
                 else DrawBassClef(canvas, ys2);
                 SecondStaveKey.SetDrawParameters(PaddingS + getClefWidth(), ys2, ys2);
@@ -230,9 +242,10 @@ public class FM_Score extends View {
                 }
                 //End Draw Bracket
             }
-
+            Font.setColor(StaveLineColor);
             if (StartBar) canvas.drawRect(PaddingS - FM_Const.dpTOpx(context, 1), BarYs, PaddingS, BarYe, Font);
             if (EndBar) canvas.drawRect(width - PaddingE, BarYs, width - PaddingE + FM_Const.dpTOpx(context, 1), BarYe, Font);
+            Font.setColor(Color);
             ys1 = ys2 + (getDistanceBetweenRows() + 4 * getDistanceBetweenStaveLines());
         }
 
@@ -242,8 +255,10 @@ public class FM_Score extends View {
         for (int j = 0; j < Beams.size(); j++) Beams.get(j).Draw(canvas);
 
         if (EndBar) {
+            Font.setColor(StaveLineColor);
             canvas.drawRect(width - PaddingE - FM_Const.dpTOpx(context,getDistanceBetweenStaveLines() / 7), BarYs, width - PaddingE, BarYe, Font);
             canvas.drawRect(width - PaddingE - FM_Const.dpTOpx(context,getDistanceBetweenStaveLines() * 2 / 7), BarYs, width - PaddingE - FM_Const.dpTOpx(context,getDistanceBetweenStaveLines() *17 / 70), BarYe, Font);
+            Font.setColor(Color);
         }
         canvas.restore();
     }
@@ -284,19 +299,16 @@ public class FM_Score extends View {
         PaddingS_p = percent;
         if (width < 100) width = 100;
         PaddingS = percent * width / 100.f;
-        //invalidate();
-        //requestLayout();
+        invalidate();
     }
 
     public float getPaddingVertical() {
-        if (CenterVertical) return  getMeasuredHeight() / 2f - getDrawHeight() / 2f;
         return PaddingV_cnt * getDistanceBetweenStaveLines();
     }
 
     public void setPaddingT(float count) {
         PaddingV_cnt = count;
-        //invalidate();
-        //requestLayout();
+        invalidate();
     }
 
     public float getPaddingE() {
@@ -352,6 +364,21 @@ public class FM_Score extends View {
         return !(differenceX > CLICK_ACTION_THRESHOLD || differenceY > CLICK_ACTION_THRESHOLD);
     }
 
+    private void CapTranslateVars() {
+        if (mPosX > 0) mPosX = 0;
+        if (mPosX < width * (1 - mScaleFactor)) mPosX = width * (1 - mScaleFactor);
+
+        float adjustY = 0;
+        if (CenterVertical) adjustY = height / 2f - getDrawHeight() / 2f;
+        //mPosY += adjustY;
+        if (mPosY < -adjustY+(height - mScaleFactor * Math.max(getMeasuredHeight_FM(), getDrawHeight()))) {
+            mPosY = -adjustY+(height - mScaleFactor * Math.max(getMeasuredHeight_FM(), getDrawHeight()));
+            return;
+        }
+        if (mPosY > -adjustY) mPosY = -adjustY;
+        //mPosY -= adjustY;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (!AllowZoomPan) return super.onTouchEvent(event);
@@ -378,16 +405,14 @@ public class FM_Score extends View {
                 if (!mScaleDetector.isInProgress()) {
                     final float dx = x - mLastTouchX;
                     final float dy = y - mLastTouchY;
-
                     mPosX += dx;
                     mPosY += dy;
-
                     invalidate();
                 }
 
                 mLastTouchX = x;
                 mLastTouchY = y;
-
+                CapTranslateVars();
                 break;
             }
 
@@ -414,8 +439,6 @@ public class FM_Score extends View {
                     final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
                     mLastTouchX = event.getX(newPointerIndex);
                     mLastTouchY = event.getY(newPointerIndex);
-                    //mLastTouchX = pivotPointX;
-                    //mLastTouchY = pivotPointY;
                     mActivePointerId = event.getPointerId(newPointerIndex);
                 }
                 break;
@@ -785,22 +808,37 @@ public class FM_Score extends View {
         AllowZoomPan = allowZoomPan;
     }
 
+    public int getStaveLineColor() {
+        return StaveLineColor;
+    }
+
+    public void setStaveLineColor(int staveLineColor) {
+        StaveLineColor = staveLineColor;
+    }
+
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             float prevScale = mScaleFactor;
             mScaleFactor *= detector.getScaleFactor();
             // Don't let the object get too small or too large.
-            mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));
+            mScaleFactor = Math.max(1.0f, Math.min(mScaleFactor, 5.0f));
 
             float adjustedScaleFactor = mScaleFactor / prevScale;
             pivotPointX = detector.getFocusX();
             pivotPointY = detector.getFocusY();
+            float adjustY = 0;
+            if (CenterVertical) adjustY = getMeasuredHeight_FM() / 2f - getDrawHeight() / 2f;
+            pivotPointY -= adjustY;
             mPosX += (mPosX - pivotPointX) * (adjustedScaleFactor - 1);
             mPosY += (mPosY - pivotPointY) * (adjustedScaleFactor - 1);
             invalidate();
             return true;
         }
+    }
+
+    private float getMeasuredHeight_FM(){
+        return Math.max(getLayoutParams().height, getMeasuredHeight());
     }
 
     public int getNoteCount() {
