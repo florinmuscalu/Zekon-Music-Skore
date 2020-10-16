@@ -834,7 +834,7 @@ public class FM_Score extends View {
     public int getNoteCount() {
         return StaveNotes.size();
     }
-    
+
     public FM_BaseNote getNote(int index){
         if (index < 0) return null;
         if (index > StaveNotes.size() - 1) return null;

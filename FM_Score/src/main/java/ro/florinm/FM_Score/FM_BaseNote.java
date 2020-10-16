@@ -21,7 +21,7 @@ public abstract class FM_BaseNote{
     int line;
 
 
-    public FM_BaseNote(@FM_NoteType int type, FM_Score score) {
+    protected FM_BaseNote(@FM_NoteType int type, FM_Score score) {
         this.type = type;
         paddingDot = 0f;
         paddingNote = 0f;
@@ -34,16 +34,25 @@ public abstract class FM_BaseNote{
         color = score.getColor();
     }
 
+    @FM_NoteType
+    public int getType() {
+        return type;
+    }
+    @FM_ClefValue
+    public int getClef(){
+        return clef;
+    }
+
     protected void setClef(@FM_ClefValue int Clef){
         this.clef = Clef;
     }
 
-    public void SetDrawParameters(float StartX, float StartY1, float StartY2){
+    protected void SetDrawParameters(float StartX, float StartY1, float StartY2){
         this.StartX = StartX;
         this.StartY1 = StartY1;
         this.StartY2 = StartY2;
     }
-    public void DrawNote(Canvas canvas){
+    protected void DrawNote(Canvas canvas){
         score.Font.setColor(color);
         if (score.getDrawBoundingBox()) {
             Paint p = new Paint();
@@ -58,13 +67,13 @@ public abstract class FM_BaseNote{
             canvas.drawLine(tx, by, bx, by, p);
         }
     };
-    public abstract float getDisplacement();
-    public abstract String asString();
+    protected abstract float getDisplacement();
+    protected abstract String asString();
     public abstract float WidthAll(boolean Stem);
     public abstract float WidthAll();
-    public abstract float WidthAccidental();
-    public abstract float WidthNote();
-    public abstract float WidthAllNoDot();
+    protected abstract float WidthAccidental();
+    protected abstract float WidthNote();
+    protected abstract float WidthAllNoDot();
 
     public int getColor() {
         return color;
@@ -73,37 +82,35 @@ public abstract class FM_BaseNote{
         this.color = color;
     }
 
-    public float getPaddingLeft() {
+    protected float getPaddingLeft() {
         return paddingLeft;
     }
-    public void setPaddingLeft(float p) {
+    protected void setPaddingLeft(float p) {
         paddingLeft = p;
     }
 
-    public void setPaddingNote(float p) {
+    protected void setPaddingNote(float p) {
         paddingNote = p;
     }
-
-    public void setPaddingDot(float p) {
+    protected void setPaddingDot(float p) {
         paddingDot = p;
     }
 
-    public void setPaddingRight(float p) {
+    protected void setPaddingRight(float p) {
         paddingRight = p;
     }
 
     public boolean isVisible() {
         return visible;
     }
-
     public void setVisible(boolean visible) {
         if (!visible) line = -1;
         else line = 1;
         this.visible = visible;
     }
 
-    public abstract float Left();
-    public abstract float Bottom();
-    public abstract float Right();
-    public abstract float Top();
+    protected abstract float Left();
+    protected abstract float Bottom();
+    protected abstract float Right();
+    protected abstract float Top();
 }
