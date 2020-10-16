@@ -237,14 +237,20 @@ public class FM_Note extends FM_BaseNote {
         FM_Const.AdjustFont(score, asStringNote(false), 1);
         canvas.drawText(asStringNote(), StartX + paddingLeft + width_accidental + paddingNote, dy, score.Font);
 
+        float adjustDotY = 0;
+        if (Math.abs(offset) - Math.floor(Math.abs(offset)) < 0.1) {
+            if (stem_up) adjustDotY = -score.getDistanceBetweenStaveLines() * 0.2f;
+            else adjustDotY = +score.getDistanceBetweenStaveLines() * 0.2f;
+        }
         FM_Const.AdjustFont(score, FM_Const.Sharp, 2);
-        canvas.drawText(asStringDot(),  StartX + paddingLeft + width_accidental + paddingNote + width_note_no_stem + paddingDot, dy, score.Font);
+        canvas.drawText(asStringDot(),  StartX + paddingLeft + width_accidental + paddingNote + width_note_no_stem + paddingDot, dy + adjustDotY, score.Font);
 
         score.Font.setColor(score.getColor());
     }
     public float Left(){
         return  StartX + paddingLeft;
-    };
+    }
+    
     public float Bottom() {
         float offset = getDisplacement();
         float dy = StartY1 + offset * score.getDistanceBetweenStaveLines();
