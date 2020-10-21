@@ -7,7 +7,7 @@ import android.graphics.Rect;
 import android.util.TypedValue;
 
 public class FM_Const {
-    public static final int DEFAULT_EXTRA_PADDING = 3;
+    public static final int DEFAULT_EXTRA_PADDING = 5;
     //notes
     public static final String _1Note = "\ue0a2";
     public static final String _2Note_up = "\ue1d3";

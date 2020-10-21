@@ -12,7 +12,6 @@ import java.util.List;
 import ro.florinm.FM_Score.FM_Accidental;
 import ro.florinm.FM_Score.FM_Align;
 import ro.florinm.FM_Score.FM_BarNote;
-import ro.florinm.FM_Score.FM_BaseNote;
 import ro.florinm.FM_Score.FM_ClefValue;
 import ro.florinm.FM_Score.FM_DurationValue;
 import ro.florinm.FM_Score.FM_KeySignatureValue;
@@ -43,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         s.setNoteSpacing(0);
         s.setTimeSignature(FM_TimeSignature._2_4);
         s.setKeySignature(FM_KeySignatureValue.DOsharp);
-        s.setAlign(FM_Align.ALIGN_LEFT_MEASURES);
+        s.setAlign(FM_Align.ALIGN_CENTER_MEASURES);
         s.setPaddingT(5);
         s.setCenterVertical(true);
         s.setMultiLine(true);
