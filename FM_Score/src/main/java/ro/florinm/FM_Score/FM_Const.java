@@ -130,6 +130,31 @@ public class FM_Const {
         return Integer.parseInt(key.substring(key.length() - 1));
     }
 
+    public static int keyToDuration(String key, int pos) {
+        key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
+        String[] s = key.split(",");
+        key = s[pos];
+        if (key.equals("w")) return FM_DurationValue.NOTE_WHOLE;
+        if (key.equals("wr")) return FM_DurationValue.NOTE_WHOLE;
+        if (key.equals("wd")) return FM_DurationValue.NOTE_WHOLE_D;
+        if (key.equals("h")) return FM_DurationValue.NOTE_HALF;
+        if (key.equals("hr")) return FM_DurationValue.NOTE_HALF;
+        if (key.equals("hd")) return FM_DurationValue.NOTE_HALF_D;
+        if (key.equals("q")) return FM_DurationValue.NOTE_QUARTER;
+        if (key.equals("qr")) return FM_DurationValue.NOTE_QUARTER;
+        if (key.equals("qd")) return FM_DurationValue.NOTE_QUARTER_D;
+        if (key.equals("8")) return FM_DurationValue.NOTE_EIGHT;
+        if (key.equals("8r")) return FM_DurationValue.NOTE_EIGHT;
+        if (key.equals("8d")) return FM_DurationValue.NOTE_EIGHT_D;
+        if (key.equals("16")) return FM_DurationValue.NOTE_SIXTEENTH;
+        if (key.equals("16r")) return FM_DurationValue.NOTE_SIXTEENTH;
+        if (key.equals("16d")) return FM_DurationValue.NOTE_SIXTEENTH_D;
+        if (key.equals("32")) return FM_DurationValue.NOTE_THIRTY_SECOND;
+        if (key.equals("32r")) return FM_DurationValue.NOTE_THIRTY_SECOND;
+        if (key.equals("32d")) return FM_DurationValue.NOTE_THIRTY_SECOND_D;
+        return FM_DurationValue.NOTE_WHOLE;
+    }
+
     public static int keyToAccidental(String key, int pos) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
@@ -142,6 +167,21 @@ public class FM_Const {
         if (key.contains("b")) return FM_Accidental.Flat;
         if (key.contains("n")) return FM_Accidental.Natural;
         return FM_Accidental.None;
+    }
+
+    public static boolean keyToStem(String key, int pos) {
+        key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
+        String[] s = key.split(",");
+        key = s[pos];
+        if (key.equals("up")) return true;
+        else return false;
+    }
+
+    public static String keyToElement(String key, int pos) {
+        key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
+        String[] s = key.split(",");
+        key = s[pos];
+        return key;
     }
 
     public static int StringToKeySignature(String s) {

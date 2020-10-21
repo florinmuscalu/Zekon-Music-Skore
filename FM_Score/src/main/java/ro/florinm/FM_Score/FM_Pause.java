@@ -24,8 +24,8 @@ public class FM_Pause extends FM_BaseNote {
         if (duration == 2 || duration == 52) return 2.0f;
         if (duration == 4 || duration == 54) return 2.0f;
         if (duration == 8 || duration == 58) return 2.0f;
-        if (duration == 16 || duration == 516) return 1.0f;
-        if (duration == 32 || duration == 532) return 2.0f;
+        if (duration == 16 || duration == 66) return 1.0f;
+        if (duration == 32 || duration == 82) return 2.0f;
 
         return 2.0f;
     }
@@ -36,8 +36,8 @@ public class FM_Pause extends FM_BaseNote {
         if (duration == 2 || duration == 52) return FM_Const.Pause_2;
         if (duration == 4 || duration == 54) return FM_Const.Pause_4;
         if (duration == 8 || duration == 58) return FM_Const.Pause_8;
-        if (duration == 16 || duration == 516) return FM_Const.Pause_16;
-        if (duration == 32 || duration == 532) return FM_Const.Pause_32;
+        if (duration == 16 || duration == 66) return FM_Const.Pause_16;
+        if (duration == 32 || duration == 82) return FM_Const.Pause_32;
         return s;
     }
 
@@ -47,8 +47,8 @@ public class FM_Pause extends FM_BaseNote {
         if (duration == 2 || duration == 52) return 1;
         if (duration == 4 || duration == 54) return 3;
         if (duration == 8 || duration == 58) return 2;
-        if (duration == 16 || duration == 516) return 3;
-        if (duration == 32 || duration == 532) return 4;
+        if (duration == 16 || duration == 66) return 3;
+        if (duration == 32 || duration == 82) return 4;
         return s;
     }
 

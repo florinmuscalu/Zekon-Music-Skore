@@ -14,7 +14,7 @@ public @interface FM_DurationValue {
     int NOTE_EIGHT = 8;
     int NOTE_EIGHT_D = 58;
     int NOTE_SIXTEENTH = 16;
-    int NOTE_SIXTEENTH_D = 516;
+    int NOTE_SIXTEENTH_D = 66;
     int NOTE_THIRTY_SECOND = 32;
-    int NOTE_THIRTY_SECOND_D = 532;
+    int NOTE_THIRTY_SECOND_D = 82;
 }

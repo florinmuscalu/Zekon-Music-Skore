@@ -9,7 +9,7 @@ public class FM_Note extends FM_BaseNote {
     final Integer note;
     int octave;
     @FM_DurationValue
-    final int duration;
+    int duration;
     @FM_Accidental
     private int accidental;
     boolean stem;
@@ -129,14 +129,14 @@ public class FM_Note extends FM_BaseNote {
                 if (duration == 2 || duration == 52) return   FM_Const._2Note_up;
                 if (duration == 4 || duration == 54) return   FM_Const._4Note_up;
                 if (duration == 8 || duration == 58) return   FM_Const._8Note_up;
-                if (duration == 16 || duration == 516) return FM_Const._16Note_up;
-                if (duration == 32 || duration == 532) return FM_Const._32Note_up;
+                if (duration == 16 || duration == 66) return FM_Const._16Note_up;
+                if (duration == 32 || duration == 82) return FM_Const._32Note_up;
             } else {
                 if (duration == 2 || duration == 52) return   FM_Const._2Note_down;
                 if (duration == 4 || duration == 54) return   FM_Const._4Note_down;
                 if (duration == 8 || duration == 58) return   FM_Const._8Note_down;
-                if (duration == 16 || duration == 516) return FM_Const._16Note_down;
-                if (duration == 32 || duration == 532) return FM_Const._32Note_down;
+                if (duration == 16 || duration == 66) return FM_Const._16Note_down;
+                if (duration == 32 || duration == 82) return FM_Const._32Note_down;
             }
         } else {
             if (duration == 2 || duration == 52) return FM_Const.EmptyNote;

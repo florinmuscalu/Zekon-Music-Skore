@@ -548,6 +548,12 @@ public class FM_Score extends View {
 
     public void clearStaffNotes(){
         StaveNotes.clear();
+        Tuples.clear();
+        Beams.clear();
+        Ties.clear();
+        mPosX = 0;
+        mPosY = 0;
+        invalidate();
     }
 
 
