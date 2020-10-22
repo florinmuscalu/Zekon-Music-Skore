@@ -1,6 +1,7 @@
 package ro.florinm.FM_Score;
 
 import android.graphics.Canvas;
+import android.graphics.Path;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ public class FM_Tuple {
 
     public void Draw(Canvas canvas) {
         float x, xe, y, ye;
+        float StaveLineHalfWidth = FM_Const.dpTOpx(score.getContext(), 0.25f);
         if (n.get(0).stem_up) {
             x = 0.5f * score.getDistanceBetweenStaveLines() + n.get(0).startX + n.get(0).paddingLeft + n.get(0).WidthAccidental() + n.get(0).paddingNote;
             xe = 0.5f * score.getDistanceBetweenStaveLines() + n.get(n.size() - 1).startX + n.get(n.size() - 1).paddingLeft + n.get(n.size() - 1).WidthAccidental() + n.get(n.size() - 1).paddingNote + n.get(n.size() - 1).WidthNote();
@@ -79,13 +81,14 @@ public class FM_Tuple {
         String text = FM_Const._3;
         if (size == 5) text = FM_Const._5;
 
+        Path topPath;
         if (!n.get(0).beam) {
             if (n.get(0).stem_up) {
-                canvas.drawLine(x, y, x, y - score.getDistanceBetweenStaveLines(), score.Font);
-                canvas.drawLine(xe, ye, xe, ye - score.getDistanceBetweenStaveLines(), score.Font);
+                canvas.drawRect(x - StaveLineHalfWidth, y, x + StaveLineHalfWidth, y - score.getDistanceBetweenStaveLines(), score.Font);
+                canvas.drawRect(xe - StaveLineHalfWidth, ye, xe + StaveLineHalfWidth, ye - score.getDistanceBetweenStaveLines(), score.Font);
             } else {
-                canvas.drawLine(x, y, x, y + score.getDistanceBetweenStaveLines(), score.Font);
-                canvas.drawLine(xe, ye, xe, ye + score.getDistanceBetweenStaveLines(), score.Font);
+                canvas.drawRect(x - StaveLineHalfWidth, y, x + StaveLineHalfWidth, y + score.getDistanceBetweenStaveLines(), score.Font);
+                canvas.drawRect(xe - StaveLineHalfWidth, ye, xe + StaveLineHalfWidth, ye + score.getDistanceBetweenStaveLines(), score.Font);
             }
         }
         FM_Const.AdjustFont(score, text, 1);
@@ -96,23 +99,40 @@ public class FM_Tuple {
 
         if (!n.get(0).beam) {
             if (n.get(0).stem_up) {
-                canvas.drawLine(x,
-                        y - score.getDistanceBetweenStaveLines(),
-                        middle1,
-                        slope * (middle1 - x) + y - score.getDistanceBetweenStaveLines(), score.Font);
-                canvas.drawLine(middle2,
-                        ye - score.getDistanceBetweenStaveLines() - slope * (xe - middle2),
-                        xe,
-                        ye - score.getDistanceBetweenStaveLines(), score.Font);
+                topPath = new Path();
+                topPath.reset();
+                topPath.moveTo(x, y - score.getDistanceBetweenStaveLines() + 2 * StaveLineHalfWidth);
+                topPath.lineTo(middle1, slope * (middle1 - x) + y - score.getDistanceBetweenStaveLines() + 2 * StaveLineHalfWidth);
+                topPath.lineTo(middle1, slope * (middle1 - x) + y - score.getDistanceBetweenStaveLines());
+                topPath.lineTo(x, y - score.getDistanceBetweenStaveLines());
+                topPath.lineTo(x, y - score.getDistanceBetweenStaveLines() + 2 * StaveLineHalfWidth);
+                canvas.drawPath(topPath, score.Font);
+
+                topPath = new Path();
+                topPath.reset();
+                topPath.moveTo(middle2, ye - score.getDistanceBetweenStaveLines() - slope * (xe - middle2) + 2 * StaveLineHalfWidth);
+                topPath.lineTo(xe, ye - score.getDistanceBetweenStaveLines() + 2 * StaveLineHalfWidth);
+                topPath.lineTo(xe, ye - score.getDistanceBetweenStaveLines());
+                topPath.lineTo(middle2, ye - score.getDistanceBetweenStaveLines() - slope * (xe - middle2));
+                topPath.lineTo(middle2, ye - score.getDistanceBetweenStaveLines() - slope * (xe - middle2) + 2 * StaveLineHalfWidth);
+                canvas.drawPath(topPath, score.Font);
             } else {
-                canvas.drawLine(x,
-                        y + score.getDistanceBetweenStaveLines(),
-                        middle1,
-                        slope * (middle1 - x) + y + score.getDistanceBetweenStaveLines(), score.Font);
-                canvas.drawLine(middle2,
-                        ye + score.getDistanceBetweenStaveLines() - slope * (xe - middle2),
-                        xe,
-                        ye + score.getDistanceBetweenStaveLines(), score.Font);
+                topPath = new Path();
+                topPath.reset();
+                topPath.moveTo(x, y + score.getDistanceBetweenStaveLines() - 2 * StaveLineHalfWidth);
+                topPath.lineTo(middle1, slope * (middle1 - x) + y + score.getDistanceBetweenStaveLines() - 2 * StaveLineHalfWidth);
+                topPath.lineTo(middle1, slope * (middle1 - x) + y + score.getDistanceBetweenStaveLines());
+                topPath.lineTo(x, y + score.getDistanceBetweenStaveLines());
+                topPath.lineTo(x, y + score.getDistanceBetweenStaveLines() - 2 * StaveLineHalfWidth);
+                canvas.drawPath(topPath, score.Font);
+                topPath = new Path();
+                topPath.reset();
+                topPath.moveTo(middle2, ye + score.getDistanceBetweenStaveLines() - slope * (xe - middle2) - 2 * StaveLineHalfWidth);
+                topPath.lineTo(xe, ye + score.getDistanceBetweenStaveLines() - 2 * StaveLineHalfWidth);
+                topPath.lineTo(xe, ye + score.getDistanceBetweenStaveLines());
+                topPath.lineTo(middle2, ye + score.getDistanceBetweenStaveLines() - slope * (xe - middle2));
+                topPath.lineTo(middle2, ye + score.getDistanceBetweenStaveLines() - slope * (xe - middle2) - 2 * StaveLineHalfWidth);
+                canvas.drawPath(topPath, score.Font);
             }
         }
         //canvas.drawLine(x, y - stave.getDistanceBetweenStaveLines(), xe,ye - stave.getDistanceBetweenStaveLines() , stave.StaveFont);

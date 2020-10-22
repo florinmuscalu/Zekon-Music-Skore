@@ -195,7 +195,7 @@ public class FM_Note extends FM_BaseNote {
         if (!isVisible()) return;
         super.DrawNote(canvas);
 
-        score.Font.setColor(score.getColor());
+        score.Font.setColor(score.getStaveLineColor());
         ys = StartY1;
         startX = StartX;
         float ly;
@@ -210,8 +210,8 @@ public class FM_Note extends FM_BaseNote {
                     ly = StartY1 + i * score.getDistanceBetweenStaveLines();
                     float tX = StartX + paddingLeft + WidthAccidental() + paddingNote - score.getDistanceBetweenStaveLines() / 3;
                     float tXe = StartX + paddingLeft + WidthAccidental() + paddingNote + WidthNote() + score.getDistanceBetweenStaveLines() / 3;
-                    float tY = ly - FM_Const.dpTOpx(score.getContext(),0.5f);
-                    float tYe = ly + FM_Const.dpTOpx(score.getContext(),0.5f);
+                    float tY = ly - FM_Const.dpTOpx(score.getContext(),0.25f);
+                    float tYe = ly + FM_Const.dpTOpx(score.getContext(),0.25f);
                     canvas.drawRect(tX, tY,tXe, tYe, score.Font);
                 }
             if (offset < 0.0f)
@@ -219,11 +219,12 @@ public class FM_Note extends FM_BaseNote {
                     ly = StartY1 + i * score.getDistanceBetweenStaveLines();
                     float tX = StartX + paddingLeft + WidthAccidental() + paddingNote - score.getDistanceBetweenStaveLines() / 3;
                     float tXe = StartX + paddingLeft + WidthAccidental() + paddingNote + WidthNote() + score.getDistanceBetweenStaveLines() / 3;
-                    float tY = ly - FM_Const.dpTOpx(score.getContext(),0.5f);
-                    float tYe = ly + FM_Const.dpTOpx(score.getContext(),0.5f);
+                    float tY = ly - FM_Const.dpTOpx(score.getContext(),0.25f);
+                    float tYe = ly + FM_Const.dpTOpx(score.getContext(),0.25f);
                     canvas.drawRect(tX, tY,tXe, tYe, score.Font);
                 }
         }
+        score.Font.setColor(score.getColor());
         float width_accidental = WidthAccidental();
         float width_note_no_stem = WidthNote(false);
         float width_note_stem = WidthNote(stem);
