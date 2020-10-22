@@ -255,8 +255,8 @@ public class FM_Score extends View {
 
         if (EndBar) {
             Font.setColor(Color);
-            canvas.drawRect(width - PaddingE - FM_Const.dpTOpx(context,getDistanceBetweenStaveLines() / 7), BarYs, width - PaddingE, BarYe, Font);
-            canvas.drawRect(width - PaddingE - FM_Const.dpTOpx(context,getDistanceBetweenStaveLines() * 2 / 7), BarYs, width - PaddingE - FM_Const.dpTOpx(context,getDistanceBetweenStaveLines() *17 / 70), BarYe, Font);
+            canvas.drawRect(width - PaddingE - FM_Const.dpTOpx(context,getDistanceBetweenStaveLines() / 7), BarYs - StaveLineHalfWidth, width - PaddingE, BarYe + StaveLineHalfWidth, Font);
+            canvas.drawRect(width - PaddingE - FM_Const.dpTOpx(context,getDistanceBetweenStaveLines() * 2 / 7), BarYs - StaveLineHalfWidth, width - PaddingE - FM_Const.dpTOpx(context,getDistanceBetweenStaveLines() *17 / 70), BarYe + StaveLineHalfWidth, Font);
         }
         canvas.restore();
     }

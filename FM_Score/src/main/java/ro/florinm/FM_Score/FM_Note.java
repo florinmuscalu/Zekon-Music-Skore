@@ -41,25 +41,25 @@ public class FM_Note extends FM_BaseNote {
         this.color = Color;
     }
 
-    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration, boolean Stem, boolean StemUp) {
+    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration, boolean StemUp) {
         super(FM_NoteType.NOTE, Score);
         this.note = Note;
         this.accidental = Accidental;
         this.octave = Octave;
         this.duration = Duration;
-        this.stem = Stem;
+        this.stem = true;
         this.stem_up = StemUp;
         this.beam = false;
         this.tuple = false;
     }
 
-    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration, boolean Stem, boolean StemUp, int Color) {
+    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration, boolean StemUp, int Color) {
         super(FM_NoteType.NOTE, Score);
         this.note = Note;
         this.accidental = Accidental;
         this.octave = Octave;
         this.duration = Duration;
-        this.stem = Stem;
+        this.stem = true;
         this.stem_up = StemUp;
         this.beam = false;
         this.tuple = false;
