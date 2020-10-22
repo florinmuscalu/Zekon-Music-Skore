@@ -116,18 +116,25 @@ public class FM_Beam {
             }
         }
 
-
         if (!n.get(0).stem_up) {
-            xe = xe + 3;
+            //xe = xe + 3;
         }
         Path topPath = new Path();
-        topPath.reset();
-        topPath.moveTo(x, y);
-        topPath.lineTo(xe, ye);
-        topPath.lineTo(xe, ye - score.getDistanceBetweenStaveLines() / 2);
-        topPath.lineTo(x, y - score.getDistanceBetweenStaveLines() / 2);
-        topPath.lineTo(x, y);
-
+        if (!n.get(0).stem_up) {
+            topPath.reset();
+            topPath.moveTo(x, y - score.getDistanceBetweenStaveLines() / 2);
+            topPath.lineTo(xe, ye - score.getDistanceBetweenStaveLines() / 2);
+            topPath.lineTo(xe, ye - score.getDistanceBetweenStaveLines());
+            topPath.lineTo(x, y - score.getDistanceBetweenStaveLines());
+            topPath.lineTo(x, y);
+        } else {
+            topPath.reset();
+            topPath.moveTo(x, y);
+            topPath.lineTo(xe, ye);
+            topPath.lineTo(xe, ye - score.getDistanceBetweenStaveLines() / 2);
+            topPath.lineTo(x, y - score.getDistanceBetweenStaveLines() / 2);
+            topPath.lineTo(x, y);
+        }
         canvas.drawPath(topPath, score.Font);
 
         for (int i = 0; i < n.size() - 1; i++) {
@@ -173,8 +180,8 @@ public class FM_Beam {
                 tmpY1 = tmpY1 + score.getDistanceBetweenStaveLines() * 2 / 3;
                 tmpY2 = tmpY2 + score.getDistanceBetweenStaveLines() * 2 / 3;
             } else {
-                tmpY1 = tmpY1 - score.getDistanceBetweenStaveLines() * 2 / 3;
-                tmpY2 = tmpY2 - score.getDistanceBetweenStaveLines() * 2 / 3;
+                tmpY1 = tmpY1 - score.getDistanceBetweenStaveLines() * 6 / 5;
+                tmpY2 = tmpY2 - score.getDistanceBetweenStaveLines() * 6 / 5;
             }
 
             //float tmpY = n.get(i).ys + n.get(i).getDisplacement() * stave.getDistanceBetweenStaveLines();
