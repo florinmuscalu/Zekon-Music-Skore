@@ -51,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
         s.setDrawBoundigBox(false);
 
         //addRandom();
-//        addTestAll();
-        //    addSimpleMelodic();
+        addTestAll();
+            addSimpleMelodic();
 //        s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true), FM_ClefValue.TREBLE);
 //        List<FM_Note> chord = new ArrayList<>();
 //        List<Integer> clefs = new ArrayList<>();
