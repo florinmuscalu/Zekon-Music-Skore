@@ -586,10 +586,14 @@ public class FM_Score extends View {
         ComputeLines();
     }
 
+    private float getStartX(int line){
+        if (line == 1) return PaddingS + getClefWidth() + FirstStaveKey.WidthAll() + getTimeSignatureWidth() + 2 * FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
+        else return PaddingS + getClefWidth() + FirstStaveKey.WidthAll();
+    }
+
     private void ComputeLines() {
         if (StaveNotes.size() == 0) return;
         int l = 1;
-        float startX = PaddingS + getClefWidth() + FirstStaveKey.WidthAll() + getTimeSignatureWidth() + 2 * FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
         float endX = width - PaddingE - 2 * FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING) - FM_Const.dpTOpx(context, 10);
         float ys1 = getPaddingVertical();
         float ys2 = getPaddingVertical();
@@ -597,15 +601,14 @@ public class FM_Score extends View {
         for (int i = 0; i < StaveNotes.size(); i++) StaveNotes.get(i).setVisible(true);
 
         if (MultiLine && Align == FM_Align.ALIGN_LEFT_NOTES) {
-            float X = startX;
+            float X = getStartX(l);
             FM_BaseNote last_note = null;
             for (int i = 0; i < StaveNotes.size(); i++) {
                 float w = StaveNotes.get(i).WidthAll(true) + NoteSpacing;
                 if (X + w > endX) {
                     if (last_note instanceof FM_BarNote) last_note.setVisible(false);
                     l++;
-                    startX = PaddingS + getClefWidth() + FirstStaveKey.WidthAll();
-                    X = startX;
+                    X = getStartX(l);
                     ys1 = ys2 + (getDistanceBetweenRows() + 4 * getDistanceBetweenStaveLines());
                     ys2 = ys1;
                 }
@@ -624,9 +627,10 @@ public class FM_Score extends View {
         }
 
         float scale = 1.15f;
+        if (Align == FM_Align.ALIGN_LEFT_LAST_MEASURE) scale = 1f;
         if (Align == FM_Align.ALIGN_CENTER_NOTES) scale = 1.0f;
         if (MultiLine && (Align == FM_Align.ALIGN_CENTER_MEASURES || Align == FM_Align.ALIGN_CENTER_NOTES || Align == FM_Align.ALIGN_LEFT_MEASURES || Align == FM_Align.ALIGN_LEFT_LAST_MEASURE)) {
-            float X = startX;
+            float X = getStartX(l);
             int last_bar = 0;
             int bar_cnt = 0;
             for (int i = 0; i < StaveNotes.size(); i++) {
@@ -637,8 +641,7 @@ public class FM_Score extends View {
                 }
                 if (bar_cnt > 0 && X + w > endX * scale) {
                     l++;
-                    startX = PaddingS + getClefWidth() + FirstStaveKey.WidthAll();
-                    X = startX;
+                    X = getStartX(l);
                     ys1 = ys2 + (getDistanceBetweenRows() + 4 * getDistanceBetweenStaveLines());
                     ys2 = ys1;
                     bar_cnt = 0;
@@ -667,9 +670,7 @@ public class FM_Score extends View {
 
         if (Align == FM_Align.ALIGN_CENTER_NOTES) {
             for (int i = 1; i <= Lines; i++) {
-                if (i == 1) startX = PaddingS + getClefWidth() + FirstStaveKey.WidthAll() + getTimeSignatureWidth() + 2 * FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
-                else startX = PaddingS + getClefWidth() + FirstStaveKey.WidthAll();
-                float X = startX;
+                float X = getStartX(i);
                 int cnt = 0;
                 float diff;
                 for (int j = 0; j < StaveNotes.size(); j++)
@@ -680,7 +681,7 @@ public class FM_Score extends View {
 
                     }
                 diff = (endX - X) / (cnt + 1);
-                X = startX;
+                X = getStartX(i);
                 if ((Align != FM_Align.ALIGN_LEFT_MEASURES && Align != FM_Align.ALIGN_LEFT_LAST_MEASURE) || diff < 0)
                     for (int j = 0; j < StaveNotes.size(); j++)
                         if (StaveNotes.get(j).line == i) {
@@ -694,9 +695,7 @@ public class FM_Score extends View {
 
         if (Align == FM_Align.ALIGN_CENTER_MEASURES || Align == FM_Align.ALIGN_LEFT_MEASURES || Align == FM_Align.ALIGN_LEFT_LAST_MEASURE) {
             for (int i = 1; i <= Lines; i++) {
-                if (i == 1) startX = PaddingS + getClefWidth() + FirstStaveKey.WidthAll() + getTimeSignatureWidth() + 2 * FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
-                else startX = PaddingS + getClefWidth() + FirstStaveKey.WidthAll();
-                float X = startX;
+                float X = getStartX(i);
                 int cnt = 0;
                 float diff, w1, we;
                 w1 = -1;
@@ -710,14 +709,14 @@ public class FM_Score extends View {
                         }
                     }
                 diff = (endX - X) / (cnt + 1);
-                X = startX + w1;
+                X = getStartX(i) + w1;
                 w1 = -1;
                 if ((Align != FM_Align.ALIGN_LEFT_MEASURES && (Align == FM_Align.ALIGN_LEFT_LAST_MEASURE && i != Lines)) || diff < 0)
                     for (int j = 0; j < StaveNotes.size(); j++)
                         if (StaveNotes.get(j).line == i) {
                             if (w1 == -1) {
                                 w1 = 0;
-                                StaveNotes.get(j).SetDrawParameters(startX, StaveNotes.get(j).StartY1, StaveNotes.get(j).StartY2);
+                                StaveNotes.get(j).SetDrawParameters(getStartX(i), StaveNotes.get(j).StartY1, StaveNotes.get(j).StartY2);
                             }
                             else {
                                 float w = StaveNotes.get(j).WidthAll(true);
