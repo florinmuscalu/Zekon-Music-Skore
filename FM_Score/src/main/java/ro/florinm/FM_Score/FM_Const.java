@@ -230,4 +230,53 @@ public class FM_Const {
         Score.Font.getTextBounds(text, 0, text.length(), bounds);
         Score.Font.setTextSize(100f * height / bounds.height());
     }
+
+    public String ConvertNote(String note, @FM_NotationSystem int NotationSystem){
+        note = note.toLowerCase().trim();
+        int n = 0;
+        if (note.equals("c") || note.equals("do") || note.equals("ha")) n = 1;
+        if ((n==0) && (note.equals("d") || note.equals("re") || note.equals("ni"))) n = 2;
+        if ((n==0) && (note.equals("e") || note.equals("mi") || note.equals("ho"))) n = 3;
+        if ((n==0) && (note.equals("f") || note.equals("fa") || note.equals("he"))) n = 4;
+        if ((n==0) && (note.equals("g") || note.equals("sol") || note.equals("to"))) n = 5;
+        if ((n==0) && (note.equals("a") || note.equals("la") || note.equals("i"))) n = 6;
+        if ((n==0) && (note.equals("b") || note.equals("h") || note.equals("si") || note.equals("ro"))) n = 7;
+        if (NotationSystem == FM_NotationSystem.ENGLISH){
+            if (n == 1) return "c";
+            if (n == 2) return "d";
+            if (n == 3) return "e";
+            if (n == 4) return "f";
+            if (n == 5) return "g";
+            if (n == 6) return "a";
+            if (n == 7) return "b";
+        }
+        if (NotationSystem == FM_NotationSystem.GERMAN){
+            if (n == 1) return "c";
+            if (n == 2) return "d";
+            if (n == 3) return "e";
+            if (n == 4) return "f";
+            if (n == 5) return "g";
+            if (n == 6) return "a";
+            if (n == 7) return "h";
+        }
+        if (NotationSystem == FM_NotationSystem.ITALIAN){
+            if (n == 1) return "do";
+            if (n == 2) return "re";
+            if (n == 3) return "mi";
+            if (n == 4) return "fa";
+            if (n == 5) return "sol";
+            if (n == 6) return "la";
+            if (n == 7) return "si";
+        }
+        if (NotationSystem == FM_NotationSystem.JAPANESE){
+            if (n == 1) return "ha";
+            if (n == 2) return "ni";
+            if (n == 3) return "ho";
+            if (n == 4) return "he";
+            if (n == 5) return "to";
+            if (n == 6) return "i";
+            if (n == 7) return "ro";
+        }
+        return "";
+    }
 }

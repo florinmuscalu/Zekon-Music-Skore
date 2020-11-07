@@ -104,7 +104,7 @@ public class FM_Beam {
                 float tmpY = n.get(i).ys + n.get(i).getDisplacement() * score.getDistanceBetweenStaveLines();
                 float tmpY2 = FM_Const.getY2(slope, x, y, tmpX);
 
-                canvas.drawRect(tmpX, tmpY, tmpX - FM_Const.dpTOpx(score.getContext(), 1), tmpY2 - score.getDistanceBetweenStaveLines() / 2, score.Font);
+                canvas.drawRect(tmpX, tmpY, tmpX - FM_Const.dpTOpx(score.getContext(), 1), tmpY2 - score.getDistanceBetweenStaveLines() / 2 + FM_Const.dpTOpx(score.getContext(), 1), score.Font);
             }
         } else {
             for (int i = 0; i < n.size(); i++) {
@@ -112,7 +112,7 @@ public class FM_Beam {
                 float tmpY = n.get(i).ys + n.get(i).getDisplacement() * score.getDistanceBetweenStaveLines();
                 float tmpY2 = FM_Const.getY2(slope, x, y, tmpX);
 
-                canvas.drawRect(tmpX, tmpY, tmpX + FM_Const.dpTOpx(score.getContext(), 1), tmpY2 - score.getDistanceBetweenStaveLines() / 2, score.Font);
+                canvas.drawRect(tmpX, tmpY, tmpX + FM_Const.dpTOpx(score.getContext(), 1), tmpY2 - score.getDistanceBetweenStaveLines() / 2 - FM_Const.dpTOpx(score.getContext(), 1), score.Font);
             }
         }
 
@@ -123,17 +123,17 @@ public class FM_Beam {
         if (!n.get(0).stem_up) {
             topPath.reset();
             topPath.moveTo(x, y - score.getDistanceBetweenStaveLines() / 2);
-            topPath.lineTo(xe, ye - score.getDistanceBetweenStaveLines() / 2);
-            topPath.lineTo(xe, ye - score.getDistanceBetweenStaveLines());
+            topPath.lineTo(xe + FM_Const.dpTOpx(score.getContext(), 1), ye - score.getDistanceBetweenStaveLines() / 2);
+            topPath.lineTo(xe + FM_Const.dpTOpx(score.getContext(), 1), ye - score.getDistanceBetweenStaveLines());
             topPath.lineTo(x, y - score.getDistanceBetweenStaveLines());
             topPath.lineTo(x, y);
         } else {
             topPath.reset();
-            topPath.moveTo(x, y);
+            topPath.moveTo(x - FM_Const.dpTOpx(score.getContext(), 1), y);
             topPath.lineTo(xe, ye);
             topPath.lineTo(xe, ye - score.getDistanceBetweenStaveLines() / 2);
-            topPath.lineTo(x, y - score.getDistanceBetweenStaveLines() / 2);
-            topPath.lineTo(x, y);
+            topPath.lineTo(x - FM_Const.dpTOpx(score.getContext(), 1), y - score.getDistanceBetweenStaveLines() / 2);
+            topPath.lineTo(x - FM_Const.dpTOpx(score.getContext(), 1), y);
         }
         canvas.drawPath(topPath, score.Font);
 
@@ -159,18 +159,19 @@ public class FM_Beam {
             float tmpX2 = 0;
             if (drawBegin && drawEnd) {
                 tmpX1 = n.get(i).startX + n.get(i).paddingLeft + n.get(i).WidthAccidental() + n.get(i).paddingNote;
-                if (n.get(0).stem_up) tmpX1 = tmpX1 + n.get(i).WidthNote();
+                if (n.get(0).stem_up) tmpX1 = tmpX1 + n.get(i).WidthNote() - FM_Const.dpTOpx(score.getContext(), 1);
                 tmpX2 = n.get(i + 1).startX + n.get(i + 1).paddingLeft + n.get(i + 1).WidthAccidental() + n.get(i + 1).paddingNote;
                 if (n.get(0).stem_up) tmpX2 = tmpX2 + n.get(i+1).WidthNote();
+                else tmpX2 = tmpX2 + FM_Const.dpTOpx(score.getContext(), 1);
             }
             if (drawBegin && !drawEnd) {
                 tmpX1 = n.get(i).startX + n.get(i).paddingLeft + n.get(i).WidthAccidental() + n.get(i).paddingNote;
-                if (n.get(0).stem_up) tmpX1 = tmpX1 + n.get(i).WidthNote();
+                if (n.get(0).stem_up) tmpX1 = tmpX1 + n.get(i).WidthNote() - FM_Const.dpTOpx(score.getContext(), 1);
                 tmpX2 = tmpX1 + score.getDistanceBetweenStaveLines() * 2 / 3;
             }
             if (!drawBegin && drawEnd) {
                 tmpX2 = n.get(i + 1).startX + n.get(i + 1).paddingLeft + n.get(i + 1).WidthAccidental() + n.get(i + 1).paddingNote;
-                if (n.get(0).stem_up) tmpX2 = tmpX2 + n.get(i + 1).WidthNote();
+                if (n.get(0).stem_up) tmpX2 = tmpX2 + n.get(i + 1).WidthNote() - FM_Const.dpTOpx(score.getContext(), 1);
                 tmpX1 = tmpX2 - score.getDistanceBetweenStaveLines() * 2 / 3;
             }
 
