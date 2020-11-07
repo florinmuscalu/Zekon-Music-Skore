@@ -104,7 +104,7 @@ public class FM_Beam {
                 float tmpY = n.get(i).ys + n.get(i).getDisplacement() * score.getDistanceBetweenStaveLines();
                 float tmpY2 = FM_Const.getY2(slope, x, y, tmpX);
 
-                canvas.drawRect(tmpX, tmpY, tmpX - FM_Const.dpTOpx(score.getContext(), 1), tmpY2 - score.getDistanceBetweenStaveLines() / 2 + FM_Const.dpTOpx(score.getContext(), 1), score.Font);
+                canvas.drawRect(tmpX, tmpY - FM_Const.dpTOpx(score.getContext(), 1), tmpX - FM_Const.dpTOpx(score.getContext(), 1), tmpY2 - score.getDistanceBetweenStaveLines() / 2 + FM_Const.dpTOpx(score.getContext(), 1), score.Font);
             }
         } else {
             for (int i = 0; i < n.size(); i++) {
@@ -112,7 +112,7 @@ public class FM_Beam {
                 float tmpY = n.get(i).ys + n.get(i).getDisplacement() * score.getDistanceBetweenStaveLines();
                 float tmpY2 = FM_Const.getY2(slope, x, y, tmpX);
 
-                canvas.drawRect(tmpX, tmpY, tmpX + FM_Const.dpTOpx(score.getContext(), 1), tmpY2 - score.getDistanceBetweenStaveLines() / 2 - FM_Const.dpTOpx(score.getContext(), 1), score.Font);
+                canvas.drawRect(tmpX, tmpY + FM_Const.dpTOpx(score.getContext(), 1), tmpX + FM_Const.dpTOpx(score.getContext(), 1), tmpY2 - score.getDistanceBetweenStaveLines() / 2 - FM_Const.dpTOpx(score.getContext(), 1), score.Font);
             }
         }
 
