@@ -110,6 +110,8 @@ class FM_KeySignature extends FM_BaseNote {
     }
 
     public float WidthAll() {
+        String s = asString();
+        if (s.equals("")) return 0;
         FM_Const.AdjustFont(score, asString(), 2);
         return paddingLeft + score.Font.measureText(asString()) + (accidental.size() - 1) * FM_Const.dpTOpx(score.getContext(), 2) + paddingRight + FM_Const.dpTOpx(score.getContext(), FM_Const.DEFAULT_EXTRA_PADDING);
     }

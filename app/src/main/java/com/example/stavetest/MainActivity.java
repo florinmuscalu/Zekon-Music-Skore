@@ -42,17 +42,17 @@ public class MainActivity extends AppCompatActivity {
         s.setNoteSpacing(0);
         s.setTimeSignature(FM_TimeSignature._2_4);
         s.setKeySignature(FM_KeySignatureValue.DOsharp);
-        s.setAlign(FM_Align.ALIGN_CENTER_MEASURES);
+        s.setAlign(FM_Align.ALIGN_CENTER_NOTES);
         s.setPaddingT(5);
         s.setCenterVertical(true);
         s.setMultiLine(true);
         s.setShowBrace(true);
         s.setAllowZoomPan(true);
         s.setDrawBoundigBox(false);
-
+        s.setTrimLastLine(true);
         //addRandom();
-        addTestAll();
-            addSimpleMelodic();
+        //addTestAll();
+        // addSimpleMelodic();
 //        s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true), FM_ClefValue.TREBLE);
 //        List<FM_Note> chord = new ArrayList<>();
 //        List<Integer> clefs = new ArrayList<>();
@@ -79,14 +79,14 @@ public class MainActivity extends AppCompatActivity {
         s.AddToBeam((FM_Note) s.getLastNote());
         s.EndBeam();
 
-        s.BeginBeam();
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
-        s.AddToBeam((FM_Note) s.getLastNote());
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.TripleFlat, FM_DurationValue.NOTE_EIGHT, true), FM_ClefValue.TREBLE);
-        s.AddToBeam((FM_Note) s.getLastNote());
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
-        s.AddToBeam((FM_Note) s.getLastNote());
-        s.EndBeam();
+//        s.BeginBeam();
+//        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
+//        s.AddToBeam((FM_Note) s.getLastNote());
+//        s.addStaffNote(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.TripleFlat, FM_DurationValue.NOTE_EIGHT, true), FM_ClefValue.TREBLE);
+//        s.AddToBeam((FM_Note) s.getLastNote());
+//        s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
+//        s.AddToBeam((FM_Note) s.getLastNote());
+//        s.EndBeam();
 
     }
 
