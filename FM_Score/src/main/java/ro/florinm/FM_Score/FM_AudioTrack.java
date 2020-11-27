@@ -328,6 +328,7 @@ public class FM_AudioTrack {
 
     public void Play(long duration, boolean NextPause) {
         //if (playing) return;
+        if (output.length == 0) return;
         new Thread(() -> {
             playing = true;
             try {
