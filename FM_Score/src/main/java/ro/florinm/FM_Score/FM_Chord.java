@@ -61,6 +61,7 @@ public class FM_Chord extends FM_BaseNote {
         for (int i = 0; i < Notes.size(); i++) {
             w = Notes.get(i).WidthAllNoDot();
             Notes.get(i).setPaddingLeft(maxW - w);
+            if (Notes.get(i) instanceof FM_Pause) Notes.get(i).setPaddingLeft(0);
         }
         //if the distance between the notes is 0, and notes
         for (int i = 0; i < Notes.size(); i++)

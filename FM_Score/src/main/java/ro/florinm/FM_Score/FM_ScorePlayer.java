@@ -23,13 +23,15 @@ public class FM_ScorePlayer {
     public FM_SoundPool soundPlayer;
     boolean playing_step, playing;
     Context context;
+    double tempo = 60.0;
 
-    public FM_ScorePlayer(Context context) {
+    public FM_ScorePlayer(Context context, double tempo) {
         super();
         this.context = context;
         soundPlayer = new FM_SoundPool(context);
         playing = false;
         playing_step = false;
+        this.tempo = tempo;
     }
 
     public int LoadFromJson(JSONObject obj) {
@@ -115,34 +117,34 @@ public class FM_ScorePlayer {
         return song;
     }
 
-    public void Play(int tempo) {
-        Play(tempo, 1, song.measures.size(), 0, false);
+    public void Play() {
+        Play(1, song.measures.size(), 0, false);
     }
 
-    public void Prepare(int tempo) {
-        Play(tempo,1, song.measures.size(), 0, true);
+    public void Prepare() {
+        Play(1, song.measures.size(), 0, true);
     }
 
-    private void Play(int tempo, int measure_start, int measure_end) {
-        Play(tempo, measure_start, measure_end, 0, false);
+    private void Play(int measure_start, int measure_end) {
+        Play(measure_start, measure_end, 0, false);
     }
 
-    private void Prepare(int tempo, int measure_start, int measure_end) {
-        Play(tempo, measure_start, measure_end, 0, true);
+    private void Prepare(int measure_start, int measure_end) {
+        Play(measure_start, measure_end, 0, true);
     }
 
-    private void Play(int tempo, int measure_start, int measure_end, int notes) {
-        Play(tempo, measure_start, measure_end, notes, false);
+    private void Play(int measure_start, int measure_end, int notes) {
+        Play(measure_start, measure_end, notes, false);
     }
 
-    private void Prepare(int tempo, int measure_start, int measure_end, int notes) {
-        Play(tempo, measure_start, measure_end, notes, true);
+    private void Prepare(int measure_start, int measure_end, int notes) {
+        Play(measure_start, measure_end, notes, true);
     }
 
-    private void Play(int tempo, int measure_start, int measure_end, int notes, Boolean prepare) {
+    private void Play(int measure_start, int measure_end, int notes, Boolean prepare) {
         if (prepare) {
             song.prepared = false;
-            PlayHarmonic(tempo, song, measure_start, measure_end, notes, prepare);
+            PlayHarmonic(song, measure_start, measure_end, notes, prepare);
         } else {
             new Thread(() -> {
                 while (!song.prepared)
@@ -151,19 +153,25 @@ public class FM_ScorePlayer {
                     } catch (Exception ignored) {
                     }
                 playing = true;
-                PlayHarmonic(tempo, song, measure_start, measure_end, notes, prepare);
+                PlayHarmonic(song, measure_start, measure_end, notes, prepare);
             }).start();
         }
     }
 
-    private void PlayHarmonic(int tempo, final FM_Audio_Song song, int measure_start, int measure_end, int notes, Boolean prepare) {
+    private void PlayHarmonic(final FM_Audio_Song song, int measure_start, int measure_end, int notes, Boolean prepare) {
         soundPlayer.TEMPO = 1000 * (60/tempo);
+        StartMeasure();
         if (measure_end > song.measures.size()) measure_end = song.measures.size();
         if (measure_end == song.measures.size()) notes = 0;
         List<FM_Audio_Note> ListNotes = new ArrayList<>();
         for (int i = measure_start - 1; i < measure_end; i++) {
             for (int j = 0; j < song.measures.get(i).notes.size(); j++) {
                 String[] n = song.measures.get(i).notes.get(j).note.split(",");
+                String tmp = "";
+                for (String value : n) {
+                    if (!value.equals("r/4")) tmp = tmp+value+",";
+                }
+                n = tmp.substring(0, tmp.length()-1).split(",");
                 n = computeNote(song.keysignature, n);
                 String[] d = song.measures.get(i).notes.get(j).duration.split(",");
                 ListNotes.add(song.measures.get(i).notes.get(j));

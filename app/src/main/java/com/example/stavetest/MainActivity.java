@@ -25,9 +25,11 @@ import ro.florinm.FM_Score.FM_Note;
 import ro.florinm.FM_Score.FM_NoteValue;
 import ro.florinm.FM_Score.FM_Pause;
 import ro.florinm.FM_Score.FM_Score;
+import ro.florinm.FM_Score.FM_ScorePlayer;
 import ro.florinm.FM_Score.FM_TimeSignature;
 
 public class MainActivity extends AppCompatActivity {
+    FM_ScorePlayer player;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception ignored) {}
 
         s.LoadFromJson(obj);
+        player = new FM_ScorePlayer(getApplicationContext(), 44);
+        player.LoadFromJson(obj);
             //addRandom();
         //addTestAll();
         // addSimpleMelodic();
@@ -449,8 +453,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void OnClick(View v){
-        FM_Score s = findViewById(R.id.stave);
-        //s.Prepare(44);
-        //s.Play(44);
+        player.Prepare();
+        player.Play();
     }
 }
