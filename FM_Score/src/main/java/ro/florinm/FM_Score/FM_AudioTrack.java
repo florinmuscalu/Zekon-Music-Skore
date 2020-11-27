@@ -27,7 +27,6 @@ class FM_Audio_Note {
     String duration;
     String playDuration;
     String pauseDuration;
-    Integer audioINT = 0;
     Boolean legato_start = false;
     Boolean legato_end = false;
     FM_AudioTrack audioT = null;
@@ -117,13 +116,17 @@ public class FM_AudioTrack {
         this.loading = true;
         new Thread(() -> {
             try {
-                InputStream in1 = context.getAssets().open(FM_SoundPool.assetFiles.get(track1.track));
-                InputStream in2 = context.getAssets().open(FM_SoundPool.assetFiles.get(track2.track));
+                InputStream in1 = null;
+                InputStream in2 = null;
                 InputStream in3 = null;
                 InputStream in4 = null;
                 InputStream in5 = null;
                 InputStream in6 = null;
                 InputStream in7 = null;
+                if (track1 != null)
+                    in1 = context.getAssets().open(FM_SoundPool.assetFiles.get(track1.track));
+                if (track2 != null)
+                    in2 = context.getAssets().open(FM_SoundPool.assetFiles.get(track2.track));
                 if (track3 != null)
                     in3 = context.getAssets().open(FM_SoundPool.assetFiles.get(track3.track));
                 if (track4 != null)
@@ -135,15 +138,21 @@ public class FM_AudioTrack {
                 if (track7 != null)
                     in7 = context.getAssets().open(FM_SoundPool.assetFiles.get(track7.track));
 
-                short[] music1 = sampleToShortArray(in1);
-                in1.close();
-                short[] music2 = sampleToShortArray(in2);
-                in2.close();
+                short[] music1 = null;
+                short[] music2 = null;
                 short[] music3 = null;
                 short[] music4 = null;
                 short[] music5 = null;
                 short[] music6 = null;
                 short[] music7 = null;
+                if (track1 != null) {
+                    music1 = sampleToShortArray(in1);
+                    in1.close();
+                }
+                if (track2 != null) {
+                    music2 = sampleToShortArray(in2);
+                    in2.close();
+                }
                 if (track3 != null) {
                     music3 = sampleToShortArray(in3);
                     in3.close();
@@ -165,8 +174,9 @@ public class FM_AudioTrack {
                     in7.close();
                 }
 
-                int l = music1.length;
-                if (l > music2.length) l = music2.length;
+                int l = 0;
+                if (track1 != null && l > music1.length) l = music1.length;
+                if (track2 != null && l > music2.length) l = music2.length;
                 if (track3 != null && l > music3.length) l = music3.length;
                 if (track4 != null && l > music4.length) l = music4.length;
                 if (track5 != null && l > music5.length) l = music5.length;
@@ -174,8 +184,10 @@ public class FM_AudioTrack {
                 if (track7 != null && l > music7.length) l = music7.length;
                 int fallback = FM_SoundPool.FALLBACK_DURATION * 24;
 
-                if (l > track1.duration * 24 + fallback) l = track1.duration * 24 + fallback;
-                if (l < track2.duration * 24 + fallback) l = track2.duration * 24 + fallback;
+                if (track1 != null && l < track1.duration * 24 + fallback)
+                    l = track1.duration * 24 + fallback;
+                if (track2 != null && l < track2.duration * 24 + fallback)
+                    l = track2.duration * 24 + fallback;
                 if (track3 != null && l < track3.duration * 24 + fallback)
                     l = track3.duration * 24 + fallback;
                 if (track4 != null && l < track4.duration * 24 + fallback)
@@ -189,40 +201,44 @@ public class FM_AudioTrack {
 
                 output = new short[l];
 
-                int td1 = track1.duration * 24;
-                int td2 = track2.duration * 24;
+                int td1 = 0;
+                int td2 = 0;
                 int td3 = 0;
                 int td4 = 0;
                 int td5 = 0;
                 int td6 = 0;
                 int td7 = 0;
+                if (track1 != null) td1 = track1.duration * 24;
+                if (track2 != null) td2 = track2.duration * 24;
                 if (track3 != null) td3 = track3.duration * 24;
                 if (track4 != null) td4 = track4.duration * 24;
                 if (track5 != null) td5 = track5.duration * 24;
                 if (track6 != null) td6 = track6.duration * 24;
                 if (track7 != null) td7 = track7.duration * 24;
                 for (int i = 0; i < output.length; i++) {
-                    float sample1;
-                    if (i < td1) {
-                        sample1 = music1[i] / 32768.0f;
-                    } else {
-                        if (i > td1 + fallback) sample1 = 0;
-                        else sample1 = (music1[i] / 32768.0f) * (td1 + fallback - i) / fallback;
-
-                    }
-                    float sample2;
-                    if (i < td2) {
-                        sample2 = music2[i] / 32768.0f;
-                    } else {
-                        if (i > td2 + fallback) sample2 = 0;
-                        else sample2 = (music2[i] / 32768.0f) * (td2 + fallback - i) / fallback;
-
-                    }
+                    float sample1 = 0;
+                    float sample2 = 0;
                     float sample3 = 0;
                     float sample4 = 0;
                     float sample5 = 0;
                     float sample6 = 0;
                     float sample7 = 0;
+                    if (track1 != null)
+                        if (i < td1) {
+                            sample1 = music1[i] / 32768.0f;
+                        } else {
+                            if (i > td1 + fallback) sample1 = 0;
+                            else
+                                sample1 = (music1[i] / 32768.0f) * (td1 + fallback - i) / fallback;
+                        }
+                    if (track2 != null)
+                        if (i < td2) {
+                            sample2 = music2[i] / 32768.0f;
+                        } else {
+                            if (i > td2 + fallback) sample2 = 0;
+                            else
+                                sample2 = (music2[i] / 32768.0f) * (td2 + fallback - i) / fallback;
+                        }
                     if (track3 != null)
                         if (i < td3) {
                             sample3 = music3[i] / 32768.0f;
@@ -230,7 +246,6 @@ public class FM_AudioTrack {
                             if (i > td3 + fallback) sample3 = 0;
                             else
                                 sample3 = (music3[i] / 32768.0f) * (td3 + fallback - i) / fallback;
-
                         }
                     if (track4 != null)
                         if (i < td4) {
@@ -239,7 +254,6 @@ public class FM_AudioTrack {
                             if (i > td4 + fallback) sample4 = 0;
                             else
                                 sample4 = (music4[i] / 32768.0f) * (td4 + fallback - i) / fallback;
-
                         }
                     if (track5 != null)
                         if (i < td5) {
@@ -248,7 +262,6 @@ public class FM_AudioTrack {
                             if (i > td5 + fallback) sample5 = 0;
                             else
                                 sample5 = (music5[i] / 32768.0f) * (td5 + fallback - i) / fallback;
-
                         }
                     if (track6 != null)
                         if (i < td6) {
@@ -257,7 +270,6 @@ public class FM_AudioTrack {
                             if (i > td6 + fallback) sample6 = 0;
                             else
                                 sample6 = (music6[i] / 32768.0f) * (td6 + fallback - i) / fallback;
-
                         }
                     if (track7 != null)
                         if (i < td7) {
@@ -266,7 +278,6 @@ public class FM_AudioTrack {
                             if (i > td7 + fallback) sample7 = 0;
                             else
                                 sample7 = (music7[i] / 32768.0f) * (td7 + fallback - i) / fallback;
-
                         }
                     float mixed = sample1 + sample2 + sample3 + sample4 + sample5 + sample6 + sample7;
                     mixed *= 0.8;
@@ -378,21 +389,21 @@ class FM_SoundPool {
     public FM_AudioTrack CreateTrack(List<Integer> tracks, int d) {
         FM_AudioSubTrack[] track;
         track = new FM_AudioSubTrack[7];
-        for (int i = 0; i < tracks.size(); i++) track[i] = new FM_AudioSubTrack(tracks.get(i), d);
+        for (int i = 0; i < tracks.size(); i++) if (tracks.get(i) != -1)  track[i] = new FM_AudioSubTrack(tracks.get(i), d);
         return CheckAndCreate(track);
     }
 
     public FM_AudioTrack CreateTrack(int[] tracks, int d) {
         FM_AudioSubTrack[] track;
         track = new FM_AudioSubTrack[7];
-        for (int i = 0; i < tracks.length; i++) track[i] = new FM_AudioSubTrack(tracks[i], d);
+        for (int i = 0; i < tracks.length; i++) if (tracks[i] != -1) track[i] = new FM_AudioSubTrack(tracks[i], d);
         return CheckAndCreate(track);
     }
 
     public FM_AudioTrack CreateTrack(List<Integer> tracks, String[] d) {
         FM_AudioSubTrack[] track;
         track = new FM_AudioSubTrack[7];
-        for (int i = 0; i < tracks.size(); i++) track[i] = new FM_AudioSubTrack(tracks.get(i), GetDurationFromStr(d[i]));
+        for (int i = 0; i < tracks.size(); i++) if (tracks.get(i) != -1) track[i] = new FM_AudioSubTrack(tracks.get(i), GetDurationFromStr(d[i]));
         return CheckAndCreate(track);
     }
 
@@ -411,8 +422,6 @@ class FM_SoundPool {
     }
 
     private boolean playing;
-    //hold the playing threads
-    private final SparseArray<PlayThread> threadMap;
     //hold the audio files
     protected static final SparseArray<String> assetFiles = new SparseArray<>();
     protected static final Map<String, Integer> KeyMapping = new HashMap<>();
@@ -889,7 +898,6 @@ class FM_SoundPool {
     public FM_SoundPool(Context context) {
         this.context = context;
         AssetManager assetManager = context.getAssets();
-        threadMap = new SparseArray<>();
         AudioAttributes attributes = new AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_GAME)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -984,24 +992,6 @@ class FM_SoundPool {
         }
     }
 
-    public void playKey(int key) {
-        if (key == -1) return;
-        if (isKeyNotPlaying(key)) {
-            PlayThread thread = new PlayThread(key, false);
-            thread.start();
-            threadMap.put(key, thread);
-        }
-    }
-
-    public void playKey(int key, boolean NextPause) {
-        if (key == -1) return;
-        if (isKeyNotPlaying(key)) {
-            PlayThread thread = new PlayThread(key, NextPause);
-            thread.start();
-            threadMap.put(key, thread);
-        }
-    }
-
     private String TranslateKey(String Key) {
         Key = Key.replace("do", "c");
         Key = Key.replace("re", "d");
@@ -1030,61 +1020,6 @@ class FM_SoundPool {
             return r;
         else
             return 1;
-    }
-
-    public void stopKey(int key) {
-        if (key == -1) return;
-        try {
-            PlayThread thread = threadMap.get(key);
-            if (thread != null) {
-                thread.stop = 1;
-                threadMap.remove(key);
-            }
-        } catch (Exception ignored) {}
-    }
-
-    public boolean isKeyNotPlaying(int key) {
-        return threadMap.get(key) == null;
-    }
-
-    class PlayThread extends Thread {
-        private final int key;
-        private final float pressure;
-        public int stop = 0;
-        private final boolean NextPause;
-        public PlayThread(int key) {
-            NextPause = false;
-            this.key = key;
-            this.pressure = 1;
-        }
-        public PlayThread(int key, boolean NextPause) {
-            this.NextPause = NextPause;
-            this.key = key;
-            this.pressure = 1;
-        }
-
-        @Override
-        public void run() {
-            try {
-                int stream = sndPool.play(soundMap.get(key), pressure, pressure, 100, 0, 1);
-                while (stop == 0) sleep(20);
-                if (stop == 1) {
-                    int d = 0;
-                    int fall = FALLBACK_DURATION;
-                    if (NextPause) fall = FALLBACK_DURATION / 5;
-                    while (d < fall) {
-                        sleep(2);
-                        float p = pressure - pressure * d / fall;
-                        sndPool.setVolume(stream, p, p);
-                        d += 2;
-                    }
-                    sndPool.setVolume(stream, 0, 0);
-                    sndPool.stop(stream);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public int GetDurationFromStr(String duration) {
@@ -1148,12 +1083,5 @@ class FM_SoundPool {
 
     public void StopAllSound() {
         playing = false;
-        for (int i = 0; i < threadMap.size(); i++) {
-            PlayThread thread = threadMap.get(i);
-            if (thread != null) {
-                thread.stop = 1;
-                threadMap.remove(i);
-            }
-        }
     }
 }

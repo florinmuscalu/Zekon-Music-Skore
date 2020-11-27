@@ -167,34 +167,21 @@ public class FM_ScorePlayer {
             StartMeasure();
             for (int j = 0; j < song.measures.get(i).notes.size(); j++) {
                 String[] n = song.measures.get(i).notes.get(j).note.split(",");
-                String tmp = "";
-                for (String value : n) {
-                    if (!value.equals("r/4")) tmp = tmp+value+",";
-                }
-                n = tmp.substring(0, tmp.length()-1).split(",");
                 n = computeNote(song.keysignature, n);
                 String[] d = song.measures.get(i).notes.get(j).duration.split(",");
                 ListNotes.add(song.measures.get(i).notes.get(j));
-                if (n.length == 1) {
-                    ListNotes.get(ListNotes.size() - 1).audioINT = soundPlayer.GetIndex(n[0].trim());
-                    ListNotes.get(ListNotes.size() - 1).audioT = null;
-                    ListNotes.get(ListNotes.size() - 1).playDuration = d[0];
-                    ListNotes.get(ListNotes.size() - 1).pauseDuration = d[0];
-                } else {
-                    List<Integer> tracks = new ArrayList<>();
-                    for (String s : n) tracks.add(soundPlayer.GetIndex(s.trim()));
-                    ListNotes.get(ListNotes.size() - 1).audioINT = 0;
-                    ListNotes.get(ListNotes.size() - 1).audioT = null;
-                    ListNotes.get(ListNotes.size() - 1).pauseDuration = d[0];
-                    ListNotes.get(ListNotes.size() - 1).playDuration = d[0];
-                    for (String s : d) {
-                        if (soundPlayer.GetDurationFromStr(ListNotes.get(ListNotes.size() - 1).pauseDuration) > soundPlayer.GetDurationFromStr(s))
-                            ListNotes.get(ListNotes.size() - 1).pauseDuration = s;
-                        if (soundPlayer.GetDurationFromStr(ListNotes.get(ListNotes.size() - 1).playDuration) < soundPlayer.GetDurationFromStr(s))
-                            ListNotes.get(ListNotes.size() - 1).playDuration = s;
-                    }
-                    ListNotes.get(ListNotes.size() - 1).audioT = soundPlayer.CreateTrack(tracks, d);
+                List<Integer> tracks = new ArrayList<>();
+                for (String s : n) tracks.add(soundPlayer.GetIndex(s.trim()));
+                ListNotes.get(ListNotes.size() - 1).audioT = null;
+                ListNotes.get(ListNotes.size() - 1).pauseDuration = d[0];
+                ListNotes.get(ListNotes.size() - 1).playDuration = d[0];
+                for (String s : d) {
+                    if (soundPlayer.GetDurationFromStr(ListNotes.get(ListNotes.size() - 1).pauseDuration) > soundPlayer.GetDurationFromStr(s))
+                        ListNotes.get(ListNotes.size() - 1).pauseDuration = s;
+                    if (soundPlayer.GetDurationFromStr(ListNotes.get(ListNotes.size() - 1).playDuration) < soundPlayer.GetDurationFromStr(s))
+                        ListNotes.get(ListNotes.size() - 1).playDuration = s;
                 }
+                ListNotes.get(ListNotes.size() - 1).audioT = soundPlayer.CreateTrack(tracks, d);
             }
         }
         if (notes != 0) {
@@ -204,30 +191,22 @@ public class FM_ScorePlayer {
                 n = computeNote(song.keysignature, n);
                 String[] d = song.measures.get(measure_end).notes.get(j).duration.split(",");
                 ListNotes.add(song.measures.get(measure_end).notes.get(j));
-                if (n.length == 1) {
-                    ListNotes.get(ListNotes.size() - 1).audioINT = soundPlayer.GetIndex(n[0].trim());
-                    ListNotes.get(ListNotes.size() - 1).audioT = null;
-                    ListNotes.get(ListNotes.size() - 1).playDuration = d[0];
-                    ListNotes.get(ListNotes.size() - 1).pauseDuration = d[0];
-                } else {
-                    List<Integer> tracks = new ArrayList<>();
-                    for (String s : n)
-                        tracks.add(soundPlayer.GetIndex(s.trim()));
-                    ListNotes.get(ListNotes.size() - 1).audioINT = 0;
-                    ListNotes.get(ListNotes.size() - 1).audioT = null;
-                    ListNotes.get(ListNotes.size() - 1).pauseDuration = d[0];
-                    ListNotes.get(ListNotes.size() - 1).playDuration = d[0];
-                    for (String s : d) {
-                        if (soundPlayer.GetDurationFromStr(ListNotes.get(ListNotes.size() - 1).pauseDuration) > soundPlayer.GetDurationFromStr(s))
-                            ListNotes.get(ListNotes.size() - 1).pauseDuration = s;
-                        if (soundPlayer.GetDurationFromStr(ListNotes.get(ListNotes.size() - 1).playDuration) < soundPlayer.GetDurationFromStr(s))
-                            ListNotes.get(ListNotes.size() - 1).playDuration = s;
-                    }
-                    ListNotes.get(ListNotes.size() - 1).audioT = soundPlayer.CreateTrack(tracks, d);
+                List<Integer> tracks = new ArrayList<>();
+                for (String s : n)
+                    tracks.add(soundPlayer.GetIndex(s.trim()));
+                ListNotes.get(ListNotes.size() - 1).audioT = null;
+                ListNotes.get(ListNotes.size() - 1).pauseDuration = d[0];
+                ListNotes.get(ListNotes.size() - 1).playDuration = d[0];
+                for (String s : d) {
+                    if (soundPlayer.GetDurationFromStr(ListNotes.get(ListNotes.size() - 1).pauseDuration) > soundPlayer.GetDurationFromStr(s))
+                        ListNotes.get(ListNotes.size() - 1).pauseDuration = s;
+                    if (soundPlayer.GetDurationFromStr(ListNotes.get(ListNotes.size() - 1).playDuration) < soundPlayer.GetDurationFromStr(s))
+                        ListNotes.get(ListNotes.size() - 1).playDuration = s;
                 }
+                ListNotes.get(ListNotes.size() - 1).audioT = soundPlayer.CreateTrack(tracks, d);
             }
         }
-        for (int i = 1; i < ListNotes.size(); i++) if (ListNotes.get(i).audioINT == -1) ListNotes.get(i - 1).NextPause = true;
+        ///for (int i = 1; i < ListNotes.size(); i++) if (ListNotes.get(i).audioINT == -1) ListNotes.get(i - 1).NextPause = true;
 
         song.prepared = true;
         if (!prepare)
@@ -235,14 +214,8 @@ public class FM_ScorePlayer {
                 playing_step = true;
                 for (FM_Audio_Note n : ListNotes) {
                     if (!playing) continue;
-                    if (n.audioINT != 0) {
-                        soundPlayer.playKey(n.audioINT, n.NextPause);
-                        soundPlayer.SleepHarmonic(n.playDuration);
-                        soundPlayer.stopKey(n.audioINT);
-                    } else {
-                        n.audioT.Play(soundPlayer.GetDurationFromStr(n.playDuration), n.NextPause);
-                        FM_SoundPool.SleepHarmonic(soundPlayer.GetDurationFromStr(n.pauseDuration));
-                    }
+                    n.audioT.Play(soundPlayer.GetDurationFromStr(n.playDuration), n.NextPause);
+                    FM_SoundPool.SleepHarmonic(soundPlayer.GetDurationFromStr(n.pauseDuration));
                 }
                 playing_step = false;
             }).start();
