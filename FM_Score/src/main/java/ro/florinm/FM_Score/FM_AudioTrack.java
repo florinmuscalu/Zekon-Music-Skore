@@ -315,10 +315,6 @@ public class FM_AudioTrack {
         return outputArray;
     }
 
-    public void Play(long duration) {
-        Play(duration, false);
-    }
-
     public void Play(long duration, boolean NextPause) {
         //if (playing) return;
         new Thread(() -> {
@@ -379,15 +375,36 @@ class FM_SoundPool {
             if (Tracks.get(i).AccessIndex > 99) Tracks.remove(i);
     }
 
-    public FM_AudioTrack CreateTrack(FM_AudioSubTrack track1, FM_AudioSubTrack track2, FM_AudioSubTrack track3, FM_AudioSubTrack track4, FM_AudioSubTrack track5, FM_AudioSubTrack track6, FM_AudioSubTrack track7) {
+    public FM_AudioTrack CreateTrack(List<Integer> tracks, int d) {
+        FM_AudioSubTrack[] track;
+        track = new FM_AudioSubTrack[7];
+        for (int i = 0; i < tracks.size(); i++) track[i] = new FM_AudioSubTrack(tracks.get(i), d);
+        return CheckAndCreate(track);
+    }
+
+    public FM_AudioTrack CreateTrack(int[] tracks, int d) {
+        FM_AudioSubTrack[] track;
+        track = new FM_AudioSubTrack[7];
+        for (int i = 0; i < tracks.length; i++) track[i] = new FM_AudioSubTrack(tracks[i], d);
+        return CheckAndCreate(track);
+    }
+
+    public FM_AudioTrack CreateTrack(List<Integer> tracks, String[] d) {
+        FM_AudioSubTrack[] track;
+        track = new FM_AudioSubTrack[7];
+        for (int i = 0; i < tracks.size(); i++) track[i] = new FM_AudioSubTrack(tracks.get(i), GetDurationFromStr(d[i]));
+        return CheckAndCreate(track);
+    }
+
+    private FM_AudioTrack CheckAndCreate(FM_AudioSubTrack[] track){
         FM_AudioTrack t;
         for (int i = 0; i < Tracks.size(); i++)
-            if (Tracks.get(i).Check(track1, track2, track3, track4, track5, track6, track7)) {
+            if (Tracks.get(i).Check(track[0], track[1], track[2], track[3], track[4], track[5], track[6])) {
                 t = Tracks.get(i);
                 updateTrackList(i);
                 return t;
             }
-        t = new FM_AudioTrack(context, track1, track2, track3, track4, track5, track6, track7);
+        t = new FM_AudioTrack(context, track[0], track[1], track[2], track[3], track[4], track[5], track[6]);
         Tracks.add(t);
         updateTrackList(Tracks.size() - 1);
         return t;
@@ -947,43 +964,12 @@ class FM_SoundPool {
 //        });
 
         AssetFileDescriptor fileDescriptor;
-        for (int i = 40; i <= 60; i++) {
+        for (int i = 1; i <= 88; i++) {
             try {
                 fileDescriptor = assetManager.openFd(assetFiles.get(i));
-
                 soundMap.put(i, sndPool.load(fileDescriptor, 1));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            } catch (IOException ignored) {}
         }
-        for (int i = 30; i <= 39; i++) {
-            try {
-                fileDescriptor = assetManager.openFd(assetFiles.get(i));
-
-                soundMap.put(i, sndPool.load(fileDescriptor, 1));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        for (int i = 61; i <= 88; i++) {
-            try {
-                fileDescriptor = assetManager.openFd(assetFiles.get(i));
-
-                soundMap.put(i, sndPool.load(fileDescriptor, 1));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        for (int i = 1; i <= 29; i++) {
-            try {
-                fileDescriptor = assetManager.openFd(assetFiles.get(i));
-
-                soundMap.put(i, sndPool.load(fileDescriptor, 1));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
         try {
             fileDescriptor = assetManager.openFd(assetFiles.get(100));
             soundMap.put(100, sndPool.load(fileDescriptor, 1));
@@ -1015,31 +1001,6 @@ class FM_SoundPool {
             threadMap.put(key, thread);
         }
     }
-
-    private static boolean MetronomeOn = false;
-
-    public void StartMetronome(){
-        MetronomeOn = true;
-        new Thread(() -> {
-            long d = GetDurationFromStr("q");
-            int tick = 0;
-            while (MetronomeOn) {
-                if (tick == 3) {
-                    sndPool.play(soundMap.get(101), 1, 1, 100, 0, 1);
-                    tick = 0;
-                } else {
-                    sndPool.play(soundMap.get(102), 1, 1, 100, 0, 1);
-                    tick = tick +1;
-                }
-                SleepHarmonic(d);
-            }
-        }).start();
-    }
-
-    public void StopMetronome(){
-        MetronomeOn = false;
-    }
-
 
     private String TranslateKey(String Key) {
         Key = Key.replace("do", "c");
@@ -1124,52 +1085,6 @@ class FM_SoundPool {
                 e.printStackTrace();
             }
         }
-    }
-
-    public void PlayNote(final String keys, final Boolean simultaneously, final Boolean prepare, final long duration) {
-        if (playing && !prepare) return;
-        new Thread(() -> {
-            String[] k = keys.replace("[", "").replace("]", "").replace("\"", "").replace("\\", "").toLowerCase().split(",");
-            final int[] Index = new int[k.length];
-            for (int i = 0; i < k.length; i++) Index[i] = GetIndex(k[i].trim());
-            if (!simultaneously) {
-                if (!prepare) {
-                    playing = true;
-                    for (int i : Index) {
-                        if (playing) {
-                            playKey(i);
-                            if (duration == -1)
-                                SleepMelodic((long) (TEMPO));
-                            else SleepMelodic(duration);
-                            stopKey(i);
-                        }
-                    }
-                    playing = false;
-                }
-            } else {
-                FM_AudioTrack t = null;
-                int d = (int) duration;
-                if (duration == -1) d = (int) TEMPO;
-                if (Index.length == 2)
-                    t = CreateTrack(new FM_AudioSubTrack(Index[0], d), new FM_AudioSubTrack(Index[1], d), null, null, null, null, null);
-                if (Index.length == 3)
-                    t = CreateTrack(new FM_AudioSubTrack(Index[0], d), new FM_AudioSubTrack(Index[1], d), new FM_AudioSubTrack(Index[2], d), null, null, null, null);
-                if (Index.length == 4)
-                    t = CreateTrack(new FM_AudioSubTrack(Index[0], d), new FM_AudioSubTrack(Index[1], d), new FM_AudioSubTrack(Index[2], d), new FM_AudioSubTrack(Index[3], d), null, null, null);
-                if (Index.length == 5)
-                    t = CreateTrack(new FM_AudioSubTrack(Index[0], d), new FM_AudioSubTrack(Index[1], d), new FM_AudioSubTrack(Index[2], d), new FM_AudioSubTrack(Index[3], d), new FM_AudioSubTrack(Index[4], d), null, null);
-                if (Index.length == 6)
-                    t = CreateTrack(new FM_AudioSubTrack(Index[0], d), new FM_AudioSubTrack(Index[1], d), new FM_AudioSubTrack(Index[2], d), new FM_AudioSubTrack(Index[3], d), new FM_AudioSubTrack(Index[4], d), new FM_AudioSubTrack(Index[5], d), null);
-                if (Index.length == 7)
-                    t = CreateTrack(new FM_AudioSubTrack(Index[0], d), new FM_AudioSubTrack(Index[1], d), new FM_AudioSubTrack(Index[2], d), new FM_AudioSubTrack(Index[3], d), new FM_AudioSubTrack(Index[4], d), new FM_AudioSubTrack(Index[5], d), new FM_AudioSubTrack(Index[6], d));
-                if (!prepare && t != null) {
-                    playing = true;
-                    t.Play(d);
-                    SleepHarmonic(d);
-                    playing = false;
-                }
-            }
-        }).start();
     }
 
     public int GetDurationFromStr(String duration) {

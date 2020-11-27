@@ -160,11 +160,11 @@ public class FM_ScorePlayer {
 
     private void PlayHarmonic(final FM_Audio_Song song, int measure_start, int measure_end, int notes, Boolean prepare) {
         soundPlayer.TEMPO = 1000 * (60/tempo);
-        StartMeasure();
         if (measure_end > song.measures.size()) measure_end = song.measures.size();
         if (measure_end == song.measures.size()) notes = 0;
         List<FM_Audio_Note> ListNotes = new ArrayList<>();
         for (int i = measure_start - 1; i < measure_end; i++) {
+            StartMeasure();
             for (int j = 0; j < song.measures.get(i).notes.size(); j++) {
                 String[] n = song.measures.get(i).notes.get(j).note.split(",");
                 String tmp = "";
@@ -182,8 +182,7 @@ public class FM_ScorePlayer {
                     ListNotes.get(ListNotes.size() - 1).pauseDuration = d[0];
                 } else {
                     List<Integer> tracks = new ArrayList<>();
-                    for (String s : n)
-                        tracks.add(soundPlayer.GetIndex(s.trim()));
+                    for (String s : n) tracks.add(soundPlayer.GetIndex(s.trim()));
                     ListNotes.get(ListNotes.size() - 1).audioINT = 0;
                     ListNotes.get(ListNotes.size() - 1).audioT = null;
                     ListNotes.get(ListNotes.size() - 1).pauseDuration = d[0];
@@ -194,22 +193,12 @@ public class FM_ScorePlayer {
                         if (soundPlayer.GetDurationFromStr(ListNotes.get(ListNotes.size() - 1).playDuration) < soundPlayer.GetDurationFromStr(s))
                             ListNotes.get(ListNotes.size() - 1).playDuration = s;
                     }
-                    if (tracks.size() == 2)
-                        ListNotes.get(ListNotes.size() - 1).audioT = soundPlayer.CreateTrack(new FM_AudioSubTrack(tracks.get(0), soundPlayer.GetDurationFromStr(d[0])), new FM_AudioSubTrack(tracks.get(1), soundPlayer.GetDurationFromStr(d[1])), null, null, null, null, null);
-                    if (tracks.size() == 3)
-                        ListNotes.get(ListNotes.size() - 1).audioT = soundPlayer.CreateTrack(new FM_AudioSubTrack(tracks.get(0), soundPlayer.GetDurationFromStr(d[0])), new FM_AudioSubTrack(tracks.get(1), soundPlayer.GetDurationFromStr(d[1])), new FM_AudioSubTrack(tracks.get(2), soundPlayer.GetDurationFromStr(d[2])), null, null, null, null);
-                    if (tracks.size() == 4)
-                        ListNotes.get(ListNotes.size() - 1).audioT = soundPlayer.CreateTrack(new FM_AudioSubTrack(tracks.get(0), soundPlayer.GetDurationFromStr(d[0])), new FM_AudioSubTrack(tracks.get(1), soundPlayer.GetDurationFromStr(d[1])), new FM_AudioSubTrack(tracks.get(2), soundPlayer.GetDurationFromStr(d[2])), new FM_AudioSubTrack(tracks.get(3), soundPlayer.GetDurationFromStr(d[3])), null, null, null);
-                    if (tracks.size() == 5)
-                        ListNotes.get(ListNotes.size() - 1).audioT = soundPlayer.CreateTrack(new FM_AudioSubTrack(tracks.get(0), soundPlayer.GetDurationFromStr(d[0])), new FM_AudioSubTrack(tracks.get(1), soundPlayer.GetDurationFromStr(d[1])), new FM_AudioSubTrack(tracks.get(2), soundPlayer.GetDurationFromStr(d[2])), new FM_AudioSubTrack(tracks.get(3), soundPlayer.GetDurationFromStr(d[3])), new FM_AudioSubTrack(tracks.get(4), soundPlayer.GetDurationFromStr(d[4])), null, null);
-                    if (tracks.size() == 6)
-                        ListNotes.get(ListNotes.size() - 1).audioT = soundPlayer.CreateTrack(new FM_AudioSubTrack(tracks.get(0), soundPlayer.GetDurationFromStr(d[0])), new FM_AudioSubTrack(tracks.get(1), soundPlayer.GetDurationFromStr(d[1])), new FM_AudioSubTrack(tracks.get(2), soundPlayer.GetDurationFromStr(d[2])), new FM_AudioSubTrack(tracks.get(3), soundPlayer.GetDurationFromStr(d[3])), new FM_AudioSubTrack(tracks.get(4), soundPlayer.GetDurationFromStr(d[4])), new FM_AudioSubTrack(tracks.get(5), soundPlayer.GetDurationFromStr(d[5])), null);
-                    if (tracks.size() == 7)
-                        ListNotes.get(ListNotes.size() - 1).audioT = soundPlayer.CreateTrack(new FM_AudioSubTrack(tracks.get(0), soundPlayer.GetDurationFromStr(d[0])), new FM_AudioSubTrack(tracks.get(1), soundPlayer.GetDurationFromStr(d[1])), new FM_AudioSubTrack(tracks.get(2), soundPlayer.GetDurationFromStr(d[2])), new FM_AudioSubTrack(tracks.get(3), soundPlayer.GetDurationFromStr(d[3])), new FM_AudioSubTrack(tracks.get(4), soundPlayer.GetDurationFromStr(d[4])), new FM_AudioSubTrack(tracks.get(5), soundPlayer.GetDurationFromStr(d[5])), new FM_AudioSubTrack(tracks.get(6), soundPlayer.GetDurationFromStr(d[6])));
+                    ListNotes.get(ListNotes.size() - 1).audioT = soundPlayer.CreateTrack(tracks, d);
                 }
             }
         }
-        if (notes != 0)
+        if (notes != 0) {
+            StartMeasure();
             for (int j = 0; j < notes; j++) {
                 String[] n = song.measures.get(measure_end).notes.get(j).note.split(",");
                 n = computeNote(song.keysignature, n);
@@ -234,21 +223,10 @@ public class FM_ScorePlayer {
                         if (soundPlayer.GetDurationFromStr(ListNotes.get(ListNotes.size() - 1).playDuration) < soundPlayer.GetDurationFromStr(s))
                             ListNotes.get(ListNotes.size() - 1).playDuration = s;
                     }
-                    if (tracks.size() == 2)
-                        ListNotes.get(ListNotes.size() - 1).audioT = soundPlayer.CreateTrack(new FM_AudioSubTrack(tracks.get(0), soundPlayer.GetDurationFromStr(d[0])), new FM_AudioSubTrack(tracks.get(1), soundPlayer.GetDurationFromStr(d[1])), null, null, null, null, null);
-                    if (tracks.size() == 3)
-                        ListNotes.get(ListNotes.size() - 1).audioT = soundPlayer.CreateTrack(new FM_AudioSubTrack(tracks.get(0), soundPlayer.GetDurationFromStr(d[0])), new FM_AudioSubTrack(tracks.get(1), soundPlayer.GetDurationFromStr(d[1])), new FM_AudioSubTrack(tracks.get(2), soundPlayer.GetDurationFromStr(d[2])), null, null, null, null);
-                    if (tracks.size() == 4)
-                        ListNotes.get(ListNotes.size() - 1).audioT = soundPlayer.CreateTrack(new FM_AudioSubTrack(tracks.get(0), soundPlayer.GetDurationFromStr(d[0])), new FM_AudioSubTrack(tracks.get(1), soundPlayer.GetDurationFromStr(d[1])), new FM_AudioSubTrack(tracks.get(2), soundPlayer.GetDurationFromStr(d[2])), new FM_AudioSubTrack(tracks.get(3), soundPlayer.GetDurationFromStr(d[3])), null, null, null);
-                    if (tracks.size() == 5)
-                        ListNotes.get(ListNotes.size() - 1).audioT = soundPlayer.CreateTrack(new FM_AudioSubTrack(tracks.get(0), soundPlayer.GetDurationFromStr(d[0])), new FM_AudioSubTrack(tracks.get(1), soundPlayer.GetDurationFromStr(d[1])), new FM_AudioSubTrack(tracks.get(2), soundPlayer.GetDurationFromStr(d[2])), new FM_AudioSubTrack(tracks.get(3), soundPlayer.GetDurationFromStr(d[3])), new FM_AudioSubTrack(tracks.get(4), soundPlayer.GetDurationFromStr(d[4])), null, null);
-                    if (tracks.size() == 6)
-                        ListNotes.get(ListNotes.size() - 1).audioT = soundPlayer.CreateTrack(new FM_AudioSubTrack(tracks.get(0), soundPlayer.GetDurationFromStr(d[0])), new FM_AudioSubTrack(tracks.get(1), soundPlayer.GetDurationFromStr(d[1])), new FM_AudioSubTrack(tracks.get(2), soundPlayer.GetDurationFromStr(d[2])), new FM_AudioSubTrack(tracks.get(3), soundPlayer.GetDurationFromStr(d[3])), new FM_AudioSubTrack(tracks.get(4), soundPlayer.GetDurationFromStr(d[4])), new FM_AudioSubTrack(tracks.get(5), soundPlayer.GetDurationFromStr(d[5])), null);
-                    if (tracks.size() == 7)
-                        ListNotes.get(ListNotes.size() - 1).audioT = soundPlayer.CreateTrack(new FM_AudioSubTrack(tracks.get(0), soundPlayer.GetDurationFromStr(d[0])), new FM_AudioSubTrack(tracks.get(1), soundPlayer.GetDurationFromStr(d[1])), new FM_AudioSubTrack(tracks.get(2), soundPlayer.GetDurationFromStr(d[2])), new FM_AudioSubTrack(tracks.get(3), soundPlayer.GetDurationFromStr(d[3])), new FM_AudioSubTrack(tracks.get(4), soundPlayer.GetDurationFromStr(d[4])), new FM_AudioSubTrack(tracks.get(5), soundPlayer.GetDurationFromStr(d[5])), new FM_AudioSubTrack(tracks.get(6), soundPlayer.GetDurationFromStr(d[6])));
+                    ListNotes.get(ListNotes.size() - 1).audioT = soundPlayer.CreateTrack(tracks, d);
                 }
             }
-
+        }
         for (int i = 1; i < ListNotes.size(); i++) if (ListNotes.get(i).audioINT == -1) ListNotes.get(i - 1).NextPause = true;
 
         song.prepared = true;
