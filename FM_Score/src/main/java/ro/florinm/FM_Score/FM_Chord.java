@@ -7,21 +7,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FM_Chord extends FM_BaseNote {
-    List<FM_Note> Notes;
+    List<FM_BaseNote> Notes;
 
     public FM_Chord(FM_Score Score) {
         super(FM_NoteType.CHORD, Score);
         this.Notes = new ArrayList<>();
     }
 
-    public void addNote(FM_Note note){
+    public void addNote(FM_BaseNote note){
         Notes.add(note);
     }
 
     public void Compute() {
         //if (false) return;
         //Sort them by clef
-        FM_Note tmp;
+        FM_BaseNote tmp;
         for (int i = 0; i < Notes.size() - 1; i++)
             for (int j = i + 1; j < Notes.size(); j++) {
                 if (Notes.get(i).clef >= Notes.get(j).clef) {

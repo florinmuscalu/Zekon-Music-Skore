@@ -5,15 +5,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 public class FM_Note extends FM_BaseNote {
-    @FM_NoteValue
-    final Integer note;
-    int octave;
-    @FM_DurationValue
-    int duration;
-    @FM_Accidental
-    private int accidental;
-    boolean stem;
-    boolean stem_up, beam, tuple;
+    boolean beam, tuple;
     float ys, startX;
 
     public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration) {
@@ -64,13 +56,6 @@ public class FM_Note extends FM_BaseNote {
         this.beam = false;
         this.tuple = false;
         this.color = Color;
-    }
-
-    public int getAccidental() {
-        return accidental;
-    }
-    public void setAccidental(@FM_Accidental int a) {
-        accidental = a;
     }
 
     public int getOctave() {

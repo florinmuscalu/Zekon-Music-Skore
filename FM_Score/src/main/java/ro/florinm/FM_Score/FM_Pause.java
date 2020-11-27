@@ -5,9 +5,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 public class FM_Pause extends FM_BaseNote {
-    @FM_DurationValue
-    private final int duration;
-
     public FM_Pause(FM_Score Score, @FM_DurationValue int duration) {
         super(FM_NoteType.PAUSE, Score);
         this.duration = duration;
@@ -67,7 +64,8 @@ public class FM_Pause extends FM_BaseNote {
     }
 
     public float WidthAllNoDot() {
-        return WidthAll();
+        FM_Const.AdjustFont(score, FM_Const.Pause_8, 2);
+        return score.Font.measureText(asString());
     }
     public float WidthNote() {
         return WidthAll();
@@ -89,6 +87,12 @@ public class FM_Pause extends FM_BaseNote {
         return bounds.top;
     }
 
+    public String asStringDot(){
+        String s2 = "";
+        if (duration>50) s2 = " " + FM_Const.Dot;
+        return s2;
+    }
+
     public void DrawNote(Canvas canvas) {
         if (!isVisible()) return;
         super.DrawNote(canvas);
@@ -96,6 +100,8 @@ public class FM_Pause extends FM_BaseNote {
         FM_Const.AdjustFont(score, FM_Const.Pause_8, 2);
         canvas.drawText(asString(), StartX + paddingLeft, StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines(), score.Font);
         score.Font.setColor(score.getColor());
+
+        canvas.drawText(asStringDot(),  StartX + paddingLeft + paddingNote + WidthAllNoDot(), StartY1 + (getDisplacement() + 0.5f) * score.getDistanceBetweenStaveLines(), score.Font);
     }
     public float Left(){
         return StartX + paddingLeft;

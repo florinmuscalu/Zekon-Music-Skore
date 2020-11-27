@@ -22,8 +22,10 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="28dp"
         android:onClick="OnClick"
         android:text="Button"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteX="105dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

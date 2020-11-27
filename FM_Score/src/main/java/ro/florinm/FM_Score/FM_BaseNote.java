@@ -19,6 +19,15 @@ public abstract class FM_BaseNote{
     float StartX;
     float StartY1, StartY2;
     int line;
+    @FM_NoteValue
+    Integer note;
+    int octave;
+    @FM_Accidental
+    protected int accidental;
+    @FM_DurationValue
+    int duration;
+    boolean stem;
+    boolean stem_up;
 
 
     protected FM_BaseNote(@FM_NoteType int type, FM_Score score) {
@@ -32,6 +41,18 @@ public abstract class FM_BaseNote{
         this.visible = true;
         this.line = 1;
         color = score.getColor();
+        note = 0;
+        octave = 0;
+        accidental = FM_Accidental.None;
+        stem = false;
+        stem_up = true;
+    }
+
+    public int getAccidental() {
+        return accidental;
+    }
+    public void setAccidental(@FM_Accidental int a) {
+        accidental = a;
     }
 
     @FM_NoteType

@@ -6,12 +6,18 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import ro.florinm.FM_Score.FM_Accidental;
 import ro.florinm.FM_Score.FM_Align;
 import ro.florinm.FM_Score.FM_BarNote;
+import ro.florinm.FM_Score.FM_BaseNote;
 import ro.florinm.FM_Score.FM_ClefValue;
 import ro.florinm.FM_Score.FM_DurationValue;
 import ro.florinm.FM_Score.FM_KeySignatureValue;
@@ -22,7 +28,6 @@ import ro.florinm.FM_Score.FM_Score;
 import ro.florinm.FM_Score.FM_TimeSignature;
 
 public class MainActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +55,33 @@ public class MainActivity extends AppCompatActivity {
         s.setAllowZoomPan(true);
         s.setDrawBoundigBox(false);
         s.setTrimLastLine(true);
-        //addRandom();
+
+        String furelise = "";
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(getAssets().open("furelise.json")));
+            String mLine;
+            while ((mLine = reader.readLine()) != null) {
+                furelise += mLine;
+            }
+        } catch (IOException e) {
+            //log the exception
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    //log the exception
+                }
+            }
+        }
+        JSONObject obj = null;
+        try {
+            obj = new JSONObject(furelise);
+        } catch (Exception ignored) {}
+
+        s.LoadFromJson(obj);
+            //addRandom();
         //addTestAll();
         // addSimpleMelodic();
 //        s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true), FM_ClefValue.TREBLE);
@@ -69,24 +100,24 @@ public class MainActivity extends AppCompatActivity {
 //        s.addChord(chord, clefs);
 //
 //        s.addStaffNote(new FM_BarNote(s));
-
-        s.BeginBeam();
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, false), FM_ClefValue.TREBLE);
-        s.AddToBeam((FM_Note) s.getLastNote());
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.TripleFlat, FM_DurationValue.NOTE_EIGHT, true), FM_ClefValue.TREBLE);
-        s.AddToBeam((FM_Note) s.getLastNote());
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
-        s.AddToBeam((FM_Note) s.getLastNote());
-        s.EndBeam();
-
+//
 //        s.BeginBeam();
-//        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
+//        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, false), FM_ClefValue.TREBLE);
 //        s.AddToBeam((FM_Note) s.getLastNote());
 //        s.addStaffNote(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.TripleFlat, FM_DurationValue.NOTE_EIGHT, true), FM_ClefValue.TREBLE);
 //        s.AddToBeam((FM_Note) s.getLastNote());
 //        s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
 //        s.AddToBeam((FM_Note) s.getLastNote());
 //        s.EndBeam();
+//
+////        s.BeginBeam();
+////        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
+////        s.AddToBeam((FM_Note) s.getLastNote());
+////        s.addStaffNote(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.TripleFlat, FM_DurationValue.NOTE_EIGHT, true), FM_ClefValue.TREBLE);
+////        s.AddToBeam((FM_Note) s.getLastNote());
+////        s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
+////        s.AddToBeam((FM_Note) s.getLastNote());
+////        s.EndBeam();
 
     }
 
@@ -97,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
         s.BeginTie();
         s.BeginBeam();
-        List<FM_Note> chord = new ArrayList<>();
+        List<FM_BaseNote> chord = new ArrayList<>();
         List<Integer> clefs = new ArrayList<>();
         FM_Note n = new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.Flat, FM_DurationValue.NOTE_EIGHT,  false);
         s.AddToTie(n);
@@ -310,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
 
         s.addStaffNote(new FM_BarNote(s), FM_ClefValue.BASS);
 
-        List<FM_Note> chord = new ArrayList<>();
+        List<FM_BaseNote> chord = new ArrayList<>();
         List<Integer> clefs = new ArrayList<>();
         chord.add(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.DoubleSharp, FM_DurationValue.NOTE_WHOLE_D,  true));
         chord.add(new FM_Note(s, FM_NoteValue.MI, 4, FM_Accidental.DoubleSharp, FM_DurationValue.NOTE_WHOLE_D,  true));
@@ -419,6 +450,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void OnClick(View v){
         FM_Score s = findViewById(R.id.stave);
-        s.setCenterVertical(!s.getCenterVertical());
+        //s.Prepare(44);
+        //s.Play(44);
     }
 }

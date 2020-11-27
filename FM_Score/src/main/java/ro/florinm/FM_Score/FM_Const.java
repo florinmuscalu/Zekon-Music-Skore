@@ -37,6 +37,9 @@ public class FM_Const {
     public static final String _3 = "\ue083";
     public static final String _4 = "\ue084";
     public static final String _5 = "\ue085";
+    public static final String _6 = "\ue086";
+    public static final String _7 = "\ue087";
+    public static final String _8 = "\ue088";
 
     public static final String _2_b = "\ue927";
     public static final String _3_b = "\ue928";
@@ -75,7 +78,7 @@ public class FM_Const {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
     }
 
-    public static int distanceBetweenNotes(FM_Note n1, FM_Note n2) {
+    public static int distanceBetweenNotes(FM_BaseNote n1, FM_BaseNote n2) {
         if (!n1.clef.equals(n2.clef)) return 10;
         return (n1.note - n2.note) + ((n1.octave - n2.octave) * 7);
     }
@@ -137,21 +140,27 @@ public class FM_Const {
         if (key.equals("w")) return FM_DurationValue.NOTE_WHOLE;
         if (key.equals("wr")) return FM_DurationValue.NOTE_WHOLE;
         if (key.equals("wd")) return FM_DurationValue.NOTE_WHOLE_D;
+        if (key.equals("wdr")) return FM_DurationValue.NOTE_WHOLE_D;
         if (key.equals("h")) return FM_DurationValue.NOTE_HALF;
         if (key.equals("hr")) return FM_DurationValue.NOTE_HALF;
         if (key.equals("hd")) return FM_DurationValue.NOTE_HALF_D;
+        if (key.equals("hdr")) return FM_DurationValue.NOTE_HALF_D;
         if (key.equals("q")) return FM_DurationValue.NOTE_QUARTER;
         if (key.equals("qr")) return FM_DurationValue.NOTE_QUARTER;
         if (key.equals("qd")) return FM_DurationValue.NOTE_QUARTER_D;
+        if (key.equals("qdr")) return FM_DurationValue.NOTE_QUARTER_D;
         if (key.equals("8")) return FM_DurationValue.NOTE_EIGHT;
         if (key.equals("8r")) return FM_DurationValue.NOTE_EIGHT;
         if (key.equals("8d")) return FM_DurationValue.NOTE_EIGHT_D;
+        if (key.equals("8dr")) return FM_DurationValue.NOTE_EIGHT_D;
         if (key.equals("16")) return FM_DurationValue.NOTE_SIXTEENTH;
         if (key.equals("16r")) return FM_DurationValue.NOTE_SIXTEENTH;
         if (key.equals("16d")) return FM_DurationValue.NOTE_SIXTEENTH_D;
+        if (key.equals("16dr")) return FM_DurationValue.NOTE_SIXTEENTH_D;
         if (key.equals("32")) return FM_DurationValue.NOTE_THIRTY_SECOND;
         if (key.equals("32r")) return FM_DurationValue.NOTE_THIRTY_SECOND;
         if (key.equals("32d")) return FM_DurationValue.NOTE_THIRTY_SECOND_D;
+        if (key.equals("32dr")) return FM_DurationValue.NOTE_THIRTY_SECOND_D;
         return FM_DurationValue.NOTE_WHOLE;
     }
 
@@ -278,5 +287,15 @@ public class FM_Const {
             if (n == 7) return "ro";
         }
         return "";
+    }
+
+    @FM_TimeSignature public static int getTimeSignature(String s){
+        int ret = FM_TimeSignature.None;
+        if (s.equals("4/4")) ret = FM_TimeSignature._4_4;
+        if (s.equals("2/4")) ret = FM_TimeSignature._2_4;
+        if (s.equals("3/2")) ret = FM_TimeSignature._3_2;
+        if (s.equals("3/4")) ret = FM_TimeSignature._3_4;
+        if (s.equals("3/8")) ret = FM_TimeSignature._3_8;
+        return ret;
     }
 }
