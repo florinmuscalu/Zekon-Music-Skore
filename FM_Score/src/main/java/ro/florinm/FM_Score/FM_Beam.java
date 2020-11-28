@@ -35,21 +35,21 @@ public class FM_Beam {
                     n.get(n.size() - 1).paddingNote +
                     n.get(n.size() - 1).WidthNote();
 
-            y = n.get(0).ys +
-                    n.get(0).getDisplacement() * score.getDistanceBetweenStaveLines() -
-                    n.get(0).Height(true) * 2 / 3;
-            ye = n.get(n.size() - 1).ys +
-                    n.get(n.size() - 1).getDisplacement() * score.getDistanceBetweenStaveLines() -
-                    n.get(n.size() - 1).Height(true) * 2 / 3;
+            y = n.get(0).ys + (n.get(0).getDisplacement() - 2) * score.getDistanceBetweenStaveLines() - n.get(0).Height(true);
+            ye = n.get(n.size() - 1).ys + (n.get(n.size() - 1).getDisplacement() - 2) * score.getDistanceBetweenStaveLines() - n.get(n.size() - 1).Height(true);
 
-            float yMiddleMin = n.get(1).ys +
-                    n.get(1).getDisplacement() * score.getDistanceBetweenStaveLines() -
-                    n.get(1).Height(true) * 2 / 3;
+            if (ye<y) {
+                float slope = FM_Const.slope(x, y, xe, ye);
+                ye = FM_Const.getY2(slope, x, y, xe);
+            }
+            else {
+                float slope = FM_Const.slope(xe, ye, x, y);
+                y = FM_Const.getY2(slope, xe, ye, x);
+            }
+            float yMiddleMin = n.get(1).ys + (n.get(1).getDisplacement() - 2) * score.getDistanceBetweenStaveLines() - n.get(1).Height(true);
 
             for (int i = 2; i < n.size() - 1; i++) {
-                float yMiddle = n.get(i).ys +
-                        n.get(i).getDisplacement() * score.getDistanceBetweenStaveLines() -
-                        n.get(i).Height(true) * 2 / 3;
+                float yMiddle = n.get(i).ys + (n.get(i).getDisplacement() - 2) * score.getDistanceBetweenStaveLines() - n.get(i).Height(true);
                 if (yMiddle < yMiddleMin) yMiddleMin = yMiddle;
             }
             if ((y + ye) / 2 > yMiddleMin) {
@@ -68,25 +68,21 @@ public class FM_Beam {
                     n.get(n.size() - 1).WidthAccidental() +
                     n.get(n.size() - 1).paddingNote;
 
-            y = n.get(0).ys +
-                    n.get(0).getDisplacement() * score.getDistanceBetweenStaveLines() +
-                    n.get(0).Height(true) * 2 / 3 +
-                    n.get(0).Height(false) - 0.5f * score.getDistanceBetweenStaveLines();
-            ye = n.get(n.size() - 1).ys +
-                    n.get(n.size() - 1).getDisplacement() * score.getDistanceBetweenStaveLines() +
-                    n.get(n.size() - 1).Height(true) * 2 / 3 +
-                    n.get(n.size() - 1).Height(false) - 0.5f * score.getDistanceBetweenStaveLines();
+            y = n.get(0).ys + (n.get(0).getDisplacement() + 2) * score.getDistanceBetweenStaveLines() + n.get(0).Height(true);
+            ye = n.get(n.size() - 1).ys + (n.get(n.size() - 1).getDisplacement() + 2) * score.getDistanceBetweenStaveLines() + n.get(n.size() - 1).Height(true);
 
-            float yMiddleMin = n.get(1).ys +
-                    n.get(1).getDisplacement() * score.getDistanceBetweenStaveLines() +
-                    n.get(1).Height(true) * 2 / 3  +
-                    n.get(1).Height(false) - 0.5f * score.getDistanceBetweenStaveLines();
+            if (ye<y) {
+                float slope = FM_Const.slope(x, y, xe, ye);
+                ye = FM_Const.getY2(slope, x, y, xe);
+            }
+            else {
+                float slope = FM_Const.slope(xe, ye, x, y);
+                y = FM_Const.getY2(slope, xe, ye, x);
+            }
+            float yMiddleMin = n.get(1).ys + (n.get(1).getDisplacement() + 2) * score.getDistanceBetweenStaveLines() + n.get(1).Height(true);
 
             for (int i = 2; i < n.size() - 1; i++) {
-                float yMiddle = n.get(i).ys +
-                        n.get(i).getDisplacement() * score.getDistanceBetweenStaveLines() +
-                        n.get(i).Height(true) * 2 / 3 +
-                        n.get(i).Height(false) - 0.5f * score.getDistanceBetweenStaveLines();
+                float yMiddle = n.get(i).ys + (n.get(i).getDisplacement() + 2) * score.getDistanceBetweenStaveLines()  + n.get(i).Height(true);
                 if (yMiddle > yMiddleMin) yMiddleMin = yMiddle;
             }
             if ((y + ye) / 2 < yMiddleMin) {
@@ -97,7 +93,6 @@ public class FM_Beam {
         }
 
         float slope = FM_Const.slope(x, y, xe, ye);
-
         if (n.get(0).stem_up) {
             for (int i = 0; i < n.size(); i++) {
                 float tmpX = n.get(i).startX + n.get(i).paddingLeft + n.get(i).WidthAccidental() + n.get(i).paddingNote + n.get(i).WidthNote();

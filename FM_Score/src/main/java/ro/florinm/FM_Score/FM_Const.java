@@ -84,7 +84,10 @@ public class FM_Const {
     }
 
     public static float slope(float x1, float y1, float x2, float y2) {
-        return (y2 - y1) / (x2 - x1);
+        float ret =  (y2 - y1) / (x2 - x1);
+        if (ret > 0.2) ret =  0.2f;
+        if (ret <-0.2) ret = -0.2f;
+        return ret;
     }
 
     public static float getY2(float slope, float x1, float y1, float x2) {

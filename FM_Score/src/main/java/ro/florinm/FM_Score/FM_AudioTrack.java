@@ -375,6 +375,7 @@ public class FM_AudioTrack {
 class FM_SoundPool {
     public double TEMPO = 60.0;
     public static int FALLBACK_DURATION = 250; //fallback duration for sounds
+    public static int MAX_TRACKS = 500;
     Context context;
     ArrayList<FM_AudioTrack> Tracks = new ArrayList<>();
 
@@ -384,7 +385,7 @@ class FM_SoundPool {
             t.AccessIndex += 1;
         }
         for (int i = Tracks.size() - 1; i >= 0; i--)
-            if (Tracks.get(i).AccessIndex > 99) Tracks.remove(i);
+            if (Tracks.get(i).AccessIndex > MAX_TRACKS) Tracks.remove(i);
     }
 
     public FM_AudioTrack CreateTrack(List<Integer> tracks, int d) {

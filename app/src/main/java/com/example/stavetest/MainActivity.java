@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         s.setNoteSpacing(0);
         s.setTimeSignature(FM_TimeSignature._2_4);
         s.setKeySignature(FM_KeySignatureValue.DOsharp);
-        s.setAlign(FM_Align.ALIGN_CENTER_NOTES);
+        s.setAlign(FM_Align.ALIGN_LEFT_LAST_MEASURE);
         s.setPaddingT(5);
         s.setCenterVertical(true);
         s.setMultiLine(true);
@@ -85,6 +85,43 @@ public class MainActivity extends AppCompatActivity {
         s.LoadFromJson(obj);
         player = new FM_ScorePlayer(getApplicationContext(), 44);
         player.LoadFromJson(obj);
+
+//        s.BeginBeam();
+//        s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
+//        s.AddToBeam((FM_Note) s.getLastNote());
+//        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
+//        s.AddToBeam((FM_Note) s.getLastNote());
+//        s.addStaffNote(new FM_Note(s, FM_NoteValue.MI, 5, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
+//        s.AddToBeam((FM_Note) s.getLastNote());
+//        s.EndBeam();
+//
+//        s.BeginBeam();
+//        s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, false), FM_ClefValue.TREBLE);
+//        s.AddToBeam((FM_Note) s.getLastNote());
+//        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
+//        s.AddToBeam((FM_Note) s.getLastNote());
+//        s.addStaffNote(new FM_Note(s, FM_NoteValue.MI, 5, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
+//        s.AddToBeam((FM_Note) s.getLastNote());
+//        s.EndBeam();
+//
+//        s.BeginBeam();
+//        s.addStaffNote(new FM_Note(s, FM_NoteValue.MI, 5, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
+//        s.AddToBeam((FM_Note) s.getLastNote());
+//        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
+//        s.AddToBeam((FM_Note) s.getLastNote());
+//        s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
+//        s.AddToBeam((FM_Note) s.getLastNote());
+//        s.EndBeam();
+//
+//        s.BeginBeam();
+//        s.addStaffNote(new FM_Note(s, FM_NoteValue.MI, 5, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, false), FM_ClefValue.TREBLE);
+//        s.AddToBeam((FM_Note) s.getLastNote());
+//        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
+//        s.AddToBeam((FM_Note) s.getLastNote());
+//        s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
+//        s.AddToBeam((FM_Note) s.getLastNote());
+//        s.EndBeam();
+
             //addRandom();
         //addTestAll();
         // addSimpleMelodic();

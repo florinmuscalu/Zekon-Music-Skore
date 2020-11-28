@@ -161,14 +161,14 @@ public class FM_Note extends FM_BaseNote {
         return score.Font.measureText(asStringNote(stem));
     }
 
-    public float Height(boolean all) {
+    public float Height(boolean has_beam) {
         FM_Const.AdjustFont(score, asStringNote(false), 1);
-        boolean tmp_beam = beam;
-        if (all) beam = false;
+        boolean tmp_stem = stem;
+        if (has_beam) stem = false;
         Rect bounds = new Rect();
         String s = asStringNote();
         score.Font.getTextBounds(s, 0, s.length(), bounds);
-        beam = tmp_beam;
+        stem = tmp_stem;
         return bounds.height();
     }
 
