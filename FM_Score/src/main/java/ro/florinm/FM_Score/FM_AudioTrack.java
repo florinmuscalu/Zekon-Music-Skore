@@ -379,6 +379,7 @@ class FM_SoundPool {
     Context context;
     ArrayList<FM_AudioTrack> Tracks = new ArrayList<>();
 
+
     private void updateTrackList(int index) {
         Tracks.get(index).AccessIndex = -1;
         for (FM_AudioTrack t : Tracks) {
@@ -423,6 +424,8 @@ class FM_SoundPool {
         return t;
     }
 
+    //hold the playing threads
+    private final SparseArray<PlayThread> threadMap;
     private boolean playing;
     //hold the audio files
     protected static final SparseArray<String> assetFiles = new SparseArray<>();
@@ -900,6 +903,7 @@ class FM_SoundPool {
     public FM_SoundPool(Context context) {
         this.context = context;
         AssetManager assetManager = context.getAssets();
+        threadMap = new SparseArray<>();
         AudioAttributes attributes = new AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_GAME)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -994,6 +998,79 @@ class FM_SoundPool {
         }
     }
 
+    public void playKey(int key) {
+        if (key == -1) return;
+        if (isKeyNotPlaying(key)) {
+            PlayThread thread = new PlayThread(key, false);
+            thread.start();
+            threadMap.put(key, thread);
+        }
+    }
+
+    public void playKey(int key, boolean NextPause) {
+        if (key == -1) return;
+        if (isKeyNotPlaying(key)) {
+            PlayThread thread = new PlayThread(key, NextPause);
+            thread.start();
+            threadMap.put(key, thread);
+        }
+    }
+
+    public void stopKey(int key) {
+        if (key == -1) return;
+        try {
+            PlayThread thread = threadMap.get(key);
+            if (thread != null) {
+                thread.stop = 1;
+                threadMap.remove(key);
+            }
+        } catch (Exception ignored) {}
+    }
+
+    public boolean isKeyNotPlaying(int key) {
+        return threadMap.get(key) == null;
+    }
+
+    class PlayThread extends Thread {
+        private final int key;
+        private final float pressure;
+        public int stop = 0;
+        private final boolean NextPause;
+        public PlayThread(int key) {
+            NextPause = false;
+            this.key = key;
+            this.pressure = 1;
+        }
+        public PlayThread(int key, boolean NextPause) {
+            this.NextPause = NextPause;
+            this.key = key;
+            this.pressure = 1;
+        }
+
+        @Override
+        public void run() {
+            try {
+                int stream = sndPool.play(soundMap.get(key), pressure, pressure, 100, 0, 1);
+                while (stop == 0) sleep(20);
+                if (stop == 1) {
+                    int d = 0;
+                    int fall = FALLBACK_DURATION;
+                    if (NextPause) fall = FALLBACK_DURATION / 5;
+                    while (d < fall) {
+                        sleep(2);
+                        float p = pressure - pressure * d / fall;
+                        sndPool.setVolume(stream, p, p);
+                        d += 2;
+                    }
+                    sndPool.setVolume(stream, 0, 0);
+                    sndPool.stop(stream);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private String TranslateKey(String Key) {
         Key = Key.replace("do", "c");
         Key = Key.replace("re", "d");
@@ -1085,5 +1162,12 @@ class FM_SoundPool {
 
     public void StopAllSound() {
         playing = false;
+        for (int i = 0; i < threadMap.size(); i++) {
+            PlayThread thread = threadMap.get(i);
+            if (thread != null) {
+                thread.stop = 1;
+                threadMap.remove(i);
+            }
+        }
     }
 }
