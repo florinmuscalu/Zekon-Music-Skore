@@ -22,6 +22,8 @@ public class FM_Beam {
 
     public void Draw(Canvas canvas) {
         float x, xe, y, ye;
+        int EndIndex = n.size() - 1;
+        float StemLength = 2.5f;
         if (n.get(0).stem_up) {
             x = n.get(0).startX +
                     n.get(0).paddingLeft +
@@ -29,16 +31,16 @@ public class FM_Beam {
                     n.get(0).paddingNote +
                     n.get(0).WidthNote();
 
-            xe = n.get(n.size() - 1).startX +
-                    n.get(n.size() - 1).paddingLeft +
-                    n.get(n.size() - 1).WidthAccidental() +
-                    n.get(n.size() - 1).paddingNote +
-                    n.get(n.size() - 1).WidthNote();
+            xe = n.get(EndIndex).startX +
+                    n.get(EndIndex).paddingLeft +
+                    n.get(EndIndex).WidthAccidental() +
+                    n.get(EndIndex).paddingNote +
+                    n.get(EndIndex).WidthNote();
 
-            y = n.get(0).ys + (n.get(0).getDisplacement() - 2) * score.getDistanceBetweenStaveLines() - n.get(0).Height(true);
-            ye = n.get(n.size() - 1).ys + (n.get(n.size() - 1).getDisplacement() - 2) * score.getDistanceBetweenStaveLines() - n.get(n.size() - 1).Height(true);
+            y =  n.get(0).ys +          (n.get(0).getDisplacement() - StemLength) *        score.getDistanceBetweenStaveLines();
+            ye = n.get(EndIndex).ys +   (n.get(EndIndex).getDisplacement() - StemLength) * score.getDistanceBetweenStaveLines();
 
-            if (ye<y) {
+            if (ye>y) {
                 float slope = FM_Const.slope(x, y, xe, ye);
                 ye = FM_Const.getY2(slope, x, y, xe);
             }
@@ -46,10 +48,10 @@ public class FM_Beam {
                 float slope = FM_Const.slope(xe, ye, x, y);
                 y = FM_Const.getY2(slope, xe, ye, x);
             }
-            float yMiddleMin = n.get(1).ys + (n.get(1).getDisplacement() - 2) * score.getDistanceBetweenStaveLines() - n.get(1).Height(true);
+            float yMiddleMin = n.get(1).ys + (n.get(1).getDisplacement() - StemLength) * score.getDistanceBetweenStaveLines();
 
             for (int i = 2; i < n.size() - 1; i++) {
-                float yMiddle = n.get(i).ys + (n.get(i).getDisplacement() - 2) * score.getDistanceBetweenStaveLines() - n.get(i).Height(true);
+                float yMiddle = n.get(i).ys + (n.get(i).getDisplacement() - StemLength) * score.getDistanceBetweenStaveLines();
                 if (yMiddle < yMiddleMin) yMiddleMin = yMiddle;
             }
             if ((y + ye) / 2 > yMiddleMin) {
@@ -63,13 +65,13 @@ public class FM_Beam {
                     n.get(0).WidthAccidental() +
                     n.get(0).paddingNote;
 
-            xe = n.get(n.size() - 1).startX +
-                    n.get(n.size() - 1).paddingLeft +
-                    n.get(n.size() - 1).WidthAccidental() +
-                    n.get(n.size() - 1).paddingNote;
+            xe = n.get(EndIndex).startX +
+                    n.get(EndIndex).paddingLeft +
+                    n.get(EndIndex).WidthAccidental() +
+                    n.get(EndIndex).paddingNote;
 
-            y = n.get(0).ys + (n.get(0).getDisplacement() + 2) * score.getDistanceBetweenStaveLines() + n.get(0).Height(true);
-            ye = n.get(n.size() - 1).ys + (n.get(n.size() - 1).getDisplacement() + 2) * score.getDistanceBetweenStaveLines() + n.get(n.size() - 1).Height(true);
+            y = n.get(0).ys +           (n.get(0).getDisplacement() + StemLength + 1) * score.getDistanceBetweenStaveLines();
+            ye = n.get(EndIndex).ys +   (n.get(EndIndex).getDisplacement() + StemLength + 1) * score.getDistanceBetweenStaveLines();
 
             if (ye<y) {
                 float slope = FM_Const.slope(x, y, xe, ye);
@@ -79,10 +81,10 @@ public class FM_Beam {
                 float slope = FM_Const.slope(xe, ye, x, y);
                 y = FM_Const.getY2(slope, xe, ye, x);
             }
-            float yMiddleMin = n.get(1).ys + (n.get(1).getDisplacement() + 2) * score.getDistanceBetweenStaveLines() + n.get(1).Height(true);
+            float yMiddleMin = n.get(1).ys + (n.get(1).getDisplacement() + StemLength + 1) * score.getDistanceBetweenStaveLines();
 
             for (int i = 2; i < n.size() - 1; i++) {
-                float yMiddle = n.get(i).ys + (n.get(i).getDisplacement() + 2) * score.getDistanceBetweenStaveLines()  + n.get(i).Height(true);
+                float yMiddle = n.get(i).ys + (n.get(i).getDisplacement() + StemLength + 1) * score.getDistanceBetweenStaveLines();
                 if (yMiddle > yMiddleMin) yMiddleMin = yMiddle;
             }
             if ((y + ye) / 2 < yMiddleMin) {
@@ -92,6 +94,7 @@ public class FM_Beam {
             }
         }
 
+        //below is the code for stems
         float slope = FM_Const.slope(x, y, xe, ye);
         if (n.get(0).stem_up) {
             for (int i = 0; i < n.size(); i++) {
@@ -99,7 +102,11 @@ public class FM_Beam {
                 float tmpY = n.get(i).ys + n.get(i).getDisplacement() * score.getDistanceBetweenStaveLines();
                 float tmpY2 = FM_Const.getY2(slope, x, y, tmpX);
 
-                canvas.drawRect(tmpX, tmpY - FM_Const.dpTOpx(score.getContext(), 1), tmpX - FM_Const.dpTOpx(score.getContext(), 1), tmpY2 - score.getDistanceBetweenStaveLines() / 2 + FM_Const.dpTOpx(score.getContext(), 1), score.Font);
+                canvas.drawRect(tmpX,
+                        tmpY - FM_Const.dpTOpx(score.getContext(), 1),
+                        tmpX - FM_Const.dpTOpx(score.getContext(), 1),
+                        tmpY2 - score.getDistanceBetweenStaveLines() / 2 + FM_Const.dpTOpx(score.getContext(), 1),
+                        score.Font);
             }
         } else {
             for (int i = 0; i < n.size(); i++) {
@@ -107,13 +114,15 @@ public class FM_Beam {
                 float tmpY = n.get(i).ys + n.get(i).getDisplacement() * score.getDistanceBetweenStaveLines();
                 float tmpY2 = FM_Const.getY2(slope, x, y, tmpX);
 
-                canvas.drawRect(tmpX, tmpY + FM_Const.dpTOpx(score.getContext(), 1), tmpX + FM_Const.dpTOpx(score.getContext(), 1), tmpY2 - score.getDistanceBetweenStaveLines() / 2 - FM_Const.dpTOpx(score.getContext(), 1), score.Font);
+                canvas.drawRect(tmpX,
+                        tmpY + FM_Const.dpTOpx(score.getContext(), 1),
+                        tmpX + FM_Const.dpTOpx(score.getContext(), 1),
+                        tmpY2 - score.getDistanceBetweenStaveLines() / 2 - FM_Const.dpTOpx(score.getContext(), 1),
+                        score.Font);
             }
         }
 
-        if (!n.get(0).stem_up) {
-            //xe = xe + 3;
-        }
+        //below is the core for the principal beam
         Path topPath = new Path();
         if (!n.get(0).stem_up) {
             topPath.reset();
@@ -132,6 +141,7 @@ public class FM_Beam {
         }
         canvas.drawPath(topPath, score.Font);
 
+        //below is the code for beams for 1/16 note
         for (int i = 0; i < n.size() - 1; i++) {
             boolean drawBegin = true;
             boolean drawEnd = true;
@@ -169,7 +179,6 @@ public class FM_Beam {
                 if (n.get(0).stem_up) tmpX2 = tmpX2 + n.get(i + 1).WidthNote() - FM_Const.dpTOpx(score.getContext(), 1);
                 tmpX1 = tmpX2 - score.getDistanceBetweenStaveLines() * 2 / 3;
             }
-
             float tmpY1 = FM_Const.getY2(slope, x, y, tmpX1);
             float tmpY2 = FM_Const.getY2(slope, x, y, tmpX2);
             if (n.get(0).stem_up) {
@@ -179,10 +188,6 @@ public class FM_Beam {
                 tmpY1 = tmpY1 - score.getDistanceBetweenStaveLines() * 6 / 5;
                 tmpY2 = tmpY2 - score.getDistanceBetweenStaveLines() * 6 / 5;
             }
-
-            //float tmpY = n.get(i).ys + n.get(i).getDisplacement() * stave.getDistanceBetweenStaveLines();
-            //float tmpY2 = FM_Const.getY2(slope, x, y, tmpX);
-
             Path bottomPath = new Path();
             bottomPath.reset();
             bottomPath.moveTo(tmpX1, tmpY1);

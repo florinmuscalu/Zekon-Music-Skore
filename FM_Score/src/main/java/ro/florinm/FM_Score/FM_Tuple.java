@@ -26,16 +26,26 @@ public class FM_Tuple {
     public void Draw(Canvas canvas) {
         float x, xe, y, ye;
         float StaveLineHalfWidth = FM_Const.dpTOpx(score.getContext(), 0.25f);
+        int EndIndex = n.size() - 1;
+        float StemLength = 2.5f;
+        x = n.get(0).startX + n.get(0).paddingLeft + n.get(0).WidthAccidental() + n.get(0).paddingNote;
+        xe = n.get(EndIndex).startX + n.get(EndIndex).paddingLeft + n.get(EndIndex).WidthAccidental() + n.get(EndIndex).paddingNote + n.get(EndIndex).WidthNote();
         if (n.get(0).stem_up) {
-            x = 0.5f * score.getDistanceBetweenStaveLines() + n.get(0).startX + n.get(0).paddingLeft + n.get(0).WidthAccidental() + n.get(0).paddingNote;
-            xe = 0.5f * score.getDistanceBetweenStaveLines() + n.get(n.size() - 1).startX + n.get(n.size() - 1).paddingLeft + n.get(n.size() - 1).WidthAccidental() + n.get(n.size() - 1).paddingNote + n.get(n.size() - 1).WidthNote();
-            y = n.get(0).ys + (n.get(0).getDisplacement() + 0.5f) * score.getDistanceBetweenStaveLines() - n.get(0).Height(true) + score.getDistanceBetweenStaveLines() / 2;
-            ye = n.get(n.size() - 1).ys + (n.get(n.size() - 1).getDisplacement() + 0.5f) * score.getDistanceBetweenStaveLines() - n.get(n.size() - 1).Height(true) + score.getDistanceBetweenStaveLines() / 2;
-
-            float yMiddleMin = n.get(1).ys + (n.get(1).getDisplacement() + 0.5f) * score.getDistanceBetweenStaveLines() - n.get(1).Height(true) + score.getDistanceBetweenStaveLines() / 2;
-
+            x = x + 0.5f * score.getDistanceBetweenStaveLines();
+            xe = xe + 0.5f * score.getDistanceBetweenStaveLines();
+            y =  n.get(0).ys +          (n.get(0).getDisplacement() - StemLength) *        score.getDistanceBetweenStaveLines();
+            ye = n.get(EndIndex).ys +   (n.get(EndIndex).getDisplacement() - StemLength) * score.getDistanceBetweenStaveLines();
+            if (ye>y) {
+                float slope = FM_Const.slope(0, x, y, xe, ye);
+                ye = FM_Const.getY2(slope, x, y, xe);
+            }
+            else {
+                float slope = FM_Const.slope(0, xe, ye, x, y);
+                y = FM_Const.getY2(slope, xe, ye, x);
+            }
+            float yMiddleMin = n.get(1).ys + (n.get(1).getDisplacement() - StemLength) * score.getDistanceBetweenStaveLines();
             for (int i = 2; i < n.size() - 1; i++) {
-                float yMiddle = n.get(i).ys + (n.get(i).getDisplacement() + 0.5f) * score.getDistanceBetweenStaveLines() - n.get(i).Height(true) + score.getDistanceBetweenStaveLines() / 2;
+                float yMiddle = n.get(i).ys + (n.get(i).getDisplacement() - StemLength) * score.getDistanceBetweenStaveLines();
                 if (yMiddle < yMiddleMin) yMiddleMin = yMiddle;
             }
             if ((y + ye) / 2 > yMiddleMin) {
@@ -44,31 +54,25 @@ public class FM_Tuple {
                 ye = ye - diff;
             }
         } else {
-            x = n.get(0).startX +
-                    n.get(0).paddingLeft +
-                    n.get(0).WidthAccidental() +
-                    n.get(0).paddingNote -
-                    0.5f * score.getDistanceBetweenStaveLines() ;
-            xe = n.get(n.size() - 1).startX +
-                    n.get(n.size() - 1).paddingLeft +
-                    n.get(n.size() - 1).WidthAccidental() +
-                    n.get(n.size() - 1).WidthNote() +
-                    n.get(n.size() - 1).paddingNote -
-                    0.5f * score.getDistanceBetweenStaveLines();
+            x = x - 0.5f * score.getDistanceBetweenStaveLines() ;
+            xe = xe - 0.5f * score.getDistanceBetweenStaveLines();
 
-            y = n.get(0).ys +
-                    (n.get(0).getDisplacement() - 0.5f) * score.getDistanceBetweenStaveLines() +
-                    n.get(0).Height(true) -
-                    score.getDistanceBetweenStaveLines() / 2;
-            ye = n.get(n.size() - 1).ys +
-                    (n.get(n.size() - 1).getDisplacement() - 0.5f) * score.getDistanceBetweenStaveLines() +
-                    n.get(n.size() - 1).Height(true) -
-                    score.getDistanceBetweenStaveLines() / 2;
+            y = n.get(0).ys +           (n.get(0).getDisplacement() + StemLength) * score.getDistanceBetweenStaveLines();
+            ye = n.get(EndIndex).ys +   (n.get(EndIndex).getDisplacement() + StemLength) * score.getDistanceBetweenStaveLines();
 
-            float yMiddleMin = n.get(1).ys + (n.get(1).getDisplacement()) * score.getDistanceBetweenStaveLines() + n.get(1).Height(true) - score.getDistanceBetweenStaveLines() / 2;
+            if (ye<y) {
+                float slope = FM_Const.slope(0, x, y, xe, ye);
+                ye = FM_Const.getY2(slope, x, y, xe);
+            }
+            else {
+                float slope = FM_Const.slope(0, xe, ye, x, y);
+                y = FM_Const.getY2(slope, xe, ye, x);
+            }
+
+            float yMiddleMin = n.get(1).ys + (n.get(1).getDisplacement() + StemLength) * score.getDistanceBetweenStaveLines();
 
             for (int i = 2; i < n.size() - 1; i++) {
-                float yMiddle = n.get(i).ys + (n.get(i).getDisplacement()) * score.getDistanceBetweenStaveLines() + n.get(i).Height(true) - score.getDistanceBetweenStaveLines() / 2;
+                float yMiddle = n.get(i).ys + (n.get(i).getDisplacement() + StemLength) * score.getDistanceBetweenStaveLines();
                 if (yMiddle > yMiddleMin) yMiddleMin = yMiddle;
             }
             if ((y + ye) / 2 < yMiddleMin) {
@@ -95,7 +99,7 @@ public class FM_Tuple {
         float w = score.Font.measureText(text);
         float middle1 = (x + xe) / 2 - w / 2 - score.getDistanceBetweenStaveLines() / 2;
         float middle2 = (x + xe) / 2 + w / 2 + score.getDistanceBetweenStaveLines() / 2;
-        float slope = FM_Const.slope(x, y - score.getDistanceBetweenStaveLines(), xe, ye - score.getDistanceBetweenStaveLines());
+        float slope = FM_Const.slope(0, x, y - score.getDistanceBetweenStaveLines(), xe, ye - score.getDistanceBetweenStaveLines());
 
         if (!n.get(0).beam) {
             if (n.get(0).stem_up) {
