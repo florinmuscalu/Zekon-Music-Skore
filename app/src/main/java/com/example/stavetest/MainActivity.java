@@ -25,8 +25,8 @@ import ro.florinm.FM_Score.FM_Note;
 import ro.florinm.FM_Score.FM_NoteValue;
 import ro.florinm.FM_Score.FM_Pause;
 import ro.florinm.FM_Score.FM_Score;
-import ro.florinm.FM_Score.FM_ScorePlayer;
 import ro.florinm.FM_Score.FM_TimeSignature;
+import ro.florinm.FM_ScorePlayer.FM_ScorePlayer;
 
 public class MainActivity extends AppCompatActivity {
     FM_ScorePlayer player;

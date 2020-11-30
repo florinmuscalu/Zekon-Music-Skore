@@ -1,4 +1,4 @@
-package ro.florinm.FM_Score;
+package ro.florinm.FM_ScorePlayer;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
