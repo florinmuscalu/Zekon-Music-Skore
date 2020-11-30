@@ -164,12 +164,11 @@ public class FM_Chord extends FM_BaseNote {
 
     public void DrawNote(Canvas canvas) {
         if (!isVisible()) return;
-        super.DrawNote(canvas);
-
         for (int i = 0; i< Notes.size(); i++) {
             if (Notes.get(i).clef == score.getFirstStaveClef()) Notes.get(i).DrawNote(canvas);
             if (Notes.get(i).clef == score.getSecondStaveClef()) Notes.get(i).DrawNote(canvas);
         }
+        super.DrawNote(canvas);
     }
 
     @Override
@@ -177,15 +176,40 @@ public class FM_Chord extends FM_BaseNote {
         return 0;
     }
     public float Left(){
-        return 0;
+        float left = Notes.get(0).Left();
+        for (int i = 0; i< Notes.size(); i++) if (Notes.get(i).Left() < left) left = Notes.get(i).Left();
+        return left;
     };
     public float Bottom() {
-        return 0;
+        float bottom = Notes.get(0).Bottom();
+        for (int i = 0; i< Notes.size(); i++) if (Notes.get(i).Bottom() < bottom) bottom = Notes.get(i).Bottom();
+        for (int i = 0; i< Notes.size(); i++) if (Notes.get(i).Top() < bottom) bottom = Notes.get(i).Top();
+        return bottom;
     }
     public float Right() {
-        return 0;
+        float right = Notes.get(0).Right();
+        for (int i = 0; i< Notes.size(); i++) if (Notes.get(i).Right() > right) right = Notes.get(i).Right();
+        return right;
     }
     public float Top(){
-        return 0;
+        float top = Notes.get(0).Top();
+        for (int i = 0; i< Notes.size(); i++) if (Notes.get(i).Top() > top) top = Notes.get(i).Top();
+        for (int i = 0; i< Notes.size(); i++) if (Notes.get(i).Bottom() > top) top = Notes.get(i).Bottom();
+        return top;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+        for (int i = 0; i< Notes.size(); i++) Notes.get(i).setColor(color);
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+    public void setVisible(boolean visible) {
+        if (!visible) line = -1;
+        else line = 1;
+        this.visible = visible;
+        for (int i = 0; i< Notes.size(); i++) Notes.get(i).setVisible(visible);
     }
 }

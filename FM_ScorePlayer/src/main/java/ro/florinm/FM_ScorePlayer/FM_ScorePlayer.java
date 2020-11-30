@@ -17,6 +17,9 @@ public class FM_ScorePlayer {
     private final FM_SoundPool soundPlayer;
     private boolean playing_step, playing;
 
+    /**
+     * @param context The Application's context.
+     */
     public FM_ScorePlayer(Context context) {
         super();
         soundPlayer = new FM_SoundPool(context);
@@ -25,95 +28,31 @@ public class FM_ScorePlayer {
         setTempo(60);
     }
 
+    /**
+     * @param tempo the tempo used for playing the song.
+     */
     public void setTempo(int tempo) {
         soundPlayer.TEMPO = 60000.0 / tempo;
     }
 
+    /**
+     * @return get the tempo used for playing the song.
+     */
     public int getTempo(){
         return (int) (60000.0 / soundPlayer.TEMPO);
     }
 
+    /**
+     * @param obj The song in Json format. Check the documentation for how the Json should look like.
+     * @return 0 if loading is successful, -1 otherwise.
+     */
     public int LoadFromJson(JSONObject obj) {
         try {
-            song = generateHarmonicSong(obj.optString("keysignature", "DO"), obj.getJSONArray("keys"));
+            song = FM_Helper.generateHarmonicSong(obj.optString("keysignature", "DO"), obj.getJSONArray("keys"));
         } catch (JSONException e) {
             return -1;
         }
         return 0;
-    }
-
-    public FM_Audio_Song generateHarmonicSong(String keysignature, JSONArray keys) {
-        FM_Audio_Song song = new FM_Audio_Song();
-        song.keysignature = keysignature;
-        JSONArray a = new JSONArray();
-        try {
-            while (keys.length() > 0) {
-                JSONArray b = (JSONArray) keys.get(0);
-                if (b.getString(0).startsWith("BAR")) {
-                    JSONArray value = new JSONArray();
-                    value.put("BAR");
-                    a.put(value);
-                    keys.remove(0);
-                    continue;
-                }
-                boolean still_to_go = true;
-                int current_group = 0;
-                while (still_to_go) {
-                    int i = 0;
-                    current_group = current_group + 1;
-                    JSONArray value = new JSONArray();
-                    while (true) {
-                        if (keys.length() == 0) {
-                            still_to_go = false;
-                            break;
-                        }
-                        if (i > keys.length() - 1) {
-                            break;
-                        }
-                        JSONArray tmp = (JSONArray) keys.get(i);
-                        if (tmp.getString(0).startsWith("BAR")) {
-                            if (i == 0) still_to_go = false;
-                            break;
-                        }
-                        int pg = tmp.getInt(8);
-                        if (current_group == pg) {
-                            value.put(tmp.getString(0));
-                            value.put(tmp.getString(1));
-                            keys.remove(i);
-                            i = i - 1;
-                        }
-                        i = i + 1;
-                    }
-                    a.put(value);
-                }
-            }
-
-            FM_Audio_Measure m = new FM_Audio_Measure();
-            song.measures.add(m);
-            for (int i = 0; i < a.length(); i++) {
-                JSONArray b = (JSONArray) a.get(i);
-                if (b.length() == 1 && b.getString(0).startsWith("BAR")) {
-                    m = new FM_Audio_Measure();
-                    song.measures.add(m);
-                } else {
-                    FM_Audio_Note n = new FM_Audio_Note();
-                    String note = "";
-                    String duration = "";
-                    for (int j = 0; j < b.length(); j = j + 2) {
-                        note = note + "," + b.getString(j);
-                        duration = duration + "," + b.getString(j + 1);
-                    }
-                    n.note = note.substring(1);
-                    n.duration = duration.substring(1);
-                    n.playDuration = duration.substring(1);
-                    n.pauseDuration = duration.substring(1);
-                    m.notes.add(n);
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return song;
     }
 
     public void Play() {
@@ -222,6 +161,7 @@ public class FM_ScorePlayer {
     //Below: functions for a Piano Keyboard
 
     /**
+     * Check to make sure that a certain key is not currently playing.
      * @param key The index of the key you want to check. It starts from 1 (A/0) to 88 (c/8).
      * @return True if the key is not currently playing
      */
@@ -230,6 +170,7 @@ public class FM_ScorePlayer {
         return soundPlayer.isKeyNotPlaying(key);
     }
     /**
+     * Start playing the key you specify.
      * @param key The index of the key you want to check. It starts from 1 (A/0) to 88 (c/8).
      */
     public void playKey(int key) {
@@ -237,6 +178,7 @@ public class FM_ScorePlayer {
         soundPlayer.playKey(key);
     }
     /**
+     * Start playing the key you specify.
      * @param key The index of the key you want to check. It starts from 1 (A/0) to 88 (c/8).
      */
     public void stopKey(int key) {

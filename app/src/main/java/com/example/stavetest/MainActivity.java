@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         s.setSecondStaveClef(FM_ClefValue.BASS);
         s.setTimeSignature(FM_TimeSignature._4_4);
         s.setKeySignature(FM_KeySignatureValue.DOb);
-        s.setDistanceBetweenStaveLines(8);
+        s.setDistanceBetweenStaveLines(10);
         s.setPaddingS(2);
         s.setPaddingE(2);
         s.setPaddingT(5);
@@ -51,13 +51,11 @@ public class MainActivity extends AppCompatActivity {
         s.setKeySignature(FM_KeySignatureValue.DOsharp);
         s.setAlign(FM_Align.ALIGN_LEFT_LAST_MEASURE);
         s.setPaddingT(5);
-        s.setCenterVertical(true);
+        s.setCenterVertical(false);
         s.setMultiLine(true);
         s.setShowBrace(true);
         s.setAllowZoomPan(true);
-        s.setDrawBoundigBox(false);
         s.setTrimLastLine(true);
-
         String furelise = "";
         BufferedReader reader = null;
         try {
@@ -83,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception ignored) {}
 
         s.LoadFromJson(obj);
-        player = new FM_ScorePlayer(getApplicationContext(), 44);
+        player = new FM_ScorePlayer(getApplicationContext());
         player.LoadFromJson(obj);
 
 //        s.BeginBeam();
@@ -492,5 +490,13 @@ public class MainActivity extends AppCompatActivity {
     public void OnClick(View v){
         player.Prepare();
         player.Play();
+    }
+
+    public void OnClickBBox(View v){
+        FM_Score s = findViewById(R.id.stave);
+        int i = s.getShowBoundingBoxes();
+        i = i + 1;
+        if (i > 2) i = 0;
+        s.ShowBoundingBoxes(i);
     }
 }

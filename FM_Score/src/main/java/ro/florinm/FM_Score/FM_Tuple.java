@@ -140,7 +140,7 @@ public class FM_Tuple {
             }
         }
         //canvas.drawLine(x, y - stave.getDistanceBetweenStaveLines(), xe,ye - stave.getDistanceBetweenStaveLines() , stave.StaveFont);
-        if (n.get(0).stem_up) canvas.drawText(text, (x + xe) / 2 - w / 2, (y + ye) / 2 - score.getDistanceBetweenStaveLines(), score.Font);
-        else canvas.drawText(text, (x + xe) / 2 - w / 2, (y + ye) / 2 + score.getDistanceBetweenStaveLines(), score.Font);
+        if (n.get(0).stem_up) canvas.drawText(text, (x + xe) / 2 - w / 2, (y + ye) / 2 - 1.2f * score.getDistanceBetweenStaveLines(), score.Font);
+        else canvas.drawText(text, (x + xe) / 2 - w / 2, (y + ye) / 2 + 1.2f * score.getDistanceBetweenStaveLines(), score.Font);
     }
 }

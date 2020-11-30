@@ -14,7 +14,7 @@ public abstract class FM_BaseNote{
     Float paddingNote;
     Float paddingDot;
     Float paddingRight;
-    private boolean visible;
+    boolean visible;
     FM_Score score;
     float StartX;
     float StartY1, StartY2;
@@ -75,9 +75,13 @@ public abstract class FM_BaseNote{
     }
     protected void DrawNote(Canvas canvas){
         score.Font.setColor(color);
-        if (score.getDrawBoundingBox()) {
+        if (score.getShowBoundingBoxes() == FM_BoundingBoxType.None) return;
+
+        if ((score.getShowBoundingBoxes() == FM_BoundingBoxType.Chord && this instanceof  FM_Chord) ||
+                (score.getShowBoundingBoxes() == FM_BoundingBoxType.Note && !(this instanceof  FM_Chord))) {
             Paint p = new Paint();
             p.setColor(android.graphics.Color.argb(255, 255, 0, 0));
+            if (this instanceof FM_Chord) p.setColor(android.graphics.Color.argb(255, 255, 0, 255));
             float bx = Left();
             float tx = Right();
             float by = Bottom();

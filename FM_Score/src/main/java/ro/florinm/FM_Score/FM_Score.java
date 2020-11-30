@@ -76,7 +76,8 @@ public class FM_Score extends View {
 
     private boolean TrimLastLine;
 
-    private boolean DrawBoundingBox;
+    @FM_BoundingBoxType
+    private int DrawBoundingBox;
 
     public FM_Score(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -109,7 +110,7 @@ public class FM_Score extends View {
         setTimeSignature(FM_TimeSignature.None);
         setKeySignature(FM_KeySignatureValue.DO);
         setAlign(FM_Align.ALIGN_CENTER_MEASURES);
-        setDrawBoundigBox(false);
+        ShowBoundingBoxes(FM_BoundingBoxType.None);
 
     }
 
@@ -122,11 +123,13 @@ public class FM_Score extends View {
         return TrimLastLine;
     }
 
-    public void setDrawBoundigBox(boolean on) {
-        DrawBoundingBox = on;
+    public void ShowBoundingBoxes(@FM_BoundingBoxType int show) {
+        DrawBoundingBox = show;
+        invalidate();
     }
 
-    public boolean getDrawBoundingBox() {
+    @FM_BoundingBoxType
+    public int getShowBoundingBoxes() {
         return DrawBoundingBox;
     }
 
