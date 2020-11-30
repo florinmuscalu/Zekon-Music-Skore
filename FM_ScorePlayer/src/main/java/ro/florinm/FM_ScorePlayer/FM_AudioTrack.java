@@ -70,7 +70,7 @@ class FM_AudioSubTrack implements Comparable<FM_AudioSubTrack>{
     }
 }
 
-public class FM_AudioTrack {
+class FM_AudioTrack {
     protected int AccessIndex = 0; //Used to remove old, unused tracks
     private final FM_AudioSubTrack track1, track2, track3, track4, track5, track6, track7;
     Boolean loading;
@@ -376,7 +376,7 @@ class FM_SoundPool {
     public double TEMPO = 60.0;
     public static int FALLBACK_DURATION = 250; //fallback duration for sounds
     public static int MAX_TRACKS = 500;
-    Context context;
+    private final Context context;
     ArrayList<FM_AudioTrack> Tracks = new ArrayList<>();
 
 

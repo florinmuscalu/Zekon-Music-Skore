@@ -1,6 +1,7 @@
 package ro.florinm.FM_ScorePlayer;
 
 import android.content.Context;
+import android.media.SoundPool;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,26 +13,24 @@ import java.util.List;
 import static java.lang.Thread.sleep;
 
 public class FM_ScorePlayer {
-    private String do_a = "";
-    private String re_a = "";
-    private String mi_a = "";
-    private String fa_a = "";
-    private String sol_a = "";
-    private String la_a = "";
-    private String si_a = "";
     private FM_Audio_Song song;
-    public FM_SoundPool soundPlayer;
-    boolean playing_step, playing;
-    Context context;
-    double tempo = 60.0;
+    private final FM_SoundPool soundPlayer;
+    private boolean playing_step, playing;
 
-    public FM_ScorePlayer(Context context, double tempo) {
+    public FM_ScorePlayer(Context context) {
         super();
-        this.context = context;
         soundPlayer = new FM_SoundPool(context);
         playing = false;
         playing_step = false;
-        this.tempo = tempo;
+        setTempo(60);
+    }
+
+    public void setTempo(int tempo) {
+        soundPlayer.TEMPO = 60000.0 / tempo;
+    }
+
+    public int getTempo(){
+        return (int) (60000.0 / soundPlayer.TEMPO);
     }
 
     public int LoadFromJson(JSONObject obj) {
@@ -43,7 +42,7 @@ public class FM_ScorePlayer {
         return 0;
     }
 
-    public static FM_Audio_Song generateHarmonicSong(String keysignature, JSONArray keys) {
+    public FM_Audio_Song generateHarmonicSong(String keysignature, JSONArray keys) {
         FM_Audio_Song song = new FM_Audio_Song();
         song.keysignature = keysignature;
         JSONArray a = new JSONArray();
@@ -164,7 +163,7 @@ public class FM_ScorePlayer {
     private FM_Audio_Note LoadNote(FM_Audio_Note note) {
         FM_Audio_Note ret;
         String[] n = note.note.split(",");
-        n = computeNote(song.keysignature, n);
+        n = FM_Helper.computeNote(song.keysignature, n);
         String[] d = note.duration.split(",");
         ret = note;
         List<Integer> tracks = new ArrayList<>();
@@ -183,17 +182,16 @@ public class FM_ScorePlayer {
     }
 
     private void PlayHarmonic(final FM_Audio_Song song, int measure_start, int measure_end, int notes, Boolean prepare) {
-        soundPlayer.TEMPO = 1000 * (60/tempo);
         if (measure_end > song.measures.size()) measure_end = song.measures.size();
         if (measure_end == song.measures.size()) notes = 0;
         List<FM_Audio_Note> ListNotes = new ArrayList<>();
         for (int i = measure_start - 1; i < measure_end; i++) {
-            StartMeasure();
+            FM_Helper.StartMeasure();
             for (int j = 0; j < song.measures.get(i).notes.size(); j++)
                 ListNotes.add(LoadNote(song.measures.get(i).notes.get(j)));
         }
         if (notes != 0) {
-            StartMeasure();
+            FM_Helper.StartMeasure();
             int cnt = notes;
             if (cnt > song.measures.get(measure_end).notes.size())
                 cnt = song.measures.get(measure_end).notes.size();
@@ -219,91 +217,30 @@ public class FM_ScorePlayer {
         playing = false;
     }
 
-    private String[] computeNote(String tonality, String[] n) {
-        String[] ret = new String[n.length];
-        for (int i = 0; i < n.length; i++) {
-            String o = n[i].substring(n[i].length() - 2);
-            String note = n[i].substring(0, n[i].length() - 2);
-            String initial_note = note;
-            String tmp = ApplyTonality(tonality, note);
-            if (note.startsWith("DO")) {
-                if (!note.equals("DO")) do_a = note;
-                else note = do_a;
-            }
-            if (note.startsWith("RE")) {
-                if (!note.equals("RE")) re_a = note;
-                else note = re_a;
-            }
-            if (note.startsWith("MI")) {
-                if (!note.equals("MI")) mi_a = note;
-                else note = mi_a;
-            }
-            if (note.startsWith("FA")) {
-                if (!note.equals("FA")) fa_a = note;
-                else note = fa_a;
-            }
-            if (note.startsWith("SOL")) {
-                if (!note.equals("SOL")) sol_a = note;
-                else note = sol_a;
-            }
-            if (note.startsWith("LA")) {
-                if (!note.equals("LA")) la_a = note;
-                else note = la_a;
-            }
-            if (note.startsWith("SI")) {
-                if (!note.equals("SI")) si_a = note;
-                else note = si_a;
-            }
-            if (initial_note.equals(note)) note = tmp;
-            ret[i] = note + o;
-        }
-        return ret;
-    }
 
-    private String ApplyTonality(String tonality, String key){
-        //send it only the note, without the octave!!
-        if (key.contains("n") || key.contains("#") || key.contains("##") || key.contains("b") || key.contains("bb") || key.equals("B")) return key;
-        String k = key.toUpperCase();
-        if (tonality.equals("SOL") || tonality.equals("MIm")){
-            if (k.equals("FA")) k = k+"#";
-        }
-        if (tonality.equals("RE") || tonality.equals("SIm")){
-            if (k.equals("FA") || k.equals("DO")) k = k + "#";
-        }
-        if (tonality.equals("LA") || tonality.equals("FA#m")){
-            if (k.equals("FA") || k.equals("DO")|| k.equals("SOL")) k = k + "#";
-        }
-        if (tonality.equals("MI") || tonality.equals("DO#m")){
-            if (k.equals("FA") || k.equals("DO") || k.equals("SOL") || k.equals("RE")) k = k + "#";
-        }
-        if (tonality.equals("SI") || tonality.equals("SOL#m")){
-            if (k.equals("FA") || k.equals("DO") || k.equals("SOL") || k.equals("RE") || k.equals("LA")) k = k + "#";
-        }
-        if (tonality.equals("FA") || tonality.equals("REm")){
-            if (k.equals("SI")) k = k+ "b";
-        }
-        if (tonality.equals("SIb") || tonality.equals("SOLm")){
-            if (k.equals("SI") || k.equals("MI")) k = k + "b";
-        }
-        if (tonality.equals("MIb") || tonality.equals("DOm")){
-            if (k.equals("SI") || k.equals("MI")|| k.equals("LA")) k = k + "b";
-        }
-        if (tonality.equals("LAb") || tonality.equals("FAm")){
-            if (k.equals("SI") || k.equals("MI") || k.equals("LA") || k.equals("RE")) k = k + "b";
-        }
-        if (tonality.equals("REb") || tonality.equals("SIbm")){
-            if (k.equals("SI") || k.equals("MI") || k.equals("LA") || k.equals("RE") || k.equals("SOL")) k = k + "b";
-        }
-        return k;
-    }
 
-    private void StartMeasure() {
-        do_a = "DO";
-        re_a = "RE";
-        mi_a = "MI";
-        fa_a = "FA";
-        sol_a = "SOL";
-        la_a = "LA";
-        si_a = "SI";
+    //Below: functions for a Piano Keyboard
+
+    /**
+     * @param key The index of the key you want to check. It starts from 1 (A/0) to 88 (c/8).
+     * @return True if the key is not currently playing
+     */
+    public boolean isKeyNotPlaying(int key) {
+        if (key<1 || key>88) return false;
+        return soundPlayer.isKeyNotPlaying(key);
+    }
+    /**
+     * @param key The index of the key you want to check. It starts from 1 (A/0) to 88 (c/8).
+     */
+    public void playKey(int key) {
+        if (key<1 || key>88) return;
+        soundPlayer.playKey(key);
+    }
+    /**
+     * @param key The index of the key you want to check. It starts from 1 (A/0) to 88 (c/8).
+     */
+    public void stopKey(int key) {
+        if (key<1 || key>88) return;
+        soundPlayer.stopKey(key);
     }
 }
