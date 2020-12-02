@@ -53,13 +53,13 @@ public class FM_Chord extends FM_BaseNote {
         float maxW = -10000;
         float w = 0;
         for (int i = 0; i < Notes.size(); i++) {
-            w = Notes.get(i).WidthNoDot();
+            w = Notes.get(i).WidthNoDotNoStem();
             if (w > maxW) maxW = w;
         }
         //Pad the notes to have the same width, without the DOT (aligning them)
         for (int i = 0; i < Notes.size(); i++) {
             w = Notes.get(i).WidthNoDotNoStem();
-            Notes.get(i).setPaddingLeft(maxW - w);
+            Notes.get(i).setPaddingLeft((maxW - w) / 2.0f);
             //if (Notes.get(i) instanceof FM_Pause) Notes.get(i).setPaddingLeft(0);
         }
         //if the distance between the notes is 0, and notes

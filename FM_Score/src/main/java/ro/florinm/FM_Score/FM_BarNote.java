@@ -24,11 +24,14 @@ public class FM_BarNote extends FM_BaseNote {
     protected float WidthAccidental(){
         return 0;
     }
+    @Override
     protected float WidthNoteNoStem() {
         return FM_Const.dpTOpx(score.getContext(),1);
     }
+
+    @Override
     protected float WidthNote(){
-        return WidthNoDotNoStem();
+        return WidthNoteNoStem();
     }
     protected float WidthDot() {
         return 0;

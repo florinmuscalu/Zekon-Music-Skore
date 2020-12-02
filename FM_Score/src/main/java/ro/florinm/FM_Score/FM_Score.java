@@ -94,7 +94,7 @@ public class FM_Score extends View {
         TrimLastLine = false;
         StaffCount = FM_StaffCount._1;
         setVoiceCount(1);
-        setNoteSpacing(0);
+        setNoteSpacing(5);
         setShowBrace(false);
         setDistanceBetweenStaveLines(10);
         setDistanceBetweenStaves(5);

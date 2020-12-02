@@ -154,7 +154,7 @@ class FM_KeySignature extends FM_BaseNote {
         return maxdy + Height();
     }
     public float Right() {
-        return StartX + paddingRight + WidthNote();
+        return StartX + Width();
     }
     public float Top(){
         float mindy = Bottom();

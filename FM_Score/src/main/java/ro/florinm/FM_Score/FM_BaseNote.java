@@ -23,13 +23,10 @@ public abstract class FM_BaseNote{
     protected void setPaddingDot(float p) { paddingDot = p; }
     protected float getPaddingDot(float p) { return paddingDot; }
     protected abstract float WidthDot();
-    Float paddingRight;
-    protected float getPaddingRight() { return paddingRight; }
-    protected void setPaddingRight(float p) { paddingRight = p; }
-    public float Width() { return paddingLeft + WidthAccidental() + paddingNote + WidthNote() + paddingDot + WidthDot() + paddingRight; }
-    public float WidthNoDot() { return paddingLeft + WidthAccidental() + paddingNote + WidthNote() + paddingRight; }
-    public float WidthNoStem(){ return paddingLeft + WidthAccidental() + paddingNote + WidthNoteNoStem() + paddingDot + WidthDot() + paddingRight; }
-    public float WidthNoDotNoStem(){ return paddingLeft + WidthAccidental() + paddingNote + WidthNoteNoStem() + paddingRight; }
+    public float Width() { return paddingLeft + WidthAccidental() + paddingNote + WidthNote() + paddingDot + WidthDot(); }
+    public float WidthNoDot() { return paddingLeft + WidthAccidental() + paddingNote + WidthNote(); }
+    public float WidthNoStem(){ return paddingLeft + WidthAccidental() + paddingNote + WidthNoteNoStem() + paddingDot + WidthDot(); }
+    public float WidthNoDotNoStem(){ return paddingLeft + WidthAccidental() + paddingNote + WidthNoteNoStem(); }
 
     boolean visible;
     FM_Score score;
@@ -52,7 +49,6 @@ public abstract class FM_BaseNote{
         paddingDot = 0f;
         paddingNote = 0f;
         setPaddingLeft(FM_Const.dpTOpx(score.getContext(), 4));
-        setPaddingRight(FM_Const.dpTOpx(score.getContext(), 8));
         clef = FM_ClefValue.TREBLE;
         this.score = score;
         this.visible = true;
