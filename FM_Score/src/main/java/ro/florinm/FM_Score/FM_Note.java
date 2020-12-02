@@ -1,7 +1,6 @@
 package ro.florinm.FM_Score;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Rect;
 
 public class FM_Note extends FM_BaseNote {
@@ -134,31 +133,22 @@ public class FM_Note extends FM_BaseNote {
         return asStringAccidental() + asStringNote() + asStringDot();
     }
 
-    public float WidthAll() {
-        return WidthAll(false);
-    }
-
-    public float WidthAll(boolean Stem) {
-        return WidthAccidental() + paddingNote + WidthNote(Stem) + paddingDot + WidthDot() + paddingRight;
-    }
-
-    public float WidthDot() {
-        FM_Const.AdjustFont(score, FM_Const.Sharp, 2);
-        return score.Font.measureText(asStringDot());
-    }
 
     public float WidthAccidental() {
         FM_Const.AdjustFont(score, FM_Const.Sharp, 2);
         return score.Font.measureText(asStringAccidental());
     }
-
-    public float WidthNote() {
-        return WidthNote(false);
+    public float WidthNoteNoStem() {
+        FM_Const.AdjustFont(score, asStringNote(false), 1);
+        return score.Font.measureText(asStringNote(false));
     }
-
-    public float WidthNote(boolean stem) {
+    public float WidthNote() {
         FM_Const.AdjustFont(score, asStringNote(false), 1);
         return score.Font.measureText(asStringNote(stem));
+    }
+    public float WidthDot() {
+        FM_Const.AdjustFont(score, FM_Const.Sharp, 2);
+        return score.Font.measureText(asStringDot());
     }
 
     public float Height(boolean all) {
@@ -170,10 +160,6 @@ public class FM_Note extends FM_BaseNote {
         score.Font.getTextBounds(s, 0, s.length(), bounds);
         beam = tmp_beam;
         return bounds.height();
-    }
-
-    public float WidthAllNoDot() {
-        return WidthAll() - WidthDot() - paddingDot;
     }
 
     public void DrawNote(Canvas canvas) {
@@ -189,12 +175,16 @@ public class FM_Note extends FM_BaseNote {
         float offset = getDisplacement();
         if (offset >= 5.0f || offset < 0.0f) l = true;
         dy = StartY1 + offset * score.getDistanceBetweenStaveLines();
+
+        float width_accidental = WidthAccidental();
+        float width_note = WidthNote();
+        float width_note_nostem = WidthNoteNoStem();
         if (l) {
             if (offset >= 5.0f)
                 for (int i = 5; i <= offset; i++) {
                     ly = StartY1 + i * score.getDistanceBetweenStaveLines();
-                    float tX = StartX + paddingLeft + WidthAccidental() + paddingNote - score.getDistanceBetweenStaveLines() / 3;
-                    float tXe = StartX + paddingLeft + WidthAccidental() + paddingNote + WidthNote() + score.getDistanceBetweenStaveLines() / 3;
+                    float tX = StartX + paddingLeft + width_accidental + paddingNote - score.getDistanceBetweenStaveLines() / 3;
+                    float tXe = StartX + paddingLeft + width_accidental + paddingNote + WidthNote() + score.getDistanceBetweenStaveLines() / 3;
                     float tY = ly - FM_Const.dpTOpx(score.getContext(),0.25f);
                     float tYe = ly + FM_Const.dpTOpx(score.getContext(),0.25f);
                     canvas.drawRect(tX, tY,tXe, tYe, score.Font);
@@ -202,37 +192,32 @@ public class FM_Note extends FM_BaseNote {
             if (offset < 0.0f)
                 for (int i = -1; i >= offset; i--) {
                     ly = StartY1 + i * score.getDistanceBetweenStaveLines();
-                    float tX = StartX + paddingLeft + WidthAccidental() + paddingNote - score.getDistanceBetweenStaveLines() / 3;
-                    float tXe = StartX + paddingLeft + WidthAccidental() + paddingNote + WidthNote() + score.getDistanceBetweenStaveLines() / 3;
+                    float tX = StartX + paddingLeft + width_accidental + paddingNote - score.getDistanceBetweenStaveLines() / 3;
+                    float tXe = StartX + paddingLeft + width_accidental + paddingNote + width_note + score.getDistanceBetweenStaveLines() / 3;
                     float tY = ly - FM_Const.dpTOpx(score.getContext(),0.25f);
                     float tYe = ly + FM_Const.dpTOpx(score.getContext(),0.25f);
                     canvas.drawRect(tX, tY,tXe, tYe, score.Font);
                 }
         }
         score.Font.setColor(score.getColor());
-        float width_accidental = WidthAccidental();
-        float width_note_no_stem = WidthNote(false);
-        float width_note_stem = WidthNote(stem);
-        float width_dot = WidthDot();
-
         score.Font.setColor(color);
 
         FM_Const.AdjustFont(score, FM_Const.Sharp, 2);
         canvas.drawText(asStringAccidental(), StartX + paddingLeft, dy, score.Font);
-
-        FM_Const.AdjustFont(score, asStringNote(false), 1);
+        FM_Const.AdjustFont(score, FM_Const.EmptyNote, 1);
         canvas.drawText(asStringNote(), StartX + paddingLeft + width_accidental + paddingNote, dy, score.Font);
 
-        float adjustDotY = 0;
-        if (Math.abs(offset) - Math.floor(Math.abs(offset)) < 0.1) {
-            if (stem_up) adjustDotY = -score.getDistanceBetweenStaveLines() * 0.2f;
-            else adjustDotY = +score.getDistanceBetweenStaveLines() * 0.2f;
+        if (duration>50) {
+            float adjustDotY = 0;
+            if (Math.abs(offset) - Math.floor(Math.abs(offset)) < 0.1) {
+                if (stem_up) adjustDotY = -score.getDistanceBetweenStaveLines() * 0.2f;
+                else adjustDotY = +score.getDistanceBetweenStaveLines() * 0.2f;
+            }
+            canvas.drawText(asStringDot(), StartX + paddingLeft + width_accidental + paddingNote + width_note_nostem + paddingDot, dy + adjustDotY, score.Font);
         }
-        FM_Const.AdjustFont(score, FM_Const.Sharp, 2);
-        canvas.drawText(asStringDot(),  StartX + paddingLeft + width_accidental + paddingNote + width_note_no_stem + paddingDot, dy + adjustDotY, score.Font);
-
         score.Font.setColor(score.getColor());
     }
+
     public float Left(){
         return  StartX + paddingLeft;
     }
@@ -247,10 +232,10 @@ public class FM_Note extends FM_BaseNote {
         }
     }
     public float Right() {
-        float width_accidental = WidthAccidental();
-        float width_note_stem = WidthNote(stem);
-        float width_dot = WidthDot();
-        return StartX + paddingLeft + width_accidental + paddingNote + width_note_stem + paddingDot + width_dot;
+        float w1 = StartX + paddingLeft + WidthAccidental() + paddingNote + WidthNoteNoStem() + paddingDot + WidthDot();
+        float w2 = StartX + paddingLeft + WidthAccidental() + paddingNote + WidthNote();
+        if (w1 > w2) return w1;
+        else return w2;
     }
     public float Top(){
         float by = Bottom();

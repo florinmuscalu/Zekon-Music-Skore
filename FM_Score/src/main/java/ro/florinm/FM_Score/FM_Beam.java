@@ -29,13 +29,13 @@ public class FM_Beam {
                     n.get(0).paddingLeft +
                     n.get(0).WidthAccidental() +
                     n.get(0).paddingNote +
-                    n.get(0).WidthNote();
+                    n.get(0).WidthNoteNoStem();
 
             xe = n.get(EndIndex).startX +
                     n.get(EndIndex).paddingLeft +
                     n.get(EndIndex).WidthAccidental() +
                     n.get(EndIndex).paddingNote +
-                    n.get(EndIndex).WidthNote();
+                    n.get(EndIndex).WidthNoteNoStem();
 
             y =  n.get(0).ys +          (n.get(0).getDisplacement() - StemLength) *        score.getDistanceBetweenStaveLines();
             ye = n.get(EndIndex).ys +   (n.get(EndIndex).getDisplacement() - StemLength) * score.getDistanceBetweenStaveLines();
@@ -98,7 +98,7 @@ public class FM_Beam {
         float slope = FM_Const.slope(x, y, xe, ye);
         if (n.get(0).stem_up) {
             for (int i = 0; i < n.size(); i++) {
-                float tmpX = n.get(i).startX + n.get(i).paddingLeft + n.get(i).WidthAccidental() + n.get(i).paddingNote + n.get(i).WidthNote();
+                float tmpX = n.get(i).startX + n.get(i).paddingLeft + n.get(i).WidthAccidental() + n.get(i).paddingNote + n.get(i).WidthNoteNoStem();
                 float tmpY = n.get(i).ys + n.get(i).getDisplacement() * score.getDistanceBetweenStaveLines();
                 float tmpY2 = FM_Const.getY2(slope, x, y, tmpX);
 
@@ -164,19 +164,19 @@ public class FM_Beam {
             float tmpX2 = 0;
             if (drawBegin && drawEnd) {
                 tmpX1 = n.get(i).startX + n.get(i).paddingLeft + n.get(i).WidthAccidental() + n.get(i).paddingNote;
-                if (n.get(0).stem_up) tmpX1 = tmpX1 + n.get(i).WidthNote() - FM_Const.dpTOpx(score.getContext(), 1);
+                if (n.get(0).stem_up) tmpX1 = tmpX1 + n.get(i).WidthNoteNoStem() - FM_Const.dpTOpx(score.getContext(), 1);
                 tmpX2 = n.get(i + 1).startX + n.get(i + 1).paddingLeft + n.get(i + 1).WidthAccidental() + n.get(i + 1).paddingNote;
-                if (n.get(0).stem_up) tmpX2 = tmpX2 + n.get(i+1).WidthNote();
+                if (n.get(0).stem_up) tmpX2 = tmpX2 + n.get(i+1).WidthNoteNoStem();
                 else tmpX2 = tmpX2 + FM_Const.dpTOpx(score.getContext(), 1);
             }
             if (drawBegin && !drawEnd) {
                 tmpX1 = n.get(i).startX + n.get(i).paddingLeft + n.get(i).WidthAccidental() + n.get(i).paddingNote;
-                if (n.get(0).stem_up) tmpX1 = tmpX1 + n.get(i).WidthNote() - FM_Const.dpTOpx(score.getContext(), 1);
+                if (n.get(0).stem_up) tmpX1 = tmpX1 + n.get(i).WidthNoteNoStem() - FM_Const.dpTOpx(score.getContext(), 1);
                 tmpX2 = tmpX1 + score.getDistanceBetweenStaveLines() * 2 / 3;
             }
             if (!drawBegin && drawEnd) {
                 tmpX2 = n.get(i + 1).startX + n.get(i + 1).paddingLeft + n.get(i + 1).WidthAccidental() + n.get(i + 1).paddingNote;
-                if (n.get(0).stem_up) tmpX2 = tmpX2 + n.get(i + 1).WidthNote() - FM_Const.dpTOpx(score.getContext(), 1);
+                if (n.get(0).stem_up) tmpX2 = tmpX2 + n.get(i + 1).WidthNoteNoStem() - FM_Const.dpTOpx(score.getContext(), 1);
                 tmpX1 = tmpX2 - score.getDistanceBetweenStaveLines() * 2 / 3;
             }
             float tmpY1 = FM_Const.getY2(slope, x, y, tmpX1);

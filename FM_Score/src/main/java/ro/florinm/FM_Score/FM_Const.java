@@ -235,7 +235,7 @@ public class FM_Const {
         return FM_KeySignatureValue.DO;
     }
 
-    static void AdjustFont(FM_Score Score, String text, int stave_lines_cnt) {
+    static void AdjustFont(FM_Score Score, String text, float stave_lines_cnt) {
         if (text.equals("")) {
             Score.Font.setTextSize(10);
             return;

@@ -1,7 +1,6 @@
 package ro.florinm.FM_Score;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Rect;
 
 public class FM_Pause extends FM_BaseNote {
@@ -49,26 +48,25 @@ public class FM_Pause extends FM_BaseNote {
         return s;
     }
 
-    @Override
-    public float WidthAll(boolean all) {
-        return WidthAll();
-    }
-
-    public float WidthAll() {
-        FM_Const.AdjustFont(score, FM_Const.Pause_8, 2);
-        return paddingLeft + score.Font.measureText(asString()) + paddingRight;
+    public String asStringDot(){
+        String s2 = "";
+        if (duration>50) s2 = " " + FM_Const.Dot;
+        return s2;
     }
 
     public float WidthAccidental() {
         return 0;
     }
-
-    public float WidthAllNoDot() {
+    protected float WidthNoteNoStem(){
         FM_Const.AdjustFont(score, FM_Const.Pause_8, 2);
         return score.Font.measureText(asString());
     }
-    public float WidthNote() {
-        return WidthAll();
+    protected float WidthNote(){
+        return WidthNoteNoStem();
+    }
+    protected float WidthDot(){
+        FM_Const.AdjustFont(score, FM_Const.Pause_8, 2);
+        return score.Font.measureText(asStringDot());
     }
 
     private float BottomMargin() {
@@ -87,21 +85,14 @@ public class FM_Pause extends FM_BaseNote {
         return bounds.top;
     }
 
-    public String asStringDot(){
-        String s2 = "";
-        if (duration>50) s2 = " " + FM_Const.Dot;
-        return s2;
-    }
-
     public void DrawNote(Canvas canvas) {
         if (!isVisible()) return;
         super.DrawNote(canvas);
 
         FM_Const.AdjustFont(score, FM_Const.Pause_8, 2);
-        canvas.drawText(asString(), StartX + paddingLeft, StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines(), score.Font);
+        canvas.drawText(asString(), StartX + paddingLeft + WidthAccidental() + paddingNote, StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines(), score.Font);
         score.Font.setColor(score.getColor());
-
-        canvas.drawText(asStringDot(),  StartX + paddingLeft + paddingNote + WidthAllNoDot(), StartY1 + (getDisplacement() + 0.5f) * score.getDistanceBetweenStaveLines(), score.Font);
+        canvas.drawText(asStringDot(),  StartX + paddingLeft + WidthAccidental() + paddingNote + WidthNote() + paddingDot, StartY1 + (getDisplacement() + 0.5f) * score.getDistanceBetweenStaveLines(), score.Font);
     }
     public float Left(){
         return StartX + paddingLeft;
@@ -110,7 +101,7 @@ public class FM_Pause extends FM_BaseNote {
         return StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines() + BottomMargin();
     }
     public float Right() {
-        return StartX + WidthAll();
+        return StartX + paddingLeft + WidthAccidental() + paddingNote + WidthNote() + paddingDot + WidthDot();
     }
     public float Top(){
         return StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines() + TopMargin();

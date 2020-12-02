@@ -1,6 +1,5 @@
 package ro.florinm.FM_Score;
 
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
@@ -10,10 +9,28 @@ public abstract class FM_BaseNote{
     protected int color;
     @FM_ClefValue
     Integer clef;
-    Float paddingLeft;
-    Float paddingNote;
-    Float paddingDot;
+
+    protected float paddingLeft;
+    protected float getPaddingLeft() { return paddingLeft; }
+    protected void setPaddingLeft(float p) { paddingLeft = p; }
+    protected abstract float WidthAccidental();
+    protected float paddingNote;
+    protected void setPaddingNote(float p) { paddingNote = p; }
+    protected float getPaddingNote() { return paddingNote; }
+    protected abstract float WidthNoteNoStem();
+    protected abstract float WidthNote();
+    protected float paddingDot;
+    protected void setPaddingDot(float p) { paddingDot = p; }
+    protected float getPaddingDot(float p) { return paddingDot; }
+    protected abstract float WidthDot();
     Float paddingRight;
+    protected float getPaddingRight() { return paddingRight; }
+    protected void setPaddingRight(float p) { paddingRight = p; }
+    public float Width() { return paddingLeft + WidthAccidental() + paddingNote + WidthNote() + paddingDot + WidthDot() + paddingRight; }
+    public float WidthNoDot() { return paddingLeft + WidthAccidental() + paddingNote + WidthNote() + paddingRight; }
+    public float WidthNoStem(){ return paddingLeft + WidthAccidental() + paddingNote + WidthNoteNoStem() + paddingDot + WidthDot() + paddingRight; }
+    public float WidthNoDotNoStem(){ return paddingLeft + WidthAccidental() + paddingNote + WidthNoteNoStem() + paddingRight; }
+
     boolean visible;
     FM_Score score;
     float StartX;
@@ -34,8 +51,8 @@ public abstract class FM_BaseNote{
         this.type = type;
         paddingDot = 0f;
         paddingNote = 0f;
-        paddingLeft = FM_Const.dpTOpx(score.getContext(), 4);
-        paddingRight = FM_Const.dpTOpx(score.getContext(), 8);
+        setPaddingLeft(FM_Const.dpTOpx(score.getContext(), 4));
+        setPaddingRight(FM_Const.dpTOpx(score.getContext(), 8));
         clef = FM_ClefValue.TREBLE;
         this.score = score;
         this.visible = true;
@@ -94,35 +111,12 @@ public abstract class FM_BaseNote{
     };
     protected abstract float getDisplacement();
     protected abstract String asString();
-    public abstract float WidthAll(boolean Stem);
-    public abstract float WidthAll();
-    protected abstract float WidthAccidental();
-    protected abstract float WidthNote();
-    protected abstract float WidthAllNoDot();
 
     public int getColor() {
         return color;
     }
     public void setColor(int color) {
         this.color = color;
-    }
-
-    protected float getPaddingLeft() {
-        return paddingLeft;
-    }
-    protected void setPaddingLeft(float p) {
-        paddingLeft = p;
-    }
-
-    protected void setPaddingNote(float p) {
-        paddingNote = p;
-    }
-    protected void setPaddingDot(float p) {
-        paddingDot = p;
-    }
-
-    protected void setPaddingRight(float p) {
-        paddingRight = p;
     }
 
     public boolean isVisible() {

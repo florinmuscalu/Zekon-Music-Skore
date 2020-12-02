@@ -2,6 +2,7 @@
   "timesignature": "3/8",
   "keysignature": "DO",
   "clef" : ["treble", "bass"],
+  "voices" : 2,
   "keys": [
     ["MI/5",	"16",	"down",	"",		"1",	"",		"0", "0", 1],
     ["RE#/5",	"16",	"down",	"",		"1",	"",		"0", "0", 2],

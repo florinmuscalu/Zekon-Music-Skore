@@ -574,7 +574,7 @@ public class FM_Score extends View {
 
     private void DrawTimeSignature(Canvas canvas, float y) {
         Font.setColor(Color);
-        float pad = PaddingS + getClefWidth() + FirstStaveKey.WidthAll();
+        float pad = PaddingS + getClefWidth() + FirstStaveKey.Width();
         FM_Const.AdjustFont(this, FM_Const._4, 2);
         if (TimeSignature == FM_TimeSignature._4_4) {
             canvas.drawText(FM_Const._4, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
@@ -643,8 +643,8 @@ public class FM_Score extends View {
 
     private float getStartX(int line) {
         if (line == 1)
-            return PaddingS + getClefWidth() + FirstStaveKey.WidthAll() + getTimeSignatureWidth() + 2 * FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
-        else return PaddingS + getClefWidth() + FirstStaveKey.WidthAll();
+            return PaddingS + getClefWidth() + FirstStaveKey.Width() + getTimeSignatureWidth() + 2 * FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
+        else return PaddingS + getClefWidth() + FirstStaveKey.Width();
     }
 
     private float getLineWidth(int line) {
@@ -654,7 +654,7 @@ public class FM_Score extends View {
             if (StaveNotes.get(j).line == line) {
                 if (X < StaveNotes.get(j).StartX) {
                     X = StaveNotes.get(j).StartX;
-                    w = StaveNotes.get(j).WidthAll(true);
+                    w = StaveNotes.get(j).Width();
                 }
             }
         return X + w + 2 * FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
@@ -674,7 +674,7 @@ public class FM_Score extends View {
             float X = getStartX(l);
             FM_BaseNote last_note = null;
             for (int i = 0; i < StaveNotes.size(); i++) {
-                float w = StaveNotes.get(i).WidthAll(true) + NoteSpacing;
+                float w = StaveNotes.get(i).Width() + NoteSpacing;
                 if (X + w > endX) {
                     if (last_note instanceof FM_BarNote) last_note.setVisible(false);
                     l++;
@@ -705,7 +705,7 @@ public class FM_Score extends View {
             int last_bar = 0;
             int bar_cnt = 0;
             for (int i = 0; i < StaveNotes.size(); i++) {
-                float w = StaveNotes.get(i).WidthAll(true) + NoteSpacing;
+                float w = StaveNotes.get(i).Width() + NoteSpacing;
                 if (StaveNotes.get(i) instanceof FM_BarNote) {
                     last_bar = i;
                     bar_cnt++;
@@ -748,7 +748,7 @@ public class FM_Score extends View {
                 float diff;
                 for (int j = 0; j < StaveNotes.size(); j++)
                     if (StaveNotes.get(j).line == i) {
-                        float w = StaveNotes.get(j).WidthAll(true);
+                        float w = StaveNotes.get(j).Width();
                         X = X + w;
                         cnt++;
 
@@ -759,14 +759,14 @@ public class FM_Score extends View {
                 if (Align == FM_Align.ALIGN_CENTER_NOTES_ALL) {
                     for (int j = 0; j < StaveNotes.size(); j++)
                         if (StaveNotes.get(j).line == i) {
-                            float w = StaveNotes.get(j).WidthAll(true);
+                            float w = StaveNotes.get(j).Width();
                             StaveNotes.get(j).SetDrawParameters(X, StaveNotes.get(j).StartY1, StaveNotes.get(j).StartY2);
                             X = X + w + diff;
                         }
                 } else {
                     for (int j = 0; j < StaveNotes.size(); j++)
                         if (StaveNotes.get(j).line == i) {
-                            float w = StaveNotes.get(j).WidthAll(true);
+                            float w = StaveNotes.get(j).Width();
                             StaveNotes.get(j).SetDrawParameters(X + s, StaveNotes.get(j).StartY1, StaveNotes.get(j).StartY2);
                             X = X + w + s;
                         }
@@ -782,9 +782,9 @@ public class FM_Score extends View {
                 w1 = -1;
                 for (int j = 0; j < StaveNotes.size(); j++)
                     if (StaveNotes.get(j).line == i) {
-                        if (w1 == -1) w1 = StaveNotes.get(j).WidthAll(true);
+                        if (w1 == -1) w1 = StaveNotes.get(j).Width();
                         else {
-                            float w = StaveNotes.get(j).WidthAll(true);
+                            float w = StaveNotes.get(j).Width();
                             X = X + w;
                             cnt++;
                         }
@@ -799,7 +799,7 @@ public class FM_Score extends View {
                                 w1 = 0;
                                 StaveNotes.get(j).SetDrawParameters(getStartX(i), StaveNotes.get(j).StartY1, StaveNotes.get(j).StartY2);
                             } else {
-                                float w = StaveNotes.get(j).WidthAll(true);
+                                float w = StaveNotes.get(j).Width();
                                 StaveNotes.get(j).SetDrawParameters(X + diff, StaveNotes.get(j).StartY1, StaveNotes.get(j).StartY2);
                                 X = X + w + diff;
                             }

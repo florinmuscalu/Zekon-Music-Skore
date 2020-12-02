@@ -1,7 +1,6 @@
 package ro.florinm.FM_Score;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,14 +53,14 @@ public class FM_Chord extends FM_BaseNote {
         float maxW = -10000;
         float w = 0;
         for (int i = 0; i < Notes.size(); i++) {
-            w = Notes.get(i).WidthAllNoDot();
+            w = Notes.get(i).WidthNoDot();
             if (w > maxW) maxW = w;
         }
         //Pad the notes to have the same width, without the DOT (aligning them)
         for (int i = 0; i < Notes.size(); i++) {
-            w = Notes.get(i).WidthAllNoDot();
+            w = Notes.get(i).WidthNoDotNoStem();
             Notes.get(i).setPaddingLeft(maxW - w);
-            if (Notes.get(i) instanceof FM_Pause) Notes.get(i).setPaddingLeft(0);
+            //if (Notes.get(i) instanceof FM_Pause) Notes.get(i).setPaddingLeft(0);
         }
         //if the distance between the notes is 0, and notes
         for (int i = 0; i < Notes.size(); i++)
@@ -77,7 +76,7 @@ public class FM_Chord extends FM_BaseNote {
                     if (Notes.get(j).duration == FM_DurationValue.NOTE_HALF || Notes.get(j).duration == FM_DurationValue.NOTE_HALF_D) nj = 2;
 
                     if (ni == 1 || ni != nj) {
-                        float all_width = (Notes.get(i).WidthAll() - Notes.get(i).WidthAccidental() + Notes.get(j).WidthAll()) / 2f;
+                        float all_width = (Notes.get(i).Width() - Notes.get(i).WidthAccidental() + Notes.get(j).Width()) / 2f;
                         Notes.get(i).setPaddingLeft(Notes.get(i).getPaddingLeft() - all_width * 0.5f);      //pad the dot on first note
                         Notes.get(j).setPaddingLeft(Notes.get(j).getPaddingLeft() + all_width * 0.5f);    //pad the note on the second note
                         if (Notes.get(i).stem_up == Notes.get(j).stem_up) Notes.get(j).stem = false;
@@ -121,22 +120,17 @@ public class FM_Chord extends FM_BaseNote {
     }
 
     @Override
-    public float WidthAll(boolean all) {
-        return WidthAll();
-    }
-
-    public float WidthAll() {
+    public float Width() {
         int i = 0;
         float w = 0;
         float maxW = 0;
         while (i < Notes.size()) {
-            w = Notes.get(i).paddingLeft + Notes.get(i).WidthAll();
+            w = Notes.get(i).Width();
             if (w > maxW) maxW = w;
             i++;
         }
         return maxW;
     }
-
     public float WidthAccidental() {
         return 0f;
     }
@@ -147,6 +141,12 @@ public class FM_Chord extends FM_BaseNote {
 
     public float WidthAllNoDot() {
         return 0f;
+    }
+    protected float WidthNoteNoStem(){
+        return 0;
+    }
+    protected float WidthDot(){
+        return 0;
     }
 
     @Override
@@ -203,9 +203,6 @@ public class FM_Chord extends FM_BaseNote {
         for (int i = 0; i< Notes.size(); i++) Notes.get(i).setColor(color);
     }
 
-    public boolean isVisible() {
-        return visible;
-    }
     public void setVisible(boolean visible) {
         if (!visible) line = -1;
         else line = 1;

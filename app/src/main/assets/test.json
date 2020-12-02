@@ -7,6 +7,7 @@
   "stave_width": 600,
   "MStaves" : ["0"],
   "MVoices" : ["0"],
+  "voices" : 1,
   "clef" : ["treble"],
   "keys": [
     ["DO/5",	"8",	"up",	"",		"1",	"",		"0",	"0", 1],

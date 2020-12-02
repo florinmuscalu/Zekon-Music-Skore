@@ -2,7 +2,6 @@ package ro.florinm.FM_Score;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Rect;
 
 import java.util.ArrayList;
@@ -104,26 +103,19 @@ class FM_KeySignature extends FM_BaseNote {
         return s;
     }
 
-    @Override
-    public float WidthAll(boolean all) {
-        return WidthAll();
+    protected float WidthAccidental(){
+        return 0;
     }
-
-    public float WidthAll() {
+    protected float WidthNoteNoStem() {
         String s = asString();
         if (s.equals("")) return 0;
         FM_Const.AdjustFont(score, asString(), 2);
-        return paddingLeft + score.Font.measureText(asString()) + (accidental.size() - 1) * FM_Const.dpTOpx(score.getContext(), 2) + paddingRight + FM_Const.dpTOpx(score.getContext(), FM_Const.DEFAULT_EXTRA_PADDING);
+        return score.Font.measureText(asString()) + (accidental.size() - 1) * FM_Const.dpTOpx(score.getContext(), 2);
     }
-
-    public float WidthAccidental() {
-        return 0;
+    protected float WidthNote() {
+        return WidthNoDotNoStem();
     }
-
-    public float WidthAllNoDot() {
-        return WidthAll();
-    }
-    public float WidthNote() {
+    protected  float WidthDot(){
         return 0;
     }
 
@@ -131,7 +123,7 @@ class FM_KeySignature extends FM_BaseNote {
         if (!isVisible()) return;
         super.DrawNote(canvas);
 
-        float dx = StartX;
+        float dx = StartX + getPaddingLeft();
         for (int i = 0; i < accidental.size(); i++) {
             float offset = displacement.get(i);
             float dy = StartY1 + offset * score.getDistanceBetweenStaveLines();
@@ -149,7 +141,7 @@ class FM_KeySignature extends FM_BaseNote {
     }
 
     public float Left(){
-        return StartX;
+        return StartX + paddingLeft;
     };
     public float Bottom() {
         float dy = 0;
@@ -162,7 +154,7 @@ class FM_KeySignature extends FM_BaseNote {
         return maxdy + Height();
     }
     public float Right() {
-        return StartX + WidthAll();
+        return StartX + paddingRight + WidthNote();
     }
     public float Top(){
         float mindy = Bottom();

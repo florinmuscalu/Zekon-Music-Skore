@@ -1,8 +1,6 @@
 package ro.florinm.FM_Score;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 
 public class FM_BarNote extends FM_BaseNote {
 
@@ -23,23 +21,16 @@ public class FM_BarNote extends FM_BaseNote {
         return "";
     }
 
-    @Override
-    public float WidthAll(boolean all) {
-        return WidthAll();
-    }
-
-    public float WidthAll() {
-        return paddingLeft + paddingRight;
-    }
-
-    public float WidthAccidental() {
+    protected float WidthAccidental(){
         return 0;
     }
-
-    public float WidthAllNoDot() {
-        return WidthAll();
+    protected float WidthNoteNoStem() {
+        return FM_Const.dpTOpx(score.getContext(),1);
     }
-    public float WidthNote() {
+    protected float WidthNote(){
+        return WidthNoDotNoStem();
+    }
+    protected float WidthDot() {
         return 0;
     }
 
@@ -61,7 +52,7 @@ public class FM_BarNote extends FM_BaseNote {
         return StartY1;
     }
     public float Right() {
-        return StartX + paddingLeft + FM_Const.dpTOpx(score.getContext(),1);
+        return StartX + paddingLeft + WidthNote();
     }
     public float Top(){
         float BarYe = 0;
