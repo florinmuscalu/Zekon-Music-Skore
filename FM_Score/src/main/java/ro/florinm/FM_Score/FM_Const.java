@@ -2,7 +2,6 @@ package ro.florinm.FM_Score;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.TypedValue;
 
@@ -296,13 +295,14 @@ public class FM_Const {
         return "";
     }
 
-    @FM_TimeSignature public static int getTimeSignature(String s){
-        int ret = FM_TimeSignature.None;
-        if (s.equals("4/4")) ret = FM_TimeSignature._4_4;
-        if (s.equals("2/4")) ret = FM_TimeSignature._2_4;
-        if (s.equals("3/2")) ret = FM_TimeSignature._3_2;
-        if (s.equals("3/4")) ret = FM_TimeSignature._3_4;
-        if (s.equals("3/8")) ret = FM_TimeSignature._3_8;
+    @FM_TimeSignatureValue
+    public static int getTimeSignature(String s){
+        int ret = FM_TimeSignatureValue.None;
+        if (s.equals("4/4")) ret = FM_TimeSignatureValue._4_4;
+        if (s.equals("2/4")) ret = FM_TimeSignatureValue._2_4;
+        if (s.equals("3/2")) ret = FM_TimeSignatureValue._3_2;
+        if (s.equals("3/4")) ret = FM_TimeSignatureValue._3_4;
+        if (s.equals("3/8")) ret = FM_TimeSignatureValue._3_8;
         return ret;
     }
 }

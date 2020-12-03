@@ -25,7 +25,7 @@ import ro.florinm.FM_Score.FM_Note;
 import ro.florinm.FM_Score.FM_NoteValue;
 import ro.florinm.FM_Score.FM_Pause;
 import ro.florinm.FM_Score.FM_Score;
-import ro.florinm.FM_Score.FM_TimeSignature;
+import ro.florinm.FM_Score.FM_TimeSignatureValue;
 import ro.florinm.FM_ScorePlayer.FM_ScorePlayer;
 
 public class MainActivity extends AppCompatActivity {
@@ -40,14 +40,14 @@ public class MainActivity extends AppCompatActivity {
         s.setColor(Color.argb(255, 0, 0, 0));
         s.setFirstStaveClef(FM_ClefValue.TREBLE);
         s.setSecondStaveClef(FM_ClefValue.BASS);
-        s.setTimeSignature(FM_TimeSignature._4_4);
+        s.setTimeSignature(FM_TimeSignatureValue._4_4);
         s.setKeySignature(FM_KeySignatureValue.DOb);
         s.setDistanceBetweenStaveLines(10);
         s.setPaddingS(2);
         s.setPaddingE(2);
         s.setPaddingT(5);
         s.setNoteSpacing(5);
-        s.setTimeSignature(FM_TimeSignature._2_4);
+        s.setTimeSignature(FM_TimeSignatureValue._2_4);
         s.setKeySignature(FM_KeySignatureValue.DOsharp);
         s.setAlign(FM_Align.ALIGN_LEFT_LAST_MEASURE);
         s.setPaddingT(5);
