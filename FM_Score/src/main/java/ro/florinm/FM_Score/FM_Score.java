@@ -26,7 +26,7 @@ import static android.view.MotionEvent.INVALID_POINTER_ID;
 import static java.lang.Thread.sleep;
 
 public class FM_Score extends View {
-    @FM_TimeSignature
+    @FM_TimeSignatureValue
     private int TimeSignature;
     @FM_KeySignatureValue
     private int KeySignature;
@@ -107,7 +107,7 @@ public class FM_Score extends View {
         setMultiLine(false);
         setFirstStaveClef(FM_ClefValue.TREBLE);
         setSecondStaveClef(FM_ClefValue.BASS);
-        setTimeSignature(FM_TimeSignature.None);
+        setTimeSignature(FM_TimeSignatureValue.None);
         setKeySignature(FM_KeySignatureValue.DO);
         setAlign(FM_Align.ALIGN_CENTER_MEASURES);
         ShowBoundingBoxes(FM_BoundingBoxType.None);
@@ -147,7 +147,7 @@ public class FM_Score extends View {
         return TimeSignature;
     }
 
-    public void setTimeSignature(@FM_TimeSignature int timeSignature) {
+    public void setTimeSignature(@FM_TimeSignatureValue int timeSignature) {
         TimeSignature = timeSignature;
         //invalidate();
         requestLayout();
@@ -566,7 +566,7 @@ public class FM_Score extends View {
     }
 
     protected float getTimeSignatureWidth() {
-        if (TimeSignature == FM_TimeSignature.None) return 0;
+        if (TimeSignature == FM_TimeSignatureValue.None) return 0;
         float w = FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
         FM_Const.AdjustFont(this, FM_Const._4, 2);
         return w + Font.measureText(FM_Const._4);
@@ -576,23 +576,23 @@ public class FM_Score extends View {
         Font.setColor(Color);
         float pad = PaddingS + getClefWidth() + FirstStaffKey.Width();
         FM_Const.AdjustFont(this, FM_Const._4, 2);
-        if (TimeSignature == FM_TimeSignature._4_4) {
+        if (TimeSignature == FM_TimeSignatureValue._4_4) {
             canvas.drawText(FM_Const._4, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
             canvas.drawText(FM_Const._4, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
         }
-        if (TimeSignature == FM_TimeSignature._2_4) {
+        if (TimeSignature == FM_TimeSignatureValue._2_4) {
             canvas.drawText(FM_Const._2, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
             canvas.drawText(FM_Const._4, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
         }
-        if (TimeSignature == FM_TimeSignature._3_4) {
+        if (TimeSignature == FM_TimeSignatureValue._3_4) {
             canvas.drawText(FM_Const._3, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
             canvas.drawText(FM_Const._4, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
         }
-        if (TimeSignature == FM_TimeSignature._3_2) {
+        if (TimeSignature == FM_TimeSignatureValue._3_2) {
             canvas.drawText(FM_Const._3, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
             canvas.drawText(FM_Const._2, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
         }
-        if (TimeSignature == FM_TimeSignature._3_8) {
+        if (TimeSignature == FM_TimeSignatureValue._3_8) {
             canvas.drawText(FM_Const._3, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
             canvas.drawText(FM_Const._8, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
         }
@@ -610,7 +610,7 @@ public class FM_Score extends View {
         setVoiceCount(1);
         setFirstStaveClef(FM_ClefValue.TREBLE);
         setSecondStaveClef(FM_ClefValue.BASS);
-        setTimeSignature(FM_TimeSignature.None);
+        setTimeSignature(FM_TimeSignatureValue.None);
         setKeySignature(FM_KeySignatureValue.DO);
         invalidate();
     }
