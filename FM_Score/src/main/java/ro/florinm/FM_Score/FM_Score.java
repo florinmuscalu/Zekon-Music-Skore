@@ -39,9 +39,9 @@ public class FM_Score extends View {
     private float NoteSpacing;
     int width, height;
     protected Paint Font;
-    FM_KeySignature FirstStaveKey, SecondStaveKey;
-    private float _DistanceBetweenStaveLines;
-    private float DistanceBetweenStaves_cnt;                //Distance between Staves as number of distances between lines
+    FM_KeySignature FirstStaffKey, SecondStaffKey;
+    private float _DistanceBetweenStaffLines;
+    private float DistanceBetweenStaff_cnt;                //Distance between Staves as number of distances between lines
     private float DistanceBetweenRows_cnt;                 //Distance between Rows of staves as number of distances between lines
     private float PaddingV_cnt, PaddingS_p, PaddingE_p;     //padding Start and padding End are set as percentange of the total width
     private float PaddingS, PaddingE;                       //padding Vertical is set as number of Distances between Lines.
@@ -247,8 +247,8 @@ public class FM_Score extends View {
             if (FirstStaveClef == FM_ClefValue.TREBLE) DrawTrebleClef(canvas, ys1);
             else DrawBassClef(canvas, ys1);
             //draw keySignature
-            FirstStaveKey.SetDrawParameters(PaddingS + getClefWidth(), ys1, ys1);
-            FirstStaveKey.DrawNote(canvas);
+            FirstStaffKey.SetDrawParameters(PaddingS + getClefWidth(), ys1, ys1);
+            FirstStaffKey.DrawNote(canvas);
             //draw timeSignature
             if (l == 0) DrawTimeSignature(canvas, ys1);
 
@@ -263,8 +263,8 @@ public class FM_Score extends View {
                 Font.setColor(Color);
                 if (SecondStaveClef == FM_ClefValue.TREBLE) DrawTrebleClef(canvas, ys2);
                 else DrawBassClef(canvas, ys2);
-                SecondStaveKey.SetDrawParameters(PaddingS + getClefWidth(), ys2, ys2);
-                SecondStaveKey.DrawNote(canvas);
+                SecondStaffKey.SetDrawParameters(PaddingS + getClefWidth(), ys2, ys2);
+                SecondStaffKey.DrawNote(canvas);
                 if (l == 0) DrawTimeSignature(canvas, ys2);
 
                 //Draw Bracket
@@ -372,11 +372,11 @@ public class FM_Score extends View {
     }
 
     public float getDistanceBetweenStaveLines() {
-        return _DistanceBetweenStaveLines;
+        return _DistanceBetweenStaffLines;
     }
 
     public void setDistanceBetweenStaveLines(float d) {
-        _DistanceBetweenStaveLines = FM_Const.dpTOpx(context, d);
+        _DistanceBetweenStaffLines = FM_Const.dpTOpx(context, d);
         Font.setTextSize(FM_Const.dpTOpx(context, 5 * d));
         invalidate();
         //requestLayout();
@@ -393,11 +393,11 @@ public class FM_Score extends View {
     }
 
     public float getDistanceBetweenStaves() {
-        return DistanceBetweenStaves_cnt * getDistanceBetweenStaveLines();
+        return DistanceBetweenStaff_cnt * getDistanceBetweenStaveLines();
     }
 
     public void setDistanceBetweenStaves(float d) {
-        DistanceBetweenStaves_cnt = d;
+        DistanceBetweenStaff_cnt = d;
         //invalidate();
         //requestLayout();
     }
@@ -528,8 +528,8 @@ public class FM_Score extends View {
     public void setColor(int color) {
         Color = color;
         Font.setColor(color);
-        FirstStaveKey.setColor(color);
-        SecondStaveKey.setColor(color);
+        FirstStaffKey.setColor(color);
+        SecondStaffKey.setColor(color);
         //invalidate();
         //requestLayout();
     }
@@ -540,8 +540,8 @@ public class FM_Score extends View {
 
     public void setKeySignature(Integer keySignature) {
         KeySignature = keySignature;
-        FirstStaveKey = new FM_KeySignature(context, FirstStaveClef, keySignature, this);
-        SecondStaveKey = new FM_KeySignature(context, SecondStaveClef, keySignature, this);
+        FirstStaffKey = new FM_KeySignature(context, FirstStaveClef, keySignature, this);
+        SecondStaffKey = new FM_KeySignature(context, SecondStaveClef, keySignature, this);
         //invalidate();
         //requestLayout();
     }
@@ -574,7 +574,7 @@ public class FM_Score extends View {
 
     private void DrawTimeSignature(Canvas canvas, float y) {
         Font.setColor(Color);
-        float pad = PaddingS + getClefWidth() + FirstStaveKey.Width();
+        float pad = PaddingS + getClefWidth() + FirstStaffKey.Width();
         FM_Const.AdjustFont(this, FM_Const._4, 2);
         if (TimeSignature == FM_TimeSignature._4_4) {
             canvas.drawText(FM_Const._4, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
@@ -620,20 +620,19 @@ public class FM_Score extends View {
         addStaffNote(n, FirstStaveClef);
     }
 
-    public void addStaffNote(FM_BaseNote n, @FM_ClefValue int clef) {
-        if (n instanceof FM_BarNote) clef = FirstStaveClef;
-        if (clef != FirstStaveClef && clef == SecondStaveClef) StaffCount = FM_StaffCount._2;
-        n.setClef(clef);
+    public void addStaffNote(FM_BaseNote n, int staff) {
+        if (n instanceof FM_BarNote) staff = 0;
+        if (staff == 1) StaffCount = FM_StaffCount._2;
+        n.staff = staff;
         StaveNotes.add(n);
         ComputeLines();
     }
 
-    public void addChord(List<FM_BaseNote> n, @FM_ClefValue List<Integer> clef) {
+    public void addChord(List<FM_BaseNote> n, List<Integer> staff) {
         FM_Chord C = new FM_Chord(this);
         for (int i = 0; i < n.size(); i++) {
-            if (clef.get(i) != FirstStaveClef && clef.get(i) == SecondStaveClef)
-                StaffCount = FM_StaffCount._2;
-            n.get(i).setClef(clef.get(i));
+            if (staff.get(i) == 1) StaffCount = FM_StaffCount._2;
+            n.get(i).staff = staff.get(i);
             C.addNote(n.get(i));
         }
         C.Compute();
@@ -643,8 +642,8 @@ public class FM_Score extends View {
 
     private float getStartX(int line) {
         if (line == 1)
-            return PaddingS + getClefWidth() + FirstStaveKey.Width() + getTimeSignatureWidth() + 2 * FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
-        else return PaddingS + getClefWidth() + FirstStaveKey.Width();
+            return PaddingS + getClefWidth() + FirstStaffKey.Width() + getTimeSignatureWidth() + 2 * FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
+        else return PaddingS + getClefWidth() + FirstStaffKey.Width();
     }
 
     private float getLineWidth(int line) {
@@ -684,10 +683,8 @@ public class FM_Score extends View {
                 }
                 if (StaffCount == FM_StaffCount._2)
                     ys2 = ys1 + (getDistanceBetweenStaves() + 4 * getDistanceBetweenStaveLines());
-                if (StaveNotes.get(i).clef == FirstStaveClef)
-                    StaveNotes.get(i).SetDrawParameters(X, ys1, ys2);
-                if (StaveNotes.get(i).clef == SecondStaveClef)
-                    StaveNotes.get(i).SetDrawParameters(X, ys2, ys2);
+                if (StaveNotes.get(i).staff == 0) StaveNotes.get(i).SetDrawParameters(X, ys1, ys2);
+                if (StaveNotes.get(i).staff == 1) StaveNotes.get(i).SetDrawParameters(X, ys2, ys2);
                 StaveNotes.get(i).line = l;
                 X = X + w;
                 last_note = StaveNotes.get(i);
@@ -722,10 +719,8 @@ public class FM_Score extends View {
                 }
                 if (StaffCount == FM_StaffCount._2)
                     ys2 = ys1 + (getDistanceBetweenStaves() + 4 * getDistanceBetweenStaveLines());
-                if (StaveNotes.get(i).clef == FirstStaveClef)
-                    StaveNotes.get(i).SetDrawParameters(X, ys1, ys2);
-                if (StaveNotes.get(i).clef == SecondStaveClef)
-                    StaveNotes.get(i).SetDrawParameters(X, ys2, ys2);
+                if (StaveNotes.get(i).staff == 0) StaveNotes.get(i).SetDrawParameters(X, ys1, ys2);
+                if (StaveNotes.get(i).staff == 1) StaveNotes.get(i).SetDrawParameters(X, ys2, ys2);
                 StaveNotes.get(i).line = l;
                 X = X + w;
             }
@@ -814,10 +809,8 @@ public class FM_Score extends View {
                 ys2 = ys1 + (getDistanceBetweenStaves() + 4 * getDistanceBetweenStaveLines());
             for (int j = 0; j < StaveNotes.size(); j++) {
                 if (StaveNotes.get(j).line == i) {
-                    if (StaveNotes.get(j).clef == FirstStaveClef)
-                        StaveNotes.get(j).SetDrawParameters(StaveNotes.get(j).StartX, ys1, ys2);
-                    if (StaveNotes.get(j).clef == SecondStaveClef)
-                        StaveNotes.get(j).SetDrawParameters(StaveNotes.get(j).StartX, ys2, ys2);
+                    if (StaveNotes.get(j).staff == 0) StaveNotes.get(j).SetDrawParameters(StaveNotes.get(j).StartX, ys1, ys2);
+                    if (StaveNotes.get(j).staff == 1) StaveNotes.get(j).SetDrawParameters(StaveNotes.get(j).StartX, ys2, ys2);
                 }
             }
             ys1 = ys2 + (getDistanceBetweenRows() + 4 * getDistanceBetweenStaveLines());
@@ -851,7 +844,7 @@ public class FM_Score extends View {
     public void EndTie() {
         inTie = false;
         if (TieNotes.size() != 2) return;
-        if (!TieNotes.get(0).clef.equals(TieNotes.get(1).clef) || TieNotes.get(0).octave != TieNotes.get(1).octave || !TieNotes.get(0).note.equals(TieNotes.get(1).note)
+        if (TieNotes.get(0).staff != TieNotes.get(1).staff || TieNotes.get(0).octave != TieNotes.get(1).octave || !TieNotes.get(0).note.equals(TieNotes.get(1).note)
                 || !TieNotes.get(0).asStringAccidental().equals(TieNotes.get(1).asStringAccidental()))
             return;
         FM_Tie t = new FM_Tie(this, currentTie);
@@ -881,10 +874,10 @@ public class FM_Score extends View {
         if (TupleNotes.size() != inTuple_size) return;
         for (int i = 0; i < TupleNotes.size(); i++)
             if (!(TupleNotes.get(i) instanceof FM_Note)) return;
-        int clef = TupleNotes.get(0).clef;
+        int staff = TupleNotes.get(0).staff;
         int duration = ((FM_Note) TupleNotes.get(0)).duration;
         for (int i = 0; i < TupleNotes.size(); i++)
-            if ((TupleNotes.get(i).clef != clef) || (((FM_Note) TupleNotes.get(i)).duration != duration))
+            if ((TupleNotes.get(i).staff != staff) || (((FM_Note) TupleNotes.get(i)).duration != duration))
                 return;
         FM_Tuple t = new FM_Tuple(this, inTuple_size, currentTuple);
         currentTuple++;
@@ -1037,12 +1030,12 @@ public class FM_Score extends View {
         String tie = "";
         String tuple = "";
         HashMap<Integer, List<FM_BaseNote>> Notes = new HashMap();
-        HashMap<Integer, List<Integer>> Clefs = new HashMap();
+        HashMap<Integer, List<Integer>> Staffs = new HashMap();
         while (i < key_list.size()) {
             if (key_list.get(i).contains("BAR")) {
-                for (Integer k : Notes.keySet()) addChord(Notes.get(k), Clefs.get(k));
+                for (Integer k : Notes.keySet()) addChord(Notes.get(k), Staffs.get(k));
                 Notes.clear();
-                Clefs.clear();
+                Staffs.clear();
                 addStaffNote(new FM_BarNote(this));
                 measure_pos += 1;
                 if (measure_cnt != 0 && measure_cnt == measure_pos) {
@@ -1080,24 +1073,24 @@ public class FM_Score extends View {
                 if (!tie.equals("")) AddToTie((FM_Note) n);
                 if (!tuple.equals("")) AddToTuple((FM_Note) n);
             }
-            String clef_str = FM_Const.keyToElement(key_list.get(i), 6);
-            int clef;
-            if (clef_str.equals("0")) clef = getFirstStaveClef();
-            else clef = getSecondStaveClef();
+            String staff_str = FM_Const.keyToElement(key_list.get(i), 6);
+            int staff;
+            if (staff_str.equals("0")) staff = 0;
+            else staff = 1;
             Integer chord = Integer.parseInt(FM_Const.keyToElement(key_list.get(i), 8));
             List<FM_BaseNote> Note_List = Notes.get(chord);
-            List<Integer> Clef_List = Clefs.get(chord);
+            List<Integer> Staff_List = Staffs.get(chord);
             if (Note_List == null) Note_List = new ArrayList();
-            if (Clef_List == null) Clef_List = new ArrayList();
+            if (Staff_List == null) Staff_List = new ArrayList();
             Note_List.add(n);
-            Clef_List.add(clef);
+            Staff_List.add(staff);
             Notes.put(chord, Note_List);
-            Clefs.put(chord, Clef_List);
+            Staffs.put(chord, Staff_List);
             i++;
         }
-        for (Integer k : Notes.keySet()) addChord(Notes.get(k), Clefs.get(k));
+        for (Integer k : Notes.keySet()) addChord(Notes.get(k), Staffs.get(k));
         Notes.clear();
-        Clefs.clear();
+        Staffs.clear();
         if (!beam.equals("")) EndBeam();
         if (!tie.equals("")) EndTie();
         if (!tuple.equals("")) EndTuple();

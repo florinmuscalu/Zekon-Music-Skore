@@ -18,12 +18,11 @@ public class FM_Chord extends FM_BaseNote {
     }
 
     public void Compute() {
-        //if (false) return;
-        //Sort them by clef
+        //Sort them by staff
         FM_BaseNote tmp;
         for (int i = 0; i < Notes.size() - 1; i++)
             for (int j = i + 1; j < Notes.size(); j++) {
-                if (Notes.get(i).clef >= Notes.get(j).clef) {
+                if (Notes.get(i).staff >= Notes.get(j).staff) {
                     tmp = Notes.get(i);
                     Notes.set(i, Notes.get(j));
                     Notes.set(j, tmp);
@@ -32,7 +31,7 @@ public class FM_Chord extends FM_BaseNote {
         //Sort them by displacement
         for (int i = 0; i < Notes.size() - 1; i++)
             for (int j = i + 1; j < Notes.size(); j++) {
-                if (Notes.get(i).clef.equals(Notes.get(j).clef) && Notes.get(i).getDisplacement() <= Notes.get(j).getDisplacement()) {
+                if (Notes.get(i).staff ==Notes.get(j).staff && Notes.get(i).getDisplacement() <= Notes.get(j).getDisplacement()) {
                     tmp = Notes.get(i);
                     Notes.set(i, Notes.get(j));
                     Notes.set(j, tmp);
@@ -155,18 +154,16 @@ public class FM_Chord extends FM_BaseNote {
         StartY1 = ys1;
         StartY2 = ys2;
         for (int i = 0; i< Notes.size(); i++) {
-            if (Notes.get(i).clef == score.getFirstStaveClef())
-                Notes.get(i).SetDrawParameters(StartX, ys1, ys2);
-            if (Notes.get(i).clef == score.getSecondStaveClef())
-                Notes.get(i).SetDrawParameters(StartX, ys2, ys2);
+            if (Notes.get(i).staff == 0) Notes.get(i).SetDrawParameters(StartX, ys1, ys2);
+            if (Notes.get(i).staff == 1) Notes.get(i).SetDrawParameters(StartX, ys2, ys2);
         }
     }
 
     public void DrawNote(Canvas canvas) {
         if (!isVisible()) return;
         for (int i = 0; i< Notes.size(); i++) {
-            if (Notes.get(i).clef == score.getFirstStaveClef()) Notes.get(i).DrawNote(canvas);
-            if (Notes.get(i).clef == score.getSecondStaveClef()) Notes.get(i).DrawNote(canvas);
+            if (Notes.get(i).staff == 0) Notes.get(i).DrawNote(canvas);
+            if (Notes.get(i).staff == 1) Notes.get(i).DrawNote(canvas);
         }
         super.DrawNote(canvas);
     }

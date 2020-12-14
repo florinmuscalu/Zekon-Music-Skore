@@ -7,8 +7,9 @@ public abstract class FM_BaseNote{
     @FM_NoteType
     private final int type;
     protected int color;
-    @FM_ClefValue
-    Integer clef;
+
+    //On which staff do you want this Note? First (0) or Second (1). First staff uses FM_Score.FirstStaffKey, second one uses FM_Score.SecondStaffKey
+    int staff;
 
     protected float paddingLeft;
     protected float getPaddingLeft() { return paddingLeft; }
@@ -49,7 +50,7 @@ public abstract class FM_BaseNote{
         paddingDot = 0f;
         paddingNote = 0f;
         setPaddingLeft(FM_Const.dpTOpx(score.getContext(), 4));
-        clef = FM_ClefValue.TREBLE;
+        staff = 0;
         this.score = score;
         this.visible = true;
         this.line = 1;
@@ -72,14 +73,11 @@ public abstract class FM_BaseNote{
     public int getType() {
         return type;
     }
-    @FM_ClefValue
-    public int getClef(){
-        return clef;
-    }
 
-    protected void setClef(@FM_ClefValue int Clef){
-        this.clef = Clef;
+    protected void setStaff(int Staff){
+        this.staff = Staff;
     }
+    protected int getStaff() {return staff; }
 
     protected void SetDrawParameters(float StartX, float StartY1, float StartY2){
         this.StartX = StartX;

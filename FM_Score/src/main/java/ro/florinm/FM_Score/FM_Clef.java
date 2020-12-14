@@ -4,14 +4,18 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 
 public class FM_Clef extends FM_BaseNote {
-    public FM_Clef(FM_Score Score, @FM_ClefValue int clef) {
+    @FM_ClefValue int clef;
+
+    public FM_Clef(FM_Score Score, @FM_ClefValue int clef, int staff) {
         super(FM_NoteType.CLEF, Score);
         this.clef = clef;
+        this.staff = staff;
     }
 
-    public FM_Clef(FM_Score Score, @FM_ClefValue int clef, int Color) {
+    public FM_Clef(FM_Score Score, @FM_ClefValue int clef, int staff, int Color) {
         super(FM_NoteType.CLEF, Score);
         this.clef = clef;
+        this.staff = staff;
         this.color = Color;
     }
 
@@ -74,7 +78,7 @@ public class FM_Clef extends FM_BaseNote {
         canvas.drawText(asString(), StartX + paddingLeft, StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines(), score.Font);
     }
     public float Left(){
-        return StartX + paddingLeft;
+        return StartX;
     };
     public float Bottom() {
         return StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines() + BottomMargin();

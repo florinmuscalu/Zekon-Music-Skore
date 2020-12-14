@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         String furelise = "";
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new InputStreamReader(getAssets().open("furelise.json")));
+            reader = new BufferedReader(new InputStreamReader(getAssets().open("test.json")));
             String mLine;
             while ((mLine = reader.readLine()) != null) {
                 furelise += mLine;

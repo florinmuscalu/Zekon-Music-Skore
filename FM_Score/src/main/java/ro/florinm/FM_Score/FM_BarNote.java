@@ -41,7 +41,7 @@ public class FM_BarNote extends FM_BaseNote {
         if (!isVisible()) return;
         super.DrawNote(canvas);
         float BarYs = StartY1;
-        float BarYe = 0;
+        float BarYe;
         if (StartY2 == 0)  BarYe = StartY1 + 4 * score.getDistanceBetweenStaveLines();
         else BarYe = StartY2 + 4 * score.getDistanceBetweenStaveLines();
         canvas.drawRect(StartX + paddingLeft, BarYs, StartX + paddingLeft + FM_Const.dpTOpx(score.getContext(),1), BarYe, score.Font);
@@ -49,7 +49,7 @@ public class FM_BarNote extends FM_BaseNote {
     }
 
     public float Left(){
-        return StartX + paddingLeft;
+        return StartX;
     };
     public float Bottom() {
         return StartY1;
@@ -58,9 +58,8 @@ public class FM_BarNote extends FM_BaseNote {
         return StartX + paddingLeft + WidthNote();
     }
     public float Top(){
-        float BarYe = 0;
-        if (StartY2 == 0)  BarYe = StartY1 + 4 * score.getDistanceBetweenStaveLines();
-        else BarYe = StartY2 + 4 * score.getDistanceBetweenStaveLines();
-        return BarYe;
+        if (StartY2 == 0)
+            return StartY1 + 4 * score.getDistanceBetweenStaveLines();
+        return StartY2 + 4 * score.getDistanceBetweenStaveLines();
     }
 }

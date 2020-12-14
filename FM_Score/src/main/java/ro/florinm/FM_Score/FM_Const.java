@@ -79,7 +79,7 @@ public class FM_Const {
     }
 
     public static int distanceBetweenNotes(FM_BaseNote n1, FM_BaseNote n2) {
-        if (!n1.clef.equals(n2.clef)) return 10;
+        if (n1.staff != n2.staff) return 10;
         return (n1.note - n2.note) + ((n1.octave - n2.octave) * 7);
     }
 
