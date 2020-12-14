@@ -56,33 +56,8 @@ public class MainActivity extends AppCompatActivity {
         s.setShowBrace(true);
         s.setAllowZoomPan(true);
         s.setTrimLastLine(true);
-        String furelise = "";
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new InputStreamReader(getAssets().open("test.json")));
-            String mLine;
-            while ((mLine = reader.readLine()) != null) {
-                furelise += mLine;
-            }
-        } catch (IOException e) {
-            //log the exception
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    //log the exception
-                }
-            }
-        }
-        JSONObject obj = null;
-        try {
-            obj = new JSONObject(furelise);
-        } catch (Exception ignored) {}
 
-        s.LoadFromJson(obj);
-        player = new FM_ScorePlayer(getApplicationContext());
-        player.LoadFromJson(obj);
+    //    LoadJson();
 
 //        s.BeginBeam();
 //        s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
@@ -120,44 +95,91 @@ public class MainActivity extends AppCompatActivity {
 //        s.AddToBeam((FM_Note) s.getLastNote());
 //        s.EndBeam();
 
-            //addRandom();
-        //addTestAll();
-        // addSimpleMelodic();
-//        s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true), FM_ClefValue.TREBLE);
-//        List<FM_Note> chord = new ArrayList<>();
-//        List<Integer> clefs = new ArrayList<>();
-//        chord.add(new FM_Note(s, FM_NoteValue.DO, 5, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true));
-//        chord.add(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.TripleFlat, FM_DurationValue.NOTE_WHOLE, true, Color.argb(255, 255, 0, 0)));
-//        chord.add(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.TripleFlat, FM_DurationValue.NOTE_WHOLE, false, Color.argb(255, 0, 0, 255)));
-//        chord.add(new FM_Note(s, FM_NoteValue.FA, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, false));
-//
-//        clefs.add(FM_ClefValue.TREBLE);
-//        clefs.add(FM_ClefValue.TREBLE);
-//        clefs.add(FM_ClefValue.TREBLE);
-//        clefs.add(FM_ClefValue.TREBLE);
-//        clefs.add(FM_ClefValue.TREBLE);
-//        s.addChord(chord, clefs);
-//
-//        s.addStaffNote(new FM_BarNote(s));
-//
-//        s.BeginBeam();
-//        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, false), FM_ClefValue.TREBLE);
-//        s.AddToBeam((FM_Note) s.getLastNote());
-//        s.addStaffNote(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.TripleFlat, FM_DurationValue.NOTE_EIGHT, true), FM_ClefValue.TREBLE);
-//        s.AddToBeam((FM_Note) s.getLastNote());
-//        s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
-//        s.AddToBeam((FM_Note) s.getLastNote());
-//        s.EndBeam();
-//
-////        s.BeginBeam();
-////        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
-////        s.AddToBeam((FM_Note) s.getLastNote());
-////        s.addStaffNote(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.TripleFlat, FM_DurationValue.NOTE_EIGHT, true), FM_ClefValue.TREBLE);
-////        s.AddToBeam((FM_Note) s.getLastNote());
-////        s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
-////        s.AddToBeam((FM_Note) s.getLastNote());
-////        s.EndBeam();
+//        addRandom();
+//        addTestAll();
+//        addSimpleMelodic();
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true), FM_ClefValue.TREBLE);
 
+        List<FM_BaseNote> chord = new ArrayList<>();
+        List<Integer> clefs = new ArrayList<>();
+        chord.add(new FM_Note(s, FM_NoteValue.DO, 5, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true));
+        chord.add(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.TripleFlat, FM_DurationValue.NOTE_HALF, true, Color.argb(255, 255, 0, 0)));
+        chord.add(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.TripleFlat, FM_DurationValue.NOTE_WHOLE, false, Color.argb(255, 0, 0, 255)));
+        chord.add(new FM_Note(s, FM_NoteValue.FA, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, false));
+
+        clefs.add(FM_ClefValue.TREBLE);
+        clefs.add(FM_ClefValue.TREBLE);
+        clefs.add(FM_ClefValue.TREBLE);
+        clefs.add(FM_ClefValue.TREBLE);
+        clefs.add(FM_ClefValue.TREBLE);
+        s.addChord(chord, clefs);
+
+        s.addStaffNote(new FM_BarNote(s));
+
+
+        chord = new ArrayList<>();
+        clefs = new ArrayList<>();
+        chord.add(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, false, Color.argb(255, 255, 0, 0)));
+        chord.add(new FM_Note(s, FM_NoteValue.DO, 5, FM_Accidental.TripleFlat, FM_DurationValue.NOTE_HALF, true));
+        chord.add(new FM_Note(s, FM_NoteValue.FA, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, false));
+
+        clefs.add(FM_ClefValue.TREBLE);
+        clefs.add(FM_ClefValue.TREBLE);
+        clefs.add(FM_ClefValue.TREBLE);
+        clefs.add(FM_ClefValue.TREBLE);
+        clefs.add(FM_ClefValue.TREBLE);
+        s.addChord(chord, clefs);
+
+        s.addStaffNote(new FM_BarNote(s));
+
+
+        chord = new ArrayList<>();
+        clefs = new ArrayList<>();
+        chord.add(new FM_Note(s, FM_NoteValue.DO, 5, FM_Accidental.Sharp, FM_DurationValue.NOTE_WHOLE, false, Color.argb(255, 255, 0, 0)));
+        chord.add(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.TripleSharp, FM_DurationValue.NOTE_WHOLE, true));
+        chord.add(new FM_Note(s, FM_NoteValue.FA, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, false));
+
+        clefs.add(FM_ClefValue.TREBLE);
+        clefs.add(FM_ClefValue.TREBLE);
+        clefs.add(FM_ClefValue.TREBLE);
+        clefs.add(FM_ClefValue.TREBLE);
+        clefs.add(FM_ClefValue.TREBLE);
+        s.addChord(chord, clefs);
+
+        s.addStaffNote(new FM_BarNote(s));
+
+
+    }
+
+    public void LoadJson(){
+        FM_Score s = findViewById(R.id.stave);
+        String furelise = "";
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(getAssets().open("test.json")));
+            String mLine;
+            while ((mLine = reader.readLine()) != null) {
+                furelise += mLine;
+            }
+        } catch (IOException e) {
+            //log the exception
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    //log the exception
+                }
+            }
+        }
+        JSONObject obj = null;
+        try {
+            obj = new JSONObject(furelise);
+        } catch (Exception ignored) {}
+
+        s.LoadFromJson(obj);
+        player = new FM_ScorePlayer(getApplicationContext());
+        player.LoadFromJson(obj);
     }
 
     public void addRandom(){

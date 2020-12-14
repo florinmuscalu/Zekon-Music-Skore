@@ -1,6 +1,7 @@
 package ro.florinm.FM_Score;
 
 import android.graphics.Canvas;
+import android.provider.ContactsContract;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,26 +19,20 @@ public class FM_Chord extends FM_BaseNote {
     }
 
     public void Compute() {
-        //Sort them by staff
         FM_BaseNote tmp;
         for (int i = 0; i < Notes.size() - 1; i++)
             for (int j = i + 1; j < Notes.size(); j++) {
-                if (Notes.get(i).staff >= Notes.get(j).staff) {
+                //Step 1
+                //Fist step is to sort the notes in the chord by staff. If they belong to the same staff, sort them by Displacement (by note, basically)
+                if ((Notes.get(i).staff > Notes.get(j).staff) || (Notes.get(i).staff == Notes.get(j).staff && Notes.get(i).getDisplacement() <= Notes.get(j).getDisplacement())) {
                     tmp = Notes.get(i);
                     Notes.set(i, Notes.get(j));
                     Notes.set(j, tmp);
                 }
             }
-        //Sort them by displacement
-        for (int i = 0; i < Notes.size() - 1; i++)
-            for (int j = i + 1; j < Notes.size(); j++) {
-                if (Notes.get(i).staff ==Notes.get(j).staff && Notes.get(i).getDisplacement() <= Notes.get(j).getDisplacement()) {
-                    tmp = Notes.get(i);
-                    Notes.set(i, Notes.get(j));
-                    Notes.set(j, tmp);
-                }
-            }
-        //if the distance between the notes is 0, remove accidental from second note
+
+        //Step 2
+        //if the distance between any two notes is 0, remove accidental and/or dot from the second note
         for (int i = 0; i < Notes.size(); i++)
             for (int j = i + 1; j < Notes.size(); j++) {
                 int distance = Math.abs(FM_Const.distanceBetweenNotes(Notes.get(i), Notes.get(j)));
@@ -48,23 +43,29 @@ public class FM_Chord extends FM_BaseNote {
                     }
                 }
             }
+
+        //Step 3
         //Get the maximum width without the DOT
-        float maxW = -10000;
+        float maxW = 0;
         float w = 0;
         for (int i = 0; i < Notes.size(); i++) {
-            w = Notes.get(i).WidthNoDotNoStem();
+            w = Notes.get(i).WidthNoDotNoStem() - Notes.get(i).WidthNoteNoStem() / 2f;
             if (w > maxW) maxW = w;
         }
+
+        //Step 4
         //Pad the notes to have the same width, without the DOT (aligning them)
         for (int i = 0; i < Notes.size(); i++) {
-            w = Notes.get(i).WidthNoDotNoStem();
-            Notes.get(i).setPaddingLeft((maxW - w) / 2.0f);
-            //if (Notes.get(i) instanceof FM_Pause) Notes.get(i).setPaddingLeft(0);
+            w = Notes.get(i).WidthNoDotNoStem() - Notes.get(i).WidthNoteNoStem() / 2f;
+            Notes.get(i).setPaddingLeft(maxW - w);
         }
-        //if the distance between the notes is 0, and notes
+
         for (int i = 0; i < Notes.size(); i++)
             for (int j = i + 1; j < Notes.size(); j++) {
                 int distance = Math.abs(FM_Const.distanceBetweenNotes(Notes.get(i), Notes.get(j)));
+
+                //Step 5
+                //if the distance between the notes is 0, line them up
                 if (distance == 0) {
                     int ni = 0;
                     int nj = 0;
@@ -75,32 +76,31 @@ public class FM_Chord extends FM_BaseNote {
                     if (Notes.get(j).duration == FM_DurationValue.NOTE_HALF || Notes.get(j).duration == FM_DurationValue.NOTE_HALF_D) nj = 2;
 
                     if (ni == 1 || ni != nj) {
-                        float all_width = (Notes.get(i).Width() - Notes.get(i).WidthAccidental() + Notes.get(j).Width()) / 2f;
+                        //float all_width = (Notes.get(i).Width() - Notes.get(i).WidthAccidental() + Notes.get(j).Width()) / 2f;
+                        float all_width = (Notes.get(i).WidthNote() + Notes.get(j).WidthNote()) / 2f;
                         Notes.get(i).setPaddingLeft(Notes.get(i).getPaddingLeft() - all_width * 0.5f);      //pad the dot on first note
                         Notes.get(j).setPaddingLeft(Notes.get(j).getPaddingLeft() + all_width * 0.5f);    //pad the note on the second note
-                        if (Notes.get(i).stem_up == Notes.get(j).stem_up) Notes.get(j).stem = false;
+                        if (Notes.get(i).stem_up == Notes.get(j).stem_up) Notes.get(j).stem_up = !Notes.get(j).stem_up;
                     }
                 }
-            }
-        //if the distance between the notes is 1, displace one of the notes
-        for (int i = 0; i < Notes.size(); i++)
-            for (int j = i + 1; j < Notes.size(); j++) {
-                int distance = Math.abs(FM_Const.distanceBetweenNotes(Notes.get(i), Notes.get(j)));
+
+                //Step 6
+                //if the distance between the notes is 1, displace one of the notes
                 if (distance == 1) {
                     Notes.get(i).setPaddingDot(Notes.get(i).paddingDot + Notes.get(j).WidthNote() * 0.8f);      //pad the dot on first note
-                    Notes.get(j).setPaddingNote(Notes.get(j).paddingNote + Notes.get(i).WidthNote() * 0.8f);    //pad the note on the second note
-                    if (Notes.get(i).stem_up == Notes.get(j).stem_up) Notes.get(j).stem = false;
+                    Notes.get(j).setPaddingNote(Notes.get(j).paddingNote + Notes.get(j).WidthNote() * 0.8f);    //pad the note on the second note
+                    if (Notes.get(i).stem_up == Notes.get(j).stem_up) Notes.get(j).stem_up = !Notes.get(j).stem_up;
                 }
-            }
-        //pad the accidentals when the distance between notes is les or equal to 3
-        for (int i = 0; i < Notes.size(); i++)
-            for (int j = i + 1; j < Notes.size(); j++) {
-                int distance = Math.abs(FM_Const.distanceBetweenNotes(Notes.get(i), Notes.get(j)));
+
+                //Step 7
+                //pad the accidentals when the distance between notes is les or equal to 3
                 if (distance <= 3 && distance!= 0 && Notes.get(i).paddingNote == 0) {
                     Notes.get(j).setPaddingLeft(Notes.get(j).paddingLeft - Notes.get(i).paddingNote - Notes.get(i).WidthAccidental());
                     Notes.get(j).setPaddingNote(Notes.get(j).paddingNote + Notes.get(i).paddingNote + Notes.get(i).WidthAccidental());
                 }
             }
+
+        //Step 8
         //if any of the notes has a negative padding, move all of them right
         float minP = 0;
         float p = 0;
