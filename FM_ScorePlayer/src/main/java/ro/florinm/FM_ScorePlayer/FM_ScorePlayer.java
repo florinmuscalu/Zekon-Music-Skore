@@ -10,21 +10,23 @@ import static java.lang.Thread.sleep;
 public class FM_ScorePlayer {
     private FM_Audio_Song song;
     private FM_SoundPool soundPlayer;
-    private boolean playing_step, playing;
     private boolean SoundsLoaded;
+    private int temp_tempo;
+    private boolean playing_step;
     /**
      * @param context The Application's context.
      */
     public FM_ScorePlayer(Context context) {
         super();
         SoundsLoaded = false;
+        temp_tempo = 60;
+        soundPlayer = null;
+        playing_step = false;
         new Thread(() -> {
             soundPlayer = new FM_SoundPool(context);
             SoundsLoaded = true;
-            setTempo(60);
+            setTempo(temp_tempo);
         }).start();
-        playing = false;
-        playing_step = false;
     }
 
     /**
@@ -38,7 +40,8 @@ public class FM_ScorePlayer {
      * @param tempo the tempo used for playing the song.
      */
     public void setTempo(int tempo) {
-        soundPlayer.TEMPO = 60000.0 / tempo;
+        temp_tempo = tempo;
+        if (soundPlayer != null) soundPlayer.TEMPO = 60000.0 / tempo;
     }
 
     /**
@@ -138,7 +141,7 @@ public class FM_ScorePlayer {
                 try {
                     sleep(200);
                 } catch (Exception ignored) { }
-                playing = true;
+                soundPlayer.playing = true;
                 if (song.harmonic) PlayHarmonic(song, measure_start, measure_end, notes, prepare);
                               else PlayMelodic(song, measure_start, measure_end, notes, prepare);
             }).start();
@@ -167,7 +170,7 @@ public class FM_ScorePlayer {
             new Thread(() -> {
                 playing_step = true;
                 for (FM_Audio_Note n : ListNotes) {
-                    if (!playing) continue;
+                    if (!soundPlayer.playing) continue;
                     n.audioT.Play(soundPlayer.GetDurationFromStr(n.playDuration), n.NextPause);
                     FM_SoundPool.SleepHarmonic(soundPlayer.GetDurationFromStr(n.pauseDuration));
                 }
@@ -200,7 +203,7 @@ public class FM_ScorePlayer {
                 boolean in_legato = false;
                 playing_step = true;
                 for (FM_Audio_Note n : ListNotes) {
-                    if (!playing) continue;
+                    if (!soundPlayer.playing) continue;
                     if (n.audioInt != 0) {
                         if (!(n.legato_end && in_legato))
                             soundPlayer.playKey(n.audioInt, n.NextPause);
@@ -218,7 +221,6 @@ public class FM_ScorePlayer {
     }
 
     public void StopPlaying() {
-        playing = false;
         soundPlayer.StopAllSound();
     }
 
@@ -258,7 +260,7 @@ public class FM_ScorePlayer {
      * @param duration - the duration for each key. If duration is -1, use the TEMPO_DURATION as duration
      */
     public void PlayKeys(final String keys, final Boolean simultaneously, final Boolean prepare, final long duration) {
-        if (playing && !prepare) return;
+        if (soundPlayer.playing && !prepare) return;
         new Thread(() -> {
             int d = (int) duration;
             if (duration == -1) d = (int) soundPlayer.TEMPO;
@@ -267,23 +269,23 @@ public class FM_ScorePlayer {
             for (int i = 0; i < k.length; i++) Tracks[i] = soundPlayer.GetIndex(k[i].trim());
             if (!simultaneously) {
                 if (!prepare) {
-                    playing = true;
+                    soundPlayer.playing = true;
                     for (int i : Tracks) {
-                        if (playing) {
+                        if (soundPlayer.playing) {
                             playKey(i);
                             soundPlayer.SleepMelodic(d);
                             stopKey(i);
                         }
                     }
-                    playing = false;
+                    soundPlayer.playing = false;
                 }
             } else {
                 FM_AudioTrack t = soundPlayer.CreateTrack(Tracks, d);
                 if (!prepare && t != null) {
-                    playing = true;
+                    soundPlayer.playing = true;
                     t.Play(d, false);
                     FM_SoundPool.SleepHarmonic(d);
-                    playing = false;
+                    soundPlayer.playing = false;
                 }
             }
         }).start();
