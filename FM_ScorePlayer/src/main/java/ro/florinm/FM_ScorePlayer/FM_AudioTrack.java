@@ -22,29 +22,6 @@ import java.util.Map;
 
 import static java.lang.Thread.sleep;
 
-class FM_Audio_Note {
-    String note;
-    String duration;
-    String playDuration;
-    String pauseDuration;
-    Boolean legato_start = false;
-    Boolean legato_end = false;
-    FM_AudioTrack audioT = null;
-    int audioInt = -1;
-    boolean NextPause;
-}
-
-class FM_Audio_Measure {
-    List<FM_Audio_Note> notes = new ArrayList<>();
-}
-
-class FM_Audio_Song {
-    boolean prepared = false;
-    boolean harmonic = false;
-    List<FM_Audio_Measure> measures = new ArrayList<>();
-    String keysignature;
-}
-
 class FM_AudioSubTrack implements Comparable<FM_AudioSubTrack>{
     public int track;
     public int duration;
