@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         s.setAllowZoomPan(true);
         s.setTrimLastLine(true);
 
-    //    LoadJson();
+        LoadJson();
 
 //        s.BeginBeam();
 //        s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
@@ -98,6 +98,10 @@ public class MainActivity extends AppCompatActivity {
 //        addRandom();
 //        addTestAll();
 //        addSimpleMelodic();
+    }
+
+    public void Testing(){
+        FM_Score s = findViewById(R.id.stave);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true), FM_ClefValue.TREBLE);
 
         List<FM_BaseNote> chord = new ArrayList<>();
@@ -147,8 +151,6 @@ public class MainActivity extends AppCompatActivity {
         s.addChord(chord, clefs);
 
         s.addStaffNote(new FM_BarNote(s));
-
-
     }
 
     public void LoadJson(){
@@ -179,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
 
         s.LoadFromJson(obj);
         player = new FM_ScorePlayer(getApplicationContext());
-        player.LoadFromJson(obj);
+        player.LoadFromJson(obj, false);
     }
 
     public void addRandom(){

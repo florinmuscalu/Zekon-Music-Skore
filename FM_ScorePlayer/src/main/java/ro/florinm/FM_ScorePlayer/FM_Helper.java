@@ -3,9 +3,6 @@ package ro.florinm.FM_ScorePlayer;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.util.ArrayList;
-import java.util.List;
-
 class FM_Helper {
     static String do_a = "";
     static String re_a = "";
@@ -105,6 +102,7 @@ class FM_Helper {
 
     static FM_Audio_Song generateHarmonicSong(String keysignature, JSONArray keys) {
         FM_Audio_Song song = new FM_Audio_Song();
+        song.harmonic = true;
         song.keysignature = keysignature;
         JSONArray a = new JSONArray();
         try {
@@ -183,6 +181,94 @@ class FM_Helper {
                     }
                     n.note = note.substring(1);
                     n.duration = duration.substring(1);
+                    n.playDuration = duration.substring(1);
+                    n.pauseDuration = duration.substring(1);
+                    m.notes.add(n);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return song;
+    }
+
+
+    static FM_Audio_Song generatMelodicSong(String keysignature, JSONArray keys) {
+        FM_Audio_Song song = new FM_Audio_Song();
+        song.harmonic = false;
+        song.keysignature = keysignature;
+        JSONArray a = new JSONArray();
+        try {
+            boolean in_legato = false;
+            while (keys.length() > 0) {
+                JSONArray b = (JSONArray) keys.get(0);
+                if (b.getString(0).startsWith("BAR")) {
+                    JSONArray value = new JSONArray();
+                    value.put("BAR");
+                    a.put(value);
+                    keys.remove(0);
+                    continue;
+                }
+                boolean still_to_go = true;
+                int current_group = 0;
+                while (still_to_go) {
+                    int i = 0;
+                    current_group = current_group + 1;
+                    JSONArray value = new JSONArray();
+                    while (true) {
+                        if (keys.length() == 0) {
+                            still_to_go = false;
+                            break;
+                        }
+                        if (i > keys.length() - 1) {
+                            break;
+                        }
+                        JSONArray tmp = (JSONArray) keys.get(i);
+                        if (tmp.getString(0).startsWith("BAR")) {
+                            if (i == 0) still_to_go = false;
+                            break;
+                        }
+                        int pg = tmp.getInt(8);
+                        if (current_group == pg) {
+                            value.put(tmp.getString(0));
+                            String triolet = "";
+                            if (!tmp.getString(5).equals("")) triolet = "t";
+                            value.put(tmp.getString(1) + triolet);
+                            if (!tmp.getString(3).equals("")) {
+                                if (!in_legato) value.put("legato_start");
+                                else value.put("legato_end");
+                                in_legato = !in_legato;
+                            } else value.put("");
+                            keys.remove(i);
+                            i = i - 1;
+                        }
+                        i = i + 1;
+                    }
+                    a.put(value);
+                }
+            }
+
+            FM_Audio_Measure m = new FM_Audio_Measure();
+            song.measures.add(m);
+            for (int i = 0; i < a.length(); i++) {
+                JSONArray b = (JSONArray) a.get(i);
+                if (b.length() == 1 && b.getString(0).startsWith("BAR")) {
+                    m = new FM_Audio_Measure();
+                    song.measures.add(m);
+                } else {
+                    FM_Audio_Note n = new FM_Audio_Note();
+                    String note = "";
+                    String duration = "";
+                    String legato = "";
+                    for (int j = 0; j < b.length(); j = j + 3) {
+                        note = note + "," + b.getString(j);
+                        duration = duration + "," + b.getString(j + 1);
+                        legato = legato + "," + b.getString(j + 2);
+                    }
+                    n.note = note.substring(1);
+                    n.duration = duration.substring(1);
+                    if (legato.substring(1).equals("legato_start")) n.legato_start = true;
+                    if (legato.substring(1).equals("legato_end")) n.legato_end = true;
                     n.playDuration = duration.substring(1);
                     n.pauseDuration = duration.substring(1);
                     m.notes.add(n);

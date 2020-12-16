@@ -1,12 +1,7 @@
 package ro.florinm.FM_ScorePlayer;
 
 import android.content.Context;
-import android.media.SoundPool;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,18 +9,29 @@ import static java.lang.Thread.sleep;
 
 public class FM_ScorePlayer {
     private FM_Audio_Song song;
-    private final FM_SoundPool soundPlayer;
+    private FM_SoundPool soundPlayer;
     private boolean playing_step, playing;
-
+    private boolean SoundsLoaded;
     /**
      * @param context The Application's context.
      */
     public FM_ScorePlayer(Context context) {
         super();
-        soundPlayer = new FM_SoundPool(context);
+        SoundsLoaded = false;
+        new Thread(() -> {
+            soundPlayer = new FM_SoundPool(context);
+            SoundsLoaded = true;
+            setTempo(60);
+        }).start();
         playing = false;
         playing_step = false;
-        setTempo(60);
+    }
+
+    /**
+     * @return return true if all the sounds have been loaded. Return false otherwise.
+     */
+    public boolean AssetsLoaded() {
+        return SoundsLoaded;
     }
 
     /**
@@ -44,15 +50,19 @@ public class FM_ScorePlayer {
 
     /**
      * @param obj The song in Json format. Check the documentation for how the Json should look like.
-     * @return 0 if loading is successful, -1 otherwise.
+     * @param harmonic Set it to true if obj contains a harmonic melody. If it's melodic, set it to false
      */
-    public int LoadFromJson(JSONObject obj) {
-        try {
-            song = FM_Helper.generateHarmonicSong(obj.optString("keysignature", "DO"), obj.getJSONArray("keys"));
-        } catch (JSONException e) {
-            return -1;
-        }
-        return 0;
+    public void LoadFromJson(JSONObject obj, boolean harmonic) {
+        new Thread(() -> {
+            try {
+                while (!SoundsLoaded) sleep(25);
+                soundPlayer.ClearAudioTracks();
+                if (harmonic)
+                    song = FM_Helper.generateHarmonicSong(obj.optString("keysignature", "DO"), obj.getJSONArray("keys"));
+                else
+                    song = FM_Helper.generatMelodicSong(obj.optString("keysignature", "DO"), obj.getJSONArray("keys"));
+            } catch (Exception ignored) {}
+        }).start();
     }
 
     public void Play() {
@@ -79,10 +89,41 @@ public class FM_ScorePlayer {
         Play(measure_start, measure_end, notes, true);
     }
 
+    private FM_Audio_Note LoadNote(FM_Audio_Note note) {
+        FM_Audio_Note ret;
+        String[] n = note.note.split(",");
+        n = FM_Helper.computeNote(song.keysignature, n);
+        String[] d = note.duration.split(",");
+        ret = note;
+        List<Integer> tracks = new ArrayList<>();
+        ret.audioInt = 0;
+        ret.pauseDuration = d[0];
+        ret.playDuration = d[0];
+        for (String s : d) {
+            if (soundPlayer.GetDurationFromStr(ret.pauseDuration) > soundPlayer.GetDurationFromStr(s))
+                ret.pauseDuration = s;
+            if (soundPlayer.GetDurationFromStr(ret.playDuration) < soundPlayer.GetDurationFromStr(s))
+                ret.playDuration = s;
+        }
+        
+        if (tracks.size() ==1 ){
+                ret.audioInt = soundPlayer.GetIndex(n[0].trim());
+                ret.audioT = null;
+            }
+        else {
+            for (String s : n) tracks.add(soundPlayer.GetIndex(s.trim()));
+            ret.audioT = null;
+            ret.audioT = soundPlayer.CreateTrack(tracks, d);
+        }
+        return ret;
+    }
+
     private void Play(int measure_start, int measure_end, int notes, Boolean prepare) {
+        if (!SoundsLoaded) return;
         if (prepare) {
             song.prepared = false;
-            PlayHarmonic(song, measure_start, measure_end, notes, prepare);
+            if (song.harmonic) PlayHarmonic(song, measure_start, measure_end, notes, prepare);
+                          else PlayMelodic(song, measure_start, measure_end, notes, prepare);
         } else {
             new Thread(() -> {
                 while (!song.prepared)
@@ -94,30 +135,10 @@ public class FM_ScorePlayer {
                     sleep(200);
                 } catch (Exception ignored) { }
                 playing = true;
-                PlayHarmonic(song, measure_start, measure_end, notes, prepare);
+                if (song.harmonic) PlayHarmonic(song, measure_start, measure_end, notes, prepare);
+                              else PlayMelodic(song, measure_start, measure_end, notes, prepare);
             }).start();
         }
-    }
-
-    private FM_Audio_Note LoadNote(FM_Audio_Note note) {
-        FM_Audio_Note ret;
-        String[] n = note.note.split(",");
-        n = FM_Helper.computeNote(song.keysignature, n);
-        String[] d = note.duration.split(",");
-        ret = note;
-        List<Integer> tracks = new ArrayList<>();
-        for (String s : n) tracks.add(soundPlayer.GetIndex(s.trim()));
-        ret.audioT = null;
-        ret.pauseDuration = d[0];
-        ret.playDuration = d[0];
-        for (String s : d) {
-            if (soundPlayer.GetDurationFromStr(ret.pauseDuration) > soundPlayer.GetDurationFromStr(s))
-                ret.pauseDuration = s;
-            if (soundPlayer.GetDurationFromStr(ret.playDuration) < soundPlayer.GetDurationFromStr(s))
-                ret.playDuration = s;
-        }
-        ret.audioT = soundPlayer.CreateTrack(tracks, d);
-        return ret;
     }
 
     private void PlayHarmonic(final FM_Audio_Song song, int measure_start, int measure_end, int notes, Boolean prepare) {
@@ -137,8 +158,6 @@ public class FM_ScorePlayer {
             for (int j = 0; j < cnt; j++)
                 ListNotes.add(LoadNote(song.measures.get(measure_end).notes.get(j)));
         }
-        ///for (int i = 1; i < ListNotes.size(); i++) if (ListNotes.get(i).audioINT == -1) ListNotes.get(i - 1).NextPause = true;
-
         song.prepared = true;
         if (!prepare)
             new Thread(() -> {
@@ -152,10 +171,52 @@ public class FM_ScorePlayer {
             }).start();
     }
 
-    public void StopPlaying() {
-        playing = false;
+    private void PlayMelodic(final FM_Audio_Song song, int measure_start, int measure_end, int notes, Boolean prepare) {
+        if (measure_end > song.measures.size()) measure_end = song.measures.size();
+        if (measure_end == song.measures.size()) notes = 0;
+        List<FM_Audio_Note> ListNotes = new ArrayList<>();
+        for (int i = measure_start - 1; i < measure_end; i++) {
+            FM_Helper.StartMeasure();
+            for (int j = 0; j < song.measures.get(i).notes.size(); j++)
+                ListNotes.add(LoadNote(song.measures.get(i).notes.get(j)));
+        }
+        if (notes != 0) {
+            FM_Helper.StartMeasure();
+            int cnt = notes;
+            if (cnt > song.measures.get(measure_end).notes.size())
+                cnt = song.measures.get(measure_end).notes.size();
+            for (int j = 0; j < cnt; j++)
+                ListNotes.add(LoadNote(song.measures.get(measure_end).notes.get(j)));
+        }
+        for (int i = 1; i < ListNotes.size(); i++) if (ListNotes.get(i).audioInt == -1) ListNotes.get(i - 1).NextPause = true;
+        song.prepared = true;
+
+        if (!prepare)
+            new Thread(() -> {
+                boolean in_legato = false;
+                playing_step = true;
+                for (FM_Audio_Note n : ListNotes) {
+                    if (!playing) continue;
+                    if (n.audioInt != 0) {
+                        if (!(n.legato_end && in_legato))
+                            soundPlayer.playKey(n.audioInt, n.NextPause);
+                        if (n.legato_start) in_legato = true;
+                        if (n.legato_end) in_legato = false;
+                        FM_SoundPool.SleepHarmonic(soundPlayer.GetDurationFromStr(n.playDuration));
+                        if (!n.legato_start) soundPlayer.stopKey(n.audioInt);
+                    } else {
+                        n.audioT.Play(soundPlayer.GetDurationFromStr(n.playDuration), n.NextPause);
+                        FM_SoundPool.SleepHarmonic(soundPlayer.GetDurationFromStr(n.pauseDuration));
+                    }
+                }
+                playing_step = false;
+            }).start();
     }
 
+    public void StopPlaying() {
+        playing = false;
+        soundPlayer.StopAllSound();
+    }
 
 
     //Below: functions for a Piano Keyboard

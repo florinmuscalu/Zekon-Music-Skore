@@ -642,8 +642,8 @@ public class FM_Score extends View {
 
     private float getStartX(int line) {
         if (line == 1)
-            return PaddingS + getClefWidth() + FirstStaffKey.Width() + getTimeSignatureWidth() + 2 * FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
-        else return PaddingS + getClefWidth() + FirstStaffKey.Width();
+            return PaddingS + getClefWidth() + FirstStaffKey.Width() + getTimeSignatureWidth() + FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
+        else return PaddingS + getClefWidth() + FirstStaffKey.Width() + FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
     }
 
     private float getLineWidth(int line) {

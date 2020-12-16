@@ -30,6 +30,7 @@ class FM_Audio_Note {
     Boolean legato_start = false;
     Boolean legato_end = false;
     FM_AudioTrack audioT = null;
+    int audioInt = -1;
     boolean NextPause;
 }
 
@@ -39,6 +40,7 @@ class FM_Audio_Measure {
 
 class FM_Audio_Song {
     boolean prepared = false;
+    boolean harmonic = false;
     List<FM_Audio_Measure> measures = new ArrayList<>();
     String keysignature;
 }
@@ -175,13 +177,6 @@ class FM_AudioTrack {
                 }
 
                 int l = 0;
-                if (track1 != null && l > music1.length) l = music1.length;
-                if (track2 != null && l > music2.length) l = music2.length;
-                if (track3 != null && l > music3.length) l = music3.length;
-                if (track4 != null && l > music4.length) l = music4.length;
-                if (track5 != null && l > music5.length) l = music5.length;
-                if (track6 != null && l > music6.length) l = music6.length;
-                if (track7 != null && l > music7.length) l = music7.length;
                 int fallback = FM_SoundPool.FALLBACK_DURATION * 24;
 
                 if (track1 != null && l < track1.duration * 24 + fallback)
@@ -373,7 +368,7 @@ class FM_AudioTrack {
 }
 
 class FM_SoundPool {
-    public double TEMPO = 60.0;
+    public double TEMPO = 1000.0;
     public static int FALLBACK_DURATION = 250; //fallback duration for sounds
     public static int MAX_TRACKS = 500;
     private final Context context;
@@ -387,6 +382,10 @@ class FM_SoundPool {
         }
         for (int i = Tracks.size() - 1; i >= 0; i--)
             if (Tracks.get(i).AccessIndex > MAX_TRACKS) Tracks.remove(i);
+    }
+
+    public void ClearAudioTracks(){
+        Tracks.clear();
     }
 
     public FM_AudioTrack CreateTrack(List<Integer> tracks, int d) {
@@ -912,71 +911,6 @@ class FM_SoundPool {
                 .setAudioAttributes(attributes)
                 .setMaxStreams(20)
                 .build();
-//        GlobalVars.getInstance().SOUNDS_LOADED = 0;
-//        sndPool.setOnLoadCompleteListener((soundPool, sampleId, status) -> {
-//            if (status == 0) {
-//                GlobalVars.getInstance().SOUNDS_LOADED++;
-//                String Text = Class_MainApp.getAppContext().getString(R.string.loading_sounds) + " " + GlobalVars.getInstance().SOUNDS_LOADED * 100 / (GlobalVars.getInstance().WHITE_COUNT + GlobalVars.getInstance().BLACK_COUNT + 3) + "%";
-//                if (GlobalVars.getInstance().SOUNDS_LOADED == GlobalVars.getInstance().WHITE_COUNT + GlobalVars.getInstance().BLACK_COUNT + 3)
-//                    Text = "";
-//
-//                try {
-//                    TextView t = Activity_DefaultMenu.getInstance().findViewById(R.id.loading_splash_text);
-//                    t.setText(Text);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                try {
-//                    TextView t = Activity_DefaultMenu.getInstance().findViewById(R.id.loading_notes_text);
-//                    t.setText(Text);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                try {
-//                    TextView t = Activity_DefaultMenu.getInstance().findViewById(R.id.loading_progresii_text);
-//                    t.setText(Text);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                try {
-//                    TextView t = Activity_DefaultMenu.getInstance().findViewById(R.id.loading_intervals_text);
-//                    t.setText(Text);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                try {
-//                    TextView t = Activity_DefaultMenu.getInstance().findViewById(R.id.loading_tonality_text);
-//                    t.setText(Text);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                try {
-//                    TextView t = Activity_DefaultMenu.getInstance().findViewById(R.id.loading_modes_text);
-//                    t.setText(Text);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                try {
-//                    TextView t = Activity_DefaultMenu.getInstance().findViewById(R.id.loading_default_text);
-//                    t.setText(Text);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                try {
-//                    TextView t = Activity_DefaultMenu.getInstance().findViewById(R.id.loading_chords_text);
-//                    t.setText(Text);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                try {
-//                    TextView t = Activity_DefaultMenu.getInstance().findViewById(R.id.loading_dictation_text);
-//                    t.setText(Text);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-
         AssetFileDescriptor fileDescriptor;
         for (int i = 1; i <= 88; i++) {
             try {
@@ -1169,5 +1103,43 @@ class FM_SoundPool {
                 threadMap.remove(i);
             }
         }
+    }
+
+    /**
+     * @param keys List of keys to be played. TO DO: add format
+     * @param simultaneously - if true, play all the keys simultaneously, like a chord
+     * @param prepare - play or prepare?
+     * @param duration - the duration for each key. If duration is -1, use the TEMPO_DURATION as duration
+     */
+    public void PlayKeys(final String keys, final Boolean simultaneously, final Boolean prepare, final long duration) {
+        if (playing && !prepare) return;
+        new Thread(() -> {
+            int d = (int) duration;
+            if (duration == -1) d = (int) TEMPO;
+            String[] k = keys.replace("[", "").replace("]", "").replace("\"", "").replace("\\", "").toLowerCase().split(",");
+            final int[] Tracks = new int[k.length];
+            for (int i = 0; i < k.length; i++) Tracks[i] = GetIndex(k[i].trim());
+            if (!simultaneously) {
+                if (!prepare) {
+                    playing = true;
+                    for (int i : Tracks) {
+                        if (playing) {
+                            playKey(i);
+                            SleepMelodic(d);
+                            stopKey(i);
+                        }
+                    }
+                    playing = false;
+                }
+            } else {
+                FM_AudioTrack t = CreateTrack(Tracks, d);
+                if (!prepare && t != null) {
+                    playing = true;
+                    t.Play(d, false);
+                    SleepHarmonic(d);
+                    playing = false;
+                }
+            }
+        }).start();
     }
 }
