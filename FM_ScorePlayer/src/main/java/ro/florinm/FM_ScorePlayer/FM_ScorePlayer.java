@@ -246,4 +246,42 @@ public class FM_ScorePlayer {
         if (key<1 || key>88) return;
         soundPlayer.stopKey(key);
     }
+
+    /**
+     * @param keys List of keys to be played. TO DO: add format
+     * @param simultaneously - if true, play all the keys simultaneously, like a chord
+     * @param prepare - play or prepare?
+     * @param duration - the duration for each key. If duration is -1, use the TEMPO_DURATION as duration
+     */
+    public void PlayKeys(final String keys, final Boolean simultaneously, final Boolean prepare, final long duration) {
+        if (playing && !prepare) return;
+        new Thread(() -> {
+            int d = (int) duration;
+            if (duration == -1) d = (int) soundPlayer.TEMPO;
+            String[] k = keys.replace("[", "").replace("]", "").replace("\"", "").replace("\\", "").toLowerCase().split(",");
+            final int[] Tracks = new int[k.length];
+            for (int i = 0; i < k.length; i++) Tracks[i] = soundPlayer.GetIndex(k[i].trim());
+            if (!simultaneously) {
+                if (!prepare) {
+                    playing = true;
+                    for (int i : Tracks) {
+                        if (playing) {
+                            playKey(i);
+                            soundPlayer.SleepMelodic(d);
+                            stopKey(i);
+                        }
+                    }
+                    playing = false;
+                }
+            } else {
+                FM_AudioTrack t = soundPlayer.CreateTrack(Tracks, d);
+                if (!prepare && t != null) {
+                    playing = true;
+                    t.Play(d, false);
+                    FM_SoundPool.SleepHarmonic(d);
+                    playing = false;
+                }
+            }
+        }).start();
+    }
 }
