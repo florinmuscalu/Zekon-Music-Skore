@@ -324,7 +324,7 @@ class FM_AudioTrack {
             audioTrack.setPlaybackHeadPosition(44);
             audioTrack.write(output, 0, output.length);
             audioTrack.play();
-            FM_SoundPool.SleepHarmonic(duration);
+            FM_SoundPool.SleepMelodic(duration);
             playing = false;
             float d = 0;
             int fall = FM_SoundPool.FALLBACK_DURATION;
@@ -402,7 +402,7 @@ class FM_SoundPool {
 
     //hold the playing threads
     private final SparseArray<PlayThread> threadMap;
-    boolean playing;
+    static boolean playing;
     //hold the audio files
     protected static final SparseArray<String> assetFiles = new SparseArray<>();
     protected static final Map<String, Integer> KeyMapping = new HashMap<>();
@@ -1042,19 +1042,19 @@ class FM_SoundPool {
         return (int) (d * TEMPO);
     }
 
-    public void SleepHarmonic(String duration) {
-        SleepHarmonic(GetDurationFromStr(duration));
-    }
+//    public void SleepHarmonic(String duration) {
+//        SleepHarmonic(GetDurationFromStr(duration));
+//    }
 
-    public static void SleepHarmonic(long duration) {
-        try {
-            sleep(duration);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+//    public static void SleepHarmonic(long duration) {
+//        try {
+//            sleep(duration);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-    public void SleepMelodic(long duration) {
+    public static void SleepMelodic(long duration) {
         try {
             if (duration<100) {
                 sleep(100);

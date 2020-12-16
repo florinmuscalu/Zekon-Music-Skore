@@ -175,7 +175,7 @@ public class FM_ScorePlayer {
                 for (FM_Audio_Note n : ListNotes) {
                     if (!soundPlayer.playing) continue;
                     n.audioT.Play(soundPlayer.GetDurationFromStr(n.playDuration), n.NextPause);
-                    FM_SoundPool.SleepHarmonic(soundPlayer.GetDurationFromStr(n.pauseDuration));
+                    FM_SoundPool.SleepMelodic(soundPlayer.GetDurationFromStr(n.pauseDuration));
                 }
                 playing_step = false;
             }).start();
@@ -212,11 +212,11 @@ public class FM_ScorePlayer {
                             soundPlayer.playKey(n.audioInt, n.NextPause);
                         if (n.legato_start) in_legato = true;
                         if (n.legato_end) in_legato = false;
-                        FM_SoundPool.SleepHarmonic(soundPlayer.GetDurationFromStr(n.playDuration));
+                        FM_SoundPool.SleepMelodic(soundPlayer.GetDurationFromStr(n.playDuration));
                         if (!n.legato_start) soundPlayer.stopKey(n.audioInt);
                     } else {
                         n.audioT.Play(soundPlayer.GetDurationFromStr(n.playDuration), n.NextPause);
-                        FM_SoundPool.SleepHarmonic(soundPlayer.GetDurationFromStr(n.pauseDuration));
+                        FM_SoundPool.SleepMelodic(soundPlayer.GetDurationFromStr(n.pauseDuration));
                     }
                 }
                 playing_step = false;
@@ -287,7 +287,7 @@ public class FM_ScorePlayer {
                 if (!prepare && t != null) {
                     soundPlayer.playing = true;
                     t.Play(d, false);
-                    FM_SoundPool.SleepHarmonic(d);
+                    FM_SoundPool.SleepMelodic(d);
                     soundPlayer.playing = false;
                 }
             }

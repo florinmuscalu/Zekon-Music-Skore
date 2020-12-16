@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
         String furelise = "";
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new InputStreamReader(getAssets().open("test.json")));
+            reader = new BufferedReader(new InputStreamReader(getAssets().open("furelise.json")));
             String mLine;
             while ((mLine = reader.readLine()) != null) {
                 furelise += mLine;
@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
 
         s.LoadFromJson(obj);
         player = new FM_ScorePlayer(getApplicationContext());
-        player.LoadFromJson(obj, false);
+        player.LoadFromJson(obj, true);
     }
 
     public void addRandom(){
