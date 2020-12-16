@@ -48,6 +48,10 @@ public class FM_ScorePlayer {
         return (int) (60000.0 / soundPlayer.TEMPO);
     }
 
+    public long getTempo(boolean ms){
+        return (long) soundPlayer.TEMPO;
+    }
+
     /**
      * @param obj The song in Json format. Check the documentation for how the Json should look like.
      * @param harmonic Set it to true if obj contains a harmonic melody. If it's melodic, set it to false
