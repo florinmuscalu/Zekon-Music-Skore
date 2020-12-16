@@ -60,6 +60,7 @@ public class FM_ScorePlayer {
      * @param harmonic Set it to true if obj contains a harmonic melody. If it's melodic, set it to false
      */
     public void LoadFromJson(JSONObject obj, boolean harmonic) {
+        song = null;
         new Thread(() -> {
             try {
                 while (!SoundsLoaded) sleep(25);
@@ -68,32 +69,33 @@ public class FM_ScorePlayer {
                     song = FM_Helper.generateHarmonicSong(obj.optString("keysignature", "DO"), obj.getJSONArray("keys"));
                 else
                     song = FM_Helper.generatMelodicSong(obj.optString("keysignature", "DO"), obj.getJSONArray("keys"));
+                Prepare();
             } catch (Exception ignored) {}
         }).start();
     }
 
     public void Play() {
-        Play(1, song.measures.size(), 0, false);
+        if (song != null) Play(1, song.measures.size(), 0, false);
     }
 
     public void Prepare() {
-        Play(1, song.measures.size(), 0, true);
+        if (song != null) Play(1, song.measures.size(), 0, true);
     }
 
     public void Play(int measure_start, int measure_end) {
-        Play(measure_start, measure_end, 0, false);
+        if (song != null) Play(measure_start, measure_end, 0, false);
     }
 
     public void Prepare(int measure_start, int measure_end) {
-        Play(measure_start, measure_end, 0, true);
+        if (song != null) Play(measure_start, measure_end, 0, true);
     }
 
     public void Play(int measure_start, int measure_end, int notes) {
-        Play(measure_start, measure_end, notes, false);
+        if (song != null) Play(measure_start, measure_end, notes, false);
     }
 
     public void Prepare(int measure_start, int measure_end, int notes) {
-        Play(measure_start, measure_end, notes, true);
+        if (song != null) Play(measure_start, measure_end, notes, true);
     }
 
     private FM_Audio_Note LoadNote(FM_Audio_Note note) {
@@ -127,6 +129,7 @@ public class FM_ScorePlayer {
 
     private void Play(int measure_start, int measure_end, int notes, Boolean prepare) {
         if (!SoundsLoaded) return;
+        if (song == null) return;
         if (prepare) {
             song.prepared = false;
             if (song.harmonic) PlayHarmonic(song, measure_start, measure_end, notes, prepare);
