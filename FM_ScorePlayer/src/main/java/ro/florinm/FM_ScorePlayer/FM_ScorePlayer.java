@@ -73,19 +73,19 @@ public class FM_ScorePlayer {
         Play(1, song.measures.size(), 0, true);
     }
 
-    private void Play(int measure_start, int measure_end) {
+    public void Play(int measure_start, int measure_end) {
         Play(measure_start, measure_end, 0, false);
     }
 
-    private void Prepare(int measure_start, int measure_end) {
+    public void Prepare(int measure_start, int measure_end) {
         Play(measure_start, measure_end, 0, true);
     }
 
-    private void Play(int measure_start, int measure_end, int notes) {
+    public void Play(int measure_start, int measure_end, int notes) {
         Play(measure_start, measure_end, notes, false);
     }
 
-    private void Prepare(int measure_start, int measure_end, int notes) {
+    public void Prepare(int measure_start, int measure_end, int notes) {
         Play(measure_start, measure_end, notes, true);
     }
 
