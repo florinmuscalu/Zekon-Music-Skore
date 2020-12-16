@@ -284,4 +284,17 @@ public class FM_ScorePlayer {
             }
         }).start();
     }
+
+    public boolean isFirstMeasureComplete(){
+        if (song.measures.size()<2) return true;
+        int r_duration = 0;
+        int f_duration = 0;
+        for (int i = 0; i < song.measures.get(1).notes.size(); i++) r_duration = r_duration + soundPlayer.GetDurationFromStr(song.measures.get(1).notes.get(i).pauseDuration);
+        for (int i = 0; i < song.measures.get(0).notes.size(); i++) f_duration = f_duration + soundPlayer.GetDurationFromStr(song.measures.get(0).notes.get(i).pauseDuration);
+        return Math.abs(r_duration - f_duration) < 5;
+    }
+
+    public FM_Audio_Song getSongObject() {
+        return song;
+    }
 }
