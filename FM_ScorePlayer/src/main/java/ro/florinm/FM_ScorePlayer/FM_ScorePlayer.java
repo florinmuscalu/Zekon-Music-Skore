@@ -12,7 +12,6 @@ public class FM_ScorePlayer {
     private FM_SoundPool soundPlayer;
     static int SoundsLoaded;
     private int temp_tempo;
-    private boolean playing_step;
     /**
      * @param context The Application's context.
      */
@@ -21,7 +20,7 @@ public class FM_ScorePlayer {
         SoundsLoaded = 0;
         temp_tempo = 60;
         soundPlayer = null;
-        playing_step = false;
+        FM_SoundPool.playing = false;
         new Thread(() -> {
             soundPlayer = new FM_SoundPool(context);
             setTempo(temp_tempo);
@@ -132,8 +131,8 @@ public class FM_ScorePlayer {
         if (song == null) return;
         if (prepare) {
             song.prepared = false;
-            if (song.harmonic) PlayHarmonic(song, measure_start, measure_end, notes, prepare);
-                          else PlayMelodic(song, measure_start, measure_end, notes, prepare);
+            if (song.harmonic) PlayHarmonic(song, measure_start, measure_end, notes, true);
+                          else PlayMelodic(song, measure_start, measure_end, notes, true);
         } else {
             new Thread(() -> {
                 while (!song.prepared)
@@ -144,9 +143,9 @@ public class FM_ScorePlayer {
                 try {
                     sleep(200);
                 } catch (Exception ignored) { }
-                soundPlayer.playing = true;
-                if (song.harmonic) PlayHarmonic(song, measure_start, measure_end, notes, prepare);
-                              else PlayMelodic(song, measure_start, measure_end, notes, prepare);
+                FM_SoundPool.playing = true;
+                if (song.harmonic) PlayHarmonic(song, measure_start, measure_end, notes, false);
+                              else PlayMelodic(song, measure_start, measure_end, notes, false);
             }).start();
         }
     }
@@ -171,13 +170,13 @@ public class FM_ScorePlayer {
         song.prepared = true;
         if (!prepare)
             new Thread(() -> {
-                playing_step = true;
+                FM_SoundPool.playing = true;
                 for (FM_Audio_Note n : ListNotes) {
-                    if (!soundPlayer.playing) continue;
+                    if (!FM_SoundPool.playing) continue;
                     n.audioT.Play(soundPlayer.GetDurationFromStr(n.playDuration), n.NextPause);
                     FM_SoundPool.SleepMelodic(soundPlayer.GetDurationFromStr(n.pauseDuration));
                 }
-                playing_step = false;
+                FM_SoundPool.playing = false;
             }).start();
     }
 
@@ -204,9 +203,9 @@ public class FM_ScorePlayer {
         if (!prepare)
             new Thread(() -> {
                 boolean in_legato = false;
-                playing_step = true;
+                FM_SoundPool.playing = true;
                 for (FM_Audio_Note n : ListNotes) {
-                    if (!soundPlayer.playing) continue;
+                    if (!FM_SoundPool.playing) continue;
                     if (n.audioInt != 0) {
                         if (!(n.legato_end && in_legato))
                             soundPlayer.playKey(n.audioInt, n.NextPause);
@@ -219,7 +218,7 @@ public class FM_ScorePlayer {
                         FM_SoundPool.SleepMelodic(soundPlayer.GetDurationFromStr(n.pauseDuration));
                     }
                 }
-                playing_step = false;
+                FM_SoundPool.playing = false;
             }).start();
     }
 
@@ -272,23 +271,23 @@ public class FM_ScorePlayer {
             for (int i = 0; i < k.length; i++) Tracks[i] = soundPlayer.GetIndex(k[i].trim());
             if (!simultaneously) {
                 if (!prepare) {
-                    soundPlayer.playing = true;
+                    FM_SoundPool.playing = true;
                     for (int i : Tracks) {
-                        if (soundPlayer.playing) {
+                        if (FM_SoundPool.playing) {
                             playKey(i);
-                            soundPlayer.SleepMelodic(d);
+                            FM_SoundPool.SleepMelodic(d);
                             stopKey(i);
                         }
                     }
-                    soundPlayer.playing = false;
+                    FM_SoundPool.playing = false;
                 }
             } else {
                 FM_AudioTrack t = soundPlayer.CreateTrack(Tracks, d);
                 if (!prepare && t != null) {
-                    soundPlayer.playing = true;
+                    FM_SoundPool.playing = true;
                     t.Play(d, false);
                     FM_SoundPool.SleepMelodic(d);
-                    soundPlayer.playing = false;
+                    FM_SoundPool.playing = false;
                 }
             }
         }).start();
