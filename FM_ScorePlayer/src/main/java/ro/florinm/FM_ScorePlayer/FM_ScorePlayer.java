@@ -141,6 +141,7 @@ public class FM_ScorePlayer {
             if (song.harmonic) PlayHarmonic(song, measure_start, measure_end, notes, true);
                           else PlayMelodic(song, measure_start, measure_end, notes, true);
         } else {
+            FM_SoundPool.playing = true;
             new Thread(() -> {
                 while (!song.prepared)
                     try {
@@ -150,7 +151,6 @@ public class FM_ScorePlayer {
                 try {
                     sleep(200);
                 } catch (Exception ignored) { }
-                FM_SoundPool.playing = true;
                 if (song.harmonic) PlayHarmonic(song, measure_start, measure_end, notes, false);
                               else PlayMelodic(song, measure_start, measure_end, notes, false);
             }).start();
@@ -270,6 +270,7 @@ public class FM_ScorePlayer {
      */
     public void PlayKeys(final String keys, final Boolean simultaneously, final Boolean prepare, final long duration) {
         if (FM_SoundPool.playing && !prepare) return;
+        FM_SoundPool.playing = true;
         new Thread(() -> {
             int d = (int) duration;
             if (duration == -1) d = (int) soundPlayer.TEMPO;
@@ -278,7 +279,6 @@ public class FM_ScorePlayer {
             for (int i = 0; i < k.length; i++) Tracks[i] = soundPlayer.GetIndex(k[i].trim());
             if (!simultaneously) {
                 if (!prepare) {
-                    FM_SoundPool.playing = true;
                     for (int i : Tracks) {
                         if (FM_SoundPool.playing) {
                             playKey(i);
