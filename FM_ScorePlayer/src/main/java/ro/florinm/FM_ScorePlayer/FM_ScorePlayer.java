@@ -28,10 +28,17 @@ public class FM_ScorePlayer {
     }
 
     /**
-     * @return return true if all the sounds have been loaded. Return false otherwise.
+     * @return return the percent of loading the assets. 100 for all done.
      */
     public int AssetsLoaded() {
         return SoundsLoaded;
+    }
+
+    /**
+     * @return return true something is playing
+     */
+    public boolean isPlaying() {
+        return FM_SoundPool.playing;
     }
 
     /**
