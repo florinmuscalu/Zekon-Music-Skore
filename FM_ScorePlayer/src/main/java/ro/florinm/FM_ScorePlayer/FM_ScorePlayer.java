@@ -10,7 +10,7 @@ import static java.lang.Thread.sleep;
 public class FM_ScorePlayer {
     private FM_Audio_Song song;
     private FM_SoundPool soundPlayer;
-    private boolean SoundsLoaded;
+    static int SoundsLoaded;
     private int temp_tempo;
     private boolean playing_step;
     /**
@@ -18,13 +18,12 @@ public class FM_ScorePlayer {
      */
     public FM_ScorePlayer(Context context) {
         super();
-        SoundsLoaded = false;
+        SoundsLoaded = 0;
         temp_tempo = 60;
         soundPlayer = null;
         playing_step = false;
         new Thread(() -> {
             soundPlayer = new FM_SoundPool(context);
-            SoundsLoaded = true;
             setTempo(temp_tempo);
         }).start();
     }
@@ -32,7 +31,7 @@ public class FM_ScorePlayer {
     /**
      * @return return true if all the sounds have been loaded. Return false otherwise.
      */
-    public boolean AssetsLoaded() {
+    public int AssetsLoaded() {
         return SoundsLoaded;
     }
 
@@ -63,7 +62,7 @@ public class FM_ScorePlayer {
         song = null;
         new Thread(() -> {
             try {
-                while (!SoundsLoaded) sleep(25);
+                while (SoundsLoaded != 100) sleep(25);
                 soundPlayer.ClearAudioTracks();
                 if (harmonic)
                     song = FM_Helper.generateHarmonicSong(obj.optString("keysignature", "DO"), obj.getJSONArray("keys"));
@@ -128,7 +127,8 @@ public class FM_ScorePlayer {
     }
 
     private void Play(int measure_start, int measure_end, int notes, Boolean prepare) {
-        if (!SoundsLoaded) return;
+        if (FM_SoundPool.playing) return;
+        if (SoundsLoaded != 100) return;
         if (song == null) return;
         if (prepare) {
             song.prepared = false;
@@ -263,7 +263,7 @@ public class FM_ScorePlayer {
      * @param duration - the duration for each key. If duration is -1, use the TEMPO_DURATION as duration
      */
     public void PlayKeys(final String keys, final Boolean simultaneously, final Boolean prepare, final long duration) {
-        if (soundPlayer.playing && !prepare) return;
+        if (FM_SoundPool.playing && !prepare) return;
         new Thread(() -> {
             int d = (int) duration;
             if (duration == -1) d = (int) soundPlayer.TEMPO;

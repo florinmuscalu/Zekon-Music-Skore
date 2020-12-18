@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.Thread.sleep;
 
@@ -501,13 +502,6 @@ class FM_SoundPool {
         assetFiles.put(87, "sounds/_7ad.wav");
         assetFiles.put(88, "sounds/_8c.wav");
 
-        assetFiles.put(100, "sounds/beat.wav");
-        KeyMapping.put("B", 100);
-        KeyMapping.put("b", 100);
-
-        assetFiles.put(101, "sounds/tick.wav");
-        assetFiles.put(102, "sounds/tock.wav");
-
         KeyMapping.put("a/0", 1);
         KeyMapping.put("an/0", 1);
         KeyMapping.put("bbb/0", 1);
@@ -888,24 +882,22 @@ class FM_SoundPool {
                 .setAudioAttributes(attributes)
                 .setMaxStreams(20)
                 .build();
+
+        FM_ScorePlayer.SoundsLoaded = 0;
+        AtomicInteger loaded_count = new AtomicInteger();
+        sndPool.setOnLoadCompleteListener((soundPool, sampleId, status) -> {
+            if (status == 0) {
+                loaded_count.getAndIncrement();
+                float f = loaded_count.floatValue();
+                FM_ScorePlayer.SoundsLoaded = (int) ((f / 88.0f) * 100);
+            }
+        });
         AssetFileDescriptor fileDescriptor;
         for (int i = 1; i <= 88; i++) {
             try {
                 fileDescriptor = assetManager.openFd(assetFiles.get(i));
                 soundMap.put(i, sndPool.load(fileDescriptor, 1));
             } catch (IOException ignored) {}
-        }
-        try {
-            fileDescriptor = assetManager.openFd(assetFiles.get(100));
-            soundMap.put(100, sndPool.load(fileDescriptor, 1));
-
-            fileDescriptor = assetManager.openFd(assetFiles.get(101));
-            soundMap.put(101, sndPool.load(fileDescriptor, 1));
-
-            fileDescriptor = assetManager.openFd(assetFiles.get(102));
-            soundMap.put(102, sndPool.load(fileDescriptor, 1));
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
