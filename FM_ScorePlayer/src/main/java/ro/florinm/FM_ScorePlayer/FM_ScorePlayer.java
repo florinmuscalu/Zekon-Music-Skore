@@ -270,7 +270,7 @@ public class FM_ScorePlayer {
      */
     public void PlayKeys(final String keys, final Boolean simultaneously, final Boolean prepare, final long duration) {
         if (FM_SoundPool.playing && !prepare) return;
-        FM_SoundPool.playing = true;
+        if (!prepare) FM_SoundPool.playing = true;
         new Thread(() -> {
             int d = (int) duration;
             if (duration == -1) d = (int) soundPlayer.TEMPO;
