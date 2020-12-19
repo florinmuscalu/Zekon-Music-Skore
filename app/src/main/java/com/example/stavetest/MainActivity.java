@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
 
         s.LoadFromJson(obj);
         player = new FM_ScorePlayer(getApplicationContext());
-        player.LoadFromJson(obj, true);
+        player.LoadFromJson(obj, false);
     }
 
     public void addRandom(){

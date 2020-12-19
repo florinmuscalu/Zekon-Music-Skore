@@ -120,7 +120,7 @@ public class FM_ScorePlayer {
                 ret.playDuration = s;
         }
         
-        if (tracks.size() ==1 ){
+        if (n.length == 1 ){
                 ret.audioInt = soundPlayer.GetIndex(n[0].trim());
                 ret.audioT = null;
             }
