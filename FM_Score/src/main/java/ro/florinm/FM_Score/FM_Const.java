@@ -303,6 +303,7 @@ public class FM_Const {
         if (s.equals("3/2")) ret = FM_TimeSignatureValue._3_2;
         if (s.equals("3/4")) ret = FM_TimeSignatureValue._3_4;
         if (s.equals("3/8")) ret = FM_TimeSignatureValue._3_8;
+        if (s.equals("6/8")) ret = FM_TimeSignatureValue._6_8;
         return ret;
     }
 

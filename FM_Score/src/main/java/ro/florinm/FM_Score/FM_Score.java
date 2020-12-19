@@ -596,6 +596,10 @@ public class FM_Score extends View {
             canvas.drawText(FM_Const._3, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
             canvas.drawText(FM_Const._8, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
         }
+        if (TimeSignature == FM_TimeSignatureValue._6_8) {
+            canvas.drawText(FM_Const._6, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
+            canvas.drawText(FM_Const._8, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
+        }
     }
 
     public void clearStaffNotes() {

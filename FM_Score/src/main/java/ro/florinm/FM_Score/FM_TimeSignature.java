@@ -67,6 +67,10 @@ class FM_TimeSignature extends FM_BaseNote {
             canvas.drawText(FM_Const._3, dx, y + 1 * score.getDistanceBetweenStaveLines(), score.Font);
             canvas.drawText(FM_Const._8, dx, y + 3 * score.getDistanceBetweenStaveLines(), score.Font);
         }
+        if (timesig == FM_TimeSignatureValue._6_8) {
+            canvas.drawText(FM_Const._6, dx, y + 1 * score.getDistanceBetweenStaveLines(), score.Font);
+            canvas.drawText(FM_Const._8, dx, y + 3 * score.getDistanceBetweenStaveLines(), score.Font);
+        }
     }
 
     public float Left(){
