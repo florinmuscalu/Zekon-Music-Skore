@@ -3,6 +3,7 @@ package ro.florinm.FM_Score;
 import android.graphics.Canvas;
 
 public class FM_BarNote extends FM_BaseNote {
+    boolean lineend = false;        //set it to true if it is a line-end bar
 
     public FM_BarNote(FM_Score score) {
         super(FM_NoteType.BAR, score);
@@ -11,6 +12,7 @@ public class FM_BarNote extends FM_BaseNote {
     public FM_BarNote(FM_Score score, int Color) {
         super(FM_NoteType.BAR, score);
         this.color = Color;
+
     }
 
     public float getDisplacement() {

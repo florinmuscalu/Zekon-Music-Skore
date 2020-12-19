@@ -21,6 +21,7 @@ public class FM_Beam {
     }
 
     public void Draw(Canvas canvas) {
+        if (!n.get(0).visible) return;
         float x, xe, y, ye;
         int EndIndex = n.size() - 1;
         float StemLength = 2.5f;

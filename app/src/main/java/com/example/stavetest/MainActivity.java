@@ -523,4 +523,11 @@ public class MainActivity extends AppCompatActivity {
         if (i > 2) i = 0;
         s.ShowBoundingBoxes(i);
     }
+    boolean show = false;
+    public void OnClickVisible(View v){
+        FM_Score s = findViewById(R.id.stave);
+        if (show) s.ShowScore(0);
+        else s.ShowScore(2);
+        show = !show;
+    }
 }

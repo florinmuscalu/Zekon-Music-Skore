@@ -667,7 +667,10 @@ public class FM_Score extends View {
         float ys2 = getPaddingVertical();
         if (StaffCount == FM_StaffCount._2)
             ys2 = ys1 + (getDistanceBetweenStaves() + 4 * getDistanceBetweenStaveLines());
-        for (int i = 0; i < StaveNotes.size(); i++) StaveNotes.get(i).setVisible(true);
+        for (int i = 0; i < StaveNotes.size(); i++) {
+            StaveNotes.get(i).setVisible(true);
+            if (StaveNotes.get(i) instanceof FM_BarNote) ((FM_BarNote) StaveNotes.get(i)).lineend = false;
+        }
 
         if (MultiLine && Align == FM_Align.ALIGN_LEFT_NOTES) {
             float X = getStartX(l);
@@ -675,7 +678,10 @@ public class FM_Score extends View {
             for (int i = 0; i < StaveNotes.size(); i++) {
                 float w = StaveNotes.get(i).Width() + NoteSpacing;
                 if (X + w > endX) {
-                    if (last_note instanceof FM_BarNote) last_note.setVisible(false);
+                    if (last_note instanceof FM_BarNote) {
+                        ((FM_BarNote) last_note).lineend = true;
+                        last_note.setVisible(false);
+                    }
                     l++;
                     X = getStartX(l);
                     ys1 = ys2 + (getDistanceBetweenRows() + 4 * getDistanceBetweenStaveLines());
@@ -690,8 +696,10 @@ public class FM_Score extends View {
                 last_note = StaveNotes.get(i);
             }
             //If last note is a bar, hide it
-            if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote)
+            if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote) {
+                ((FM_BarNote) StaveNotes.get(StaveNotes.size() - 1)).lineend = true;
                 StaveNotes.get(StaveNotes.size() - 1).setVisible(false);
+            }
         }
 
         float scale = 1.15f;
@@ -715,6 +723,7 @@ public class FM_Score extends View {
                     bar_cnt = 0;
                     i = last_bar;
                     StaveNotes.get(last_bar).setVisible(false);
+                    ((FM_BarNote) StaveNotes.get(last_bar)).lineend = true;
                     continue;
                 }
                 if (StaffCount == FM_StaffCount._2)
@@ -725,14 +734,18 @@ public class FM_Score extends View {
                 X = X + w;
             }
             //If last note is a bar, hide it
-            if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote)
+            if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote) {
+                ((FM_BarNote) StaveNotes.get(StaveNotes.size() - 1)).lineend = true;
                 StaveNotes.get(StaveNotes.size() - 1).setVisible(false);
+            }
         }
 
         if (!MultiLine) {
             //If last note is a bar, hide it
-            if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote)
+            if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote) {
+                ((FM_BarNote) StaveNotes.get(StaveNotes.size() - 1)).lineend = true;
                 StaveNotes.get(StaveNotes.size() - 1).setVisible(false);
+            }
         }
         Lines = l;
 
@@ -1095,5 +1108,36 @@ public class FM_Score extends View {
         if (!tie.equals("")) EndTie();
         if (!tuple.equals("")) EndTuple();
         return 0;
+    }
+
+    public void ShowScore(int measures){
+        for (int i = 0; i < StaveNotes.size(); i ++) {
+            StaveNotes.get(i).setVisible(true);
+            if (StaveNotes.get(i) instanceof FM_BarNote)
+                if (((FM_BarNote) StaveNotes.get(i)).lineend) StaveNotes.get(i).setVisible(false);
+        }
+        if (measures != 0) {
+            float size1 = 0;
+            float size2 = 0;
+            int i = 0;
+            while (i < StaveNotes.size() && !(StaveNotes.get(i) instanceof FM_BarNote)) {
+                size1 = size1 + FM_Const.getDurationMs(StaveNotes.get(i).duration);
+                i++;
+            }
+            i++;
+            while (i < StaveNotes.size() && !(StaveNotes.get(i) instanceof FM_BarNote)) {
+                size2 = size2 + FM_Const.getDurationMs(StaveNotes.get(i).duration);
+                i++;
+            }
+            if (Math.abs(size1 - size2) > 0.01f) measures++;
+            i = 0;
+            int bars = 0;
+            while (i < StaveNotes.size()) {
+                if (StaveNotes.get(i) instanceof FM_BarNote) bars++;
+                if (bars >= measures) StaveNotes.get(i).setVisible(false);
+                i++;
+            }
+        }
+        invalidate();
     }
 }

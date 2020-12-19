@@ -8,6 +8,17 @@
     android:keepScreenOn="true"
     tools:context=".MainActivity">
 
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginBottom="20dp"
+        android:onClick="OnClickVisible"
+        android:text="Toggle Visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <ro.florinm.FM_Score.FM_Score
         android:id="@+id/stave"
         android:layout_width="match_parent"
@@ -22,18 +33,18 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
         android:layout_marginBottom="20dp"
         android:onClick="OnClick"
         android:text="Play"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/button3" />
 
     <Button
         android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="2dp"
         android:layout_marginBottom="20dp"
         android:onClick="OnClickBBox"
         android:text="Toggle BBox"

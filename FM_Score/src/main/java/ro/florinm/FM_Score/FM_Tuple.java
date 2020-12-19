@@ -24,6 +24,7 @@ public class FM_Tuple {
     }
 
     public void Draw(Canvas canvas) {
+        if (!n.get(0).visible) return;
         float x, xe, y, ye;
         float StaveLineHalfWidth = FM_Const.dpTOpx(score.getContext(), 0.25f);
         int EndIndex = n.size() - 1;

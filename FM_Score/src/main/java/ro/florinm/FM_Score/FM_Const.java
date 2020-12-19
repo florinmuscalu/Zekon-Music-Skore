@@ -305,4 +305,20 @@ public class FM_Const {
         if (s.equals("3/8")) ret = FM_TimeSignatureValue._3_8;
         return ret;
     }
+
+    static float getDurationMs(@FM_DurationValue int duration){
+        if (duration == FM_DurationValue.NOTE_WHOLE) return 4;
+        if (duration == FM_DurationValue.NOTE_WHOLE_D) return 6;
+        if (duration == FM_DurationValue.NOTE_HALF) return 2;
+        if (duration == FM_DurationValue.NOTE_HALF_D) return 3;
+        if (duration == FM_DurationValue.NOTE_QUARTER) return 1;
+        if (duration == FM_DurationValue.NOTE_QUARTER_D) return 1.5f;
+        if (duration == FM_DurationValue.NOTE_EIGHT) return 0.5f;
+        if (duration == FM_DurationValue.NOTE_EIGHT_D) return 0.5f + 0.25f;
+        if (duration == FM_DurationValue.NOTE_SIXTEENTH) return 0.25f;
+        if (duration == FM_DurationValue.NOTE_SIXTEENTH_D) return 0.25f + 1/8f;
+        if (duration == FM_DurationValue.NOTE_THIRTY_SECOND) return 1/8f;
+        if (duration == FM_DurationValue.NOTE_THIRTY_SECOND_D) return 1/8f + 1/16f;
+        return 0;
+    }
 }

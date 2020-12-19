@@ -24,6 +24,7 @@ public class FM_Tie {
     }
 
     public void Draw(Canvas canvas) {
+        if (!s.visible) return;
         float x = s.startX + s.paddingLeft + s.WidthAccidental() + s.paddingNote + s.WidthNote();
         float xe = e.startX + e.paddingLeft + e.WidthAccidental() + e.paddingNote;
         float y = s.ys + (s.getDisplacement() + 0.5f) * score.getDistanceBetweenStaveLines();

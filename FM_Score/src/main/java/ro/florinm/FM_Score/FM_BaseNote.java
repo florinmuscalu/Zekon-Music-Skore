@@ -116,9 +116,10 @@ public abstract class FM_BaseNote{
     public boolean isVisible() {
         return visible;
     }
+
     public void setVisible(boolean visible) {
-        if (!visible) line = -1;
-        else line = 1;
+        //if (!visible) line = -1;
+        //else line = 1;
         this.visible = visible;
     }
 

@@ -12,10 +12,13 @@ public class FM_Chord extends FM_BaseNote {
     public FM_Chord(FM_Score Score) {
         super(FM_NoteType.CHORD, Score);
         this.Notes = new ArrayList<>();
+        duration = 0;
     }
 
     public void addNote(FM_BaseNote note){
         Notes.add(note);
+        if (FM_Const.getDurationMs(note.duration) > FM_Const.getDurationMs(duration))
+            duration = note.duration;
     }
 
     public void Compute() {
@@ -201,8 +204,8 @@ public class FM_Chord extends FM_BaseNote {
     }
 
     public void setVisible(boolean visible) {
-        if (!visible) line = -1;
-        else line = 1;
+        //if (!visible) line = -1;
+        //else line = 1;
         this.visible = visible;
         for (int i = 0; i< Notes.size(); i++) Notes.get(i).setVisible(visible);
     }
