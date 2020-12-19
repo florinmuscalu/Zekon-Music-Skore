@@ -660,7 +660,9 @@ public class FM_Score extends View {
                     w = StaveNotes.get(j).Width();
                 }
             }
-        return X + w + 2 * FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
+        float ret = X + w + 4 * FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
+        if (ret > width - PaddingE) ret = width - PaddingE;
+        return ret;
     }
 
     private void ComputeLines() {
