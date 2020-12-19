@@ -146,13 +146,11 @@ public class FM_Beam {
         for (int i = 0; i < n.size() - 1; i++) {
             boolean drawBegin = true;
             boolean drawEnd = true;
-            if (n.get(i).duration != FM_DurationValue.NOTE_SIXTEENTH && n.get(i).duration != FM_DurationValue.NOTE_SIXTEENTH_D)
-                drawBegin = false;
-            if (n.get(i + 1).duration != FM_DurationValue.NOTE_SIXTEENTH && n.get(i + 1).duration != FM_DurationValue.NOTE_SIXTEENTH_D)
-                drawEnd = false;
+            if (n.get(i).duration != FM_DurationValue.NOTE_SIXTEENTH && n.get(i).duration != FM_DurationValue.NOTE_SIXTEENTH_D) drawBegin = false;
+            if (n.get(i + 1).duration != FM_DurationValue.NOTE_SIXTEENTH && n.get(i + 1).duration != FM_DurationValue.NOTE_SIXTEENTH_D) drawEnd = false;
 
             if (drawBegin && !drawEnd && i > 0)
-                if (n.get(i - 1).duration == FM_DurationValue.NOTE_SIXTEENTH || n.get(i - 1).duration == FM_DurationValue.NOTE_SIXTEENTH_D)
+                //if (n.get(i - 1).duration == FM_DurationValue.NOTE_SIXTEENTH || n.get(i - 1).duration == FM_DurationValue.NOTE_SIXTEENTH_D)
                     drawBegin = false;
             if (!drawBegin && drawEnd && i < n.size() - 2)
                 if (n.get(i + 2).duration == FM_DurationValue.NOTE_SIXTEENTH || n.get(i + 2).duration == FM_DurationValue.NOTE_SIXTEENTH_D)

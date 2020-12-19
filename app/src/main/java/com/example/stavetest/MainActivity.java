@@ -57,16 +57,19 @@ public class MainActivity extends AppCompatActivity {
         s.setAllowZoomPan(true);
         s.setTrimLastLine(true);
 
-        LoadJson();
+//        LoadJson();
 
-//        s.BeginBeam();
-//        s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
-//        s.AddToBeam((FM_Note) s.getLastNote());
-//        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
-//        s.AddToBeam((FM_Note) s.getLastNote());
-//        s.addStaffNote(new FM_Note(s, FM_NoteValue.MI, 5, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
-//        s.AddToBeam((FM_Note) s.getLastNote());
-//        s.EndBeam();
+        //1100
+        s.BeginBeam();
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
+        s.AddToBeam((FM_Note) s.getLastNote());
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
+        s.AddToBeam((FM_Note) s.getLastNote());
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.MI, 5, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
+        s.AddToBeam((FM_Note) s.getLastNote());
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.MI, 5, FM_Accidental.None, FM_DurationValue.NOTE_EIGHT, true), FM_ClefValue.TREBLE);
+        s.AddToBeam((FM_Note) s.getLastNote());
+        s.EndBeam();
 //
 //        s.BeginBeam();
 //        s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, false), FM_ClefValue.TREBLE);

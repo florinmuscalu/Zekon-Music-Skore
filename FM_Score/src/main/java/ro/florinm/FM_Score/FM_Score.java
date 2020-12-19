@@ -1,7 +1,4 @@
 package ro.florinm.FM_Score;
-
-//todo add key signatures
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
