@@ -296,14 +296,28 @@ public class FM_Const {
     }
 
     @FM_TimeSignatureValue
-    public static int getTimeSignature(String s){
+    public static int getTimeSignature_n(String s){
         int ret = FM_TimeSignatureValue.None;
-        if (s.equals("4/4")) ret = FM_TimeSignatureValue._4_4;
-        if (s.equals("2/4")) ret = FM_TimeSignatureValue._2_4;
-        if (s.equals("3/2")) ret = FM_TimeSignatureValue._3_2;
-        if (s.equals("3/4")) ret = FM_TimeSignatureValue._3_4;
-        if (s.equals("3/8")) ret = FM_TimeSignatureValue._3_8;
-        if (s.equals("6/8")) ret = FM_TimeSignatureValue._6_8;
+        if (s.startsWith("2")) ret = FM_TimeSignatureValue._2;
+        if (s.startsWith("3")) ret = FM_TimeSignatureValue._3;
+        if (s.startsWith("4")) ret = FM_TimeSignatureValue._4;
+        if (s.startsWith("5")) ret = FM_TimeSignatureValue._5;
+        if (s.startsWith("6")) ret = FM_TimeSignatureValue._6;
+        if (s.startsWith("7")) ret = FM_TimeSignatureValue._7;
+        if (s.startsWith("8")) ret = FM_TimeSignatureValue._8;
+        return ret;
+    }
+
+    @FM_TimeSignatureValue
+    public static int getTimeSignature_d(String s){
+        int ret = FM_TimeSignatureValue.None;
+        if (s.endsWith("2")) ret = FM_TimeSignatureValue._2;
+        if (s.endsWith("3")) ret = FM_TimeSignatureValue._3;
+        if (s.endsWith("4")) ret = FM_TimeSignatureValue._4;
+        if (s.endsWith("5")) ret = FM_TimeSignatureValue._5;
+        if (s.endsWith("6")) ret = FM_TimeSignatureValue._6;
+        if (s.endsWith("7")) ret = FM_TimeSignatureValue._7;
+        if (s.endsWith("8")) ret = FM_TimeSignatureValue._8;
         return ret;
     }
 

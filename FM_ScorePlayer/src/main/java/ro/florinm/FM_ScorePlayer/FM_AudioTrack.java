@@ -346,7 +346,9 @@ class FM_AudioTrack {
 }
 
 class FM_SoundPool {
-    public double TEMPO = 1000.0;
+    public int TEMPO = 60;
+    public int time_signature_n;
+    public int time_signature_d;
     public static int FALLBACK_DURATION = 250; //fallback duration for sounds
     public static int MAX_TRACKS = 500;
     private final Context context;
@@ -1031,7 +1033,8 @@ class FM_SoundPool {
                 }
             }
         }
-        return (int) (d * TEMPO);
+        float multiply = (60.0f * time_signature_n) / (TEMPO * time_signature_d);
+        return (int) (d * multiply * 1000.0f);
     }
 
 //    public void SleepHarmonic(String duration) {

@@ -12,6 +12,8 @@ public class FM_ScorePlayer {
     private FM_SoundPool soundPlayer;
     static int SoundsLoaded;
     private int temp_tempo;
+    private int temp_timesig_n;
+    private int temp_timesig_d;
     /**
      * @param context The Application's context.
      */
@@ -19,11 +21,14 @@ public class FM_ScorePlayer {
         super();
         SoundsLoaded = 0;
         temp_tempo = 60;
+        temp_timesig_n = 4;
+        temp_timesig_d = 4;
         soundPlayer = null;
         FM_SoundPool.playing = false;
         new Thread(() -> {
             soundPlayer = new FM_SoundPool(context);
             setTempo(temp_tempo);
+            setTimeSignature(temp_timesig_n, temp_timesig_d);
         }).start();
     }
 
@@ -46,18 +51,28 @@ public class FM_ScorePlayer {
      */
     public void setTempo(int tempo) {
         temp_tempo = tempo;
-        if (soundPlayer != null) soundPlayer.TEMPO = 60000.0 / tempo;
+        if (soundPlayer != null) soundPlayer.TEMPO = tempo;
+    }
+
+    public void setTimeSignature(int n, int d) {
+        temp_timesig_n = n;
+        temp_timesig_d = d;
+        if (soundPlayer != null) {
+            soundPlayer.time_signature_n = n;
+            soundPlayer.time_signature_d = d;
+        }
     }
 
     /**
      * @return get the tempo used for playing the song.
      */
     public int getTempo(){
-        return (int) (60000.0 / soundPlayer.TEMPO);
+        return soundPlayer.TEMPO;
     }
 
     public long getTempo(boolean ms){
-        return (long) soundPlayer.TEMPO;
+        float multiply = (60.0f * soundPlayer.time_signature_n) / (soundPlayer.TEMPO * soundPlayer.time_signature_d);
+        return (long) multiply * 1000;
     }
 
     /**
@@ -70,6 +85,8 @@ public class FM_ScorePlayer {
             try {
                 while (SoundsLoaded != 100) sleep(25);
                 soundPlayer.ClearAudioTracks();
+                String timesignature = obj.optString("timesignature", "4/4");
+                setTimeSignature(FM_Helper.getTimeSignature_n(timesignature), FM_Helper.getTimeSignature_d(timesignature));
                 if (harmonic)
                     song = FM_Helper.generateHarmonicSong(obj.optString("keysignature", "DO"), obj.getJSONArray("keys"));
                 else

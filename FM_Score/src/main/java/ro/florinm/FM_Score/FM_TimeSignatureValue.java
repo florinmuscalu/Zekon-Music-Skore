@@ -2,13 +2,14 @@ package ro.florinm.FM_Score;
 
 import androidx.annotation.IntDef;
 
-@IntDef({FM_TimeSignatureValue.None, FM_TimeSignatureValue._2_4, FM_TimeSignatureValue._3_4, FM_TimeSignatureValue._4_4, FM_TimeSignatureValue._3_2, FM_TimeSignatureValue._3_8, FM_TimeSignatureValue._6_8})
+@IntDef({FM_TimeSignatureValue.None, FM_TimeSignatureValue._2, FM_TimeSignatureValue._3, FM_TimeSignatureValue._4, FM_TimeSignatureValue._5, FM_TimeSignatureValue._6, FM_TimeSignatureValue._7, FM_TimeSignatureValue._8})
 public @interface FM_TimeSignatureValue {
     int None = 0;
-    int _2_4 = 24;
-    int _3_4 = 34;
-    int _4_4 = 44;
-    int _3_2 = 32;
-    int _3_8 = 38;
-    int _6_8 = 68;
+    int _2 = 2;
+    int _3 = 3;
+    int _4 = 4;
+    int _5 = 5;
+    int _6 = 6;
+    int _7 = 7;
+    int _8 = 8;
 }

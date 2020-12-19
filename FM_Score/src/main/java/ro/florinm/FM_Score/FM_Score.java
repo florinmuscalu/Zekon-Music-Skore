@@ -27,7 +27,9 @@ import static java.lang.Thread.sleep;
 
 public class FM_Score extends View {
     @FM_TimeSignatureValue
-    private int TimeSignature;
+    private int TimeSignature_n;    //numerator
+    @FM_TimeSignatureValue
+    private int TimeSignature_d;    //denominator
     @FM_KeySignatureValue
     private int KeySignature;
     @FM_StaffCount
@@ -107,7 +109,7 @@ public class FM_Score extends View {
         setMultiLine(false);
         setFirstStaveClef(FM_ClefValue.TREBLE);
         setSecondStaveClef(FM_ClefValue.BASS);
-        setTimeSignature(FM_TimeSignatureValue.None);
+        setTimeSignature(FM_TimeSignatureValue.None, FM_TimeSignatureValue.None);
         setKeySignature(FM_KeySignatureValue.DO);
         setAlign(FM_Align.ALIGN_CENTER_MEASURES);
         ShowBoundingBoxes(FM_BoundingBoxType.None);
@@ -143,12 +145,22 @@ public class FM_Score extends View {
         invalidate();
     }
 
-    public int getTimeSignature() {
-        return TimeSignature;
+    /**
+     * @return Return the numerator
+     */
+    public int getTimeSignature_n() {
+        return TimeSignature_n;
+    }
+    /**
+     * @return Return the denominator
+     */
+    public int getTimeSignature_d() {
+        return TimeSignature_d;
     }
 
-    public void setTimeSignature(@FM_TimeSignatureValue int timeSignature) {
-        TimeSignature = timeSignature;
+    public void setTimeSignature(@FM_TimeSignatureValue int numerator, @FM_TimeSignatureValue int denominator) {
+        TimeSignature_n = numerator;
+        TimeSignature_d = denominator;
         //invalidate();
         requestLayout();
     }
@@ -566,7 +578,7 @@ public class FM_Score extends View {
     }
 
     protected float getTimeSignatureWidth() {
-        if (TimeSignature == FM_TimeSignatureValue.None) return 0;
+        if (TimeSignature_n == FM_TimeSignatureValue.None) return 0;
         float w = FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
         FM_Const.AdjustFont(this, FM_Const._4, 2);
         return w + Font.measureText(FM_Const._4);
@@ -576,30 +588,21 @@ public class FM_Score extends View {
         Font.setColor(Color);
         float pad = PaddingS + getClefWidth() + FirstStaffKey.Width();
         FM_Const.AdjustFont(this, FM_Const._4, 2);
-        if (TimeSignature == FM_TimeSignatureValue._4_4) {
-            canvas.drawText(FM_Const._4, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
-            canvas.drawText(FM_Const._4, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
-        }
-        if (TimeSignature == FM_TimeSignatureValue._2_4) {
-            canvas.drawText(FM_Const._2, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
-            canvas.drawText(FM_Const._4, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
-        }
-        if (TimeSignature == FM_TimeSignatureValue._3_4) {
-            canvas.drawText(FM_Const._3, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
-            canvas.drawText(FM_Const._4, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
-        }
-        if (TimeSignature == FM_TimeSignatureValue._3_2) {
-            canvas.drawText(FM_Const._3, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
-            canvas.drawText(FM_Const._2, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
-        }
-        if (TimeSignature == FM_TimeSignatureValue._3_8) {
-            canvas.drawText(FM_Const._3, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
-            canvas.drawText(FM_Const._8, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
-        }
-        if (TimeSignature == FM_TimeSignatureValue._6_8) {
-            canvas.drawText(FM_Const._6, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
-            canvas.drawText(FM_Const._8, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
-        }
+        if (TimeSignature_n == FM_TimeSignatureValue._2) canvas.drawText(FM_Const._2, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
+        if (TimeSignature_n == FM_TimeSignatureValue._3) canvas.drawText(FM_Const._3, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
+        if (TimeSignature_n == FM_TimeSignatureValue._4) canvas.drawText(FM_Const._4, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
+        if (TimeSignature_n == FM_TimeSignatureValue._5) canvas.drawText(FM_Const._5, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
+        if (TimeSignature_n == FM_TimeSignatureValue._6) canvas.drawText(FM_Const._6, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
+        if (TimeSignature_n == FM_TimeSignatureValue._7) canvas.drawText(FM_Const._7, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
+        if (TimeSignature_n == FM_TimeSignatureValue._8) canvas.drawText(FM_Const._8, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
+
+        if (TimeSignature_d == FM_TimeSignatureValue._2) canvas.drawText(FM_Const._2, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
+        if (TimeSignature_d == FM_TimeSignatureValue._3) canvas.drawText(FM_Const._3, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
+        if (TimeSignature_d == FM_TimeSignatureValue._4) canvas.drawText(FM_Const._4, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
+        if (TimeSignature_d == FM_TimeSignatureValue._5) canvas.drawText(FM_Const._5, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
+        if (TimeSignature_d == FM_TimeSignatureValue._6) canvas.drawText(FM_Const._6, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
+        if (TimeSignature_d == FM_TimeSignatureValue._7) canvas.drawText(FM_Const._7, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
+        if (TimeSignature_d == FM_TimeSignatureValue._8) canvas.drawText(FM_Const._8, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
     }
 
     public void clearStaffNotes() {
@@ -614,7 +617,7 @@ public class FM_Score extends View {
         setVoiceCount(1);
         setFirstStaveClef(FM_ClefValue.TREBLE);
         setSecondStaveClef(FM_ClefValue.BASS);
-        setTimeSignature(FM_TimeSignatureValue.None);
+        setTimeSignature(FM_TimeSignatureValue.None, FM_TimeSignatureValue.None);
         setKeySignature(FM_KeySignatureValue.DO);
         invalidate();
     }
@@ -1028,7 +1031,7 @@ public class FM_Score extends View {
 
         setAlign(FM_Align.ALIGN_LEFT_LAST_MEASURE);
         clearStaffNotes();
-        setTimeSignature(FM_Const.getTimeSignature(timesignature));
+        setTimeSignature(FM_Const.getTimeSignature_n(timesignature), FM_Const.getTimeSignature_d(timesignature));
         setKeySignature(FM_Const.StringToKeySignature(keysignature));
         if (clef_list.size() >= 1) {
             if (clef_list.get(0).equals("treble"))

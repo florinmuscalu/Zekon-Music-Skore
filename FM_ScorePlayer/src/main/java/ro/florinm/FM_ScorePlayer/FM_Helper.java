@@ -279,4 +279,28 @@ class FM_Helper {
         }
         return song;
     }
+
+    public static int getTimeSignature_n(String s){
+        int ret = 0;
+        if (s.startsWith("2")) ret = 2;
+        if (s.startsWith("3")) ret = 3;
+        if (s.startsWith("4")) ret = 4;
+        if (s.startsWith("5")) ret = 5;
+        if (s.startsWith("6")) ret = 6;
+        if (s.startsWith("7")) ret = 7;
+        if (s.startsWith("8")) ret = 8;
+        return ret;
+    }
+
+    public static int getTimeSignature_d(String s){
+        int ret = 0;
+        if (s.endsWith("2")) ret = 2;
+        if (s.endsWith("3")) ret = 3;
+        if (s.endsWith("4")) ret = 4;
+        if (s.endsWith("5")) ret = 5;
+        if (s.endsWith("6")) ret = 6;
+        if (s.endsWith("7")) ret = 7;
+        if (s.endsWith("8")) ret = 8;
+        return ret;
+    }
 }
