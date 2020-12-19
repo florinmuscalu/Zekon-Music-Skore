@@ -72,7 +72,7 @@ public class FM_ScorePlayer {
 
     public long getTempo(boolean ms){
         float multiply = (60.0f * soundPlayer.time_signature_n) / (soundPlayer.TEMPO * soundPlayer.time_signature_d);
-        return (long) multiply * 1000;
+        return (long) (multiply * 1000f);
     }
 
     /**
