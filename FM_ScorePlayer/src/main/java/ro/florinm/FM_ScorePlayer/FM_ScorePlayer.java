@@ -197,8 +197,13 @@ public class FM_ScorePlayer {
                 FM_SoundPool.playing = true;
                 for (FM_Audio_Note n : ListNotes) {
                     if (!FM_SoundPool.playing) continue;
-                    n.audioT.Play(soundPlayer.GetDurationFromStr(n.playDuration), n.NextPause);
+                    if (n.audioInt != 0)
+                        soundPlayer.playKey(n.audioInt, n.NextPause);
+                    else
+                        n.audioT.Play(soundPlayer.GetDurationFromStr(n.playDuration), n.NextPause);
                     FM_SoundPool.SleepMelodic(soundPlayer.GetDurationFromStr(n.pauseDuration));
+                    if (n.audioInt != 0)
+                        soundPlayer.stopKey(n.audioInt);
                 }
                 FM_SoundPool.playing = false;
             }).start();
