@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         s.setPaddingS(2);
         s.setPaddingE(2);
         s.setPaddingT(5);
-        s.setNoteSpacing(5);
+        s.setNoteSpacing(10);
         s.setTimeSignature(FM_TimeSignatureValue._2, FM_TimeSignatureValue._4);
         s.setKeySignature(FM_KeySignatureValue.DOsharp);
         s.setAlign(FM_Align.ALIGN_LEFT_LAST_MEASURE);

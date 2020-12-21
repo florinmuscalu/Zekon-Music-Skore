@@ -346,9 +346,9 @@ class FM_AudioTrack {
 }
 
 class FM_SoundPool {
-    public int TEMPO = 60;
-    public int time_signature_n;
-    public int time_signature_d;
+    public static int TEMPO = 60;
+    public static int time_signature_n;
+    public static int time_signature_d;
     public static int FALLBACK_DURATION = 250; //fallback duration for sounds
     public static int MAX_TRACKS = 500;
     private final Context context;
@@ -1006,60 +1006,32 @@ class FM_SoundPool {
             return 1;
     }
 
-    public int GetDurationFromStr(String duration) {
-        float d = 1;
-        if (duration.endsWith("r")) duration = duration.substring(0, duration.length() - 1);
-        if (duration.endsWith("d")) {
-            d = 1.5f;
-            duration = duration.substring(0, duration.length() - 1);
-        }
-        if (duration.endsWith("t")) {
-            d = 2f/3;
-            duration = duration.substring(0, duration.length() - 1);
-        }
-        if (duration.equals("w")) d = d * 4;
-        else {
-            if (duration.equals("h")) d = d * 2;
-            else {
-                if (duration.equals("q")) d = d * 1;
-                else {
-                    if (duration.equals("8")) d = d * 0.5f;
-                    else {
-                        if (duration.equals("16")) d = d * 0.25f;
-                        else {
-                            if (duration.equals("32")) d = d * 0.125f;
-                        }
-                    }
-                }
-            }
-        }
-        float multiply = (60.0f * time_signature_n) / (TEMPO * time_signature_d);
-        return (int) (d * multiply * 1000.0f);
+    public static int GetDurationFromStr(String duration) {
+        duration = duration.toLowerCase();
+        float d = 1000f * (60.0f * time_signature_n) / (TEMPO * time_signature_d);
+        if (duration.endsWith("r")) d = d * 1f;
+        if (duration.endsWith("d")) d = d *1.5f;
+        if (duration.endsWith("t")) d = d * 2f / 3;
+        if (duration.startsWith("w")) return (int) (d * 4);
+        if (duration.startsWith("h")) return (int) (d * 2);
+        if (duration.startsWith("q")) return (int) (d * 1);
+        if (duration.startsWith("8")) return (int) (d * 0.5f);
+        if (duration.startsWith("16")) return (int) (d * 0.25f);
+        if (duration.startsWith("32")) return (int) (d * 0.125f);
+        return 0;
     }
-
-//    public void SleepHarmonic(String duration) {
-//        SleepHarmonic(GetDurationFromStr(duration));
-//    }
-
-//    public static void SleepHarmonic(long duration) {
-//        try {
-//            sleep(duration);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     public static void SleepMelodic(long duration) {
         try {
-            if (duration<100) {
-                sleep(100);
+            if (duration<10) {
+                sleep(10);
                 return;
             }
             long d = 0;
             while (d < duration) {
                 if (!playing) return;
-                sleep(100);
-                d = d +100;
+                sleep(5);
+                d = d + 5;
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

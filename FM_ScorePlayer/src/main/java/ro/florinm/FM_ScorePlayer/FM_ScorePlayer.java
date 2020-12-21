@@ -128,13 +128,11 @@ public class FM_ScorePlayer {
         ret = note;
         List<Integer> tracks = new ArrayList<>();
         ret.audioInt = 0;
-        ret.pauseDuration = d[0];
-        ret.playDuration = d[0];
+        ret.pauseDuration = FM_SoundPool.GetDurationFromStr(d[0]);
+        ret.playDuration = FM_SoundPool.GetDurationFromStr(d[0]);
         for (String s : d) {
-            if (soundPlayer.GetDurationFromStr(ret.pauseDuration) > soundPlayer.GetDurationFromStr(s))
-                ret.pauseDuration = s;
-            if (soundPlayer.GetDurationFromStr(ret.playDuration) < soundPlayer.GetDurationFromStr(s))
-                ret.playDuration = s;
+            if (ret.pauseDuration > FM_SoundPool.GetDurationFromStr(s)) ret.pauseDuration = FM_SoundPool.GetDurationFromStr(s);
+            if (ret.playDuration  < FM_SoundPool.GetDurationFromStr(s)) ret.playDuration =  FM_SoundPool.GetDurationFromStr(s);
         }
         
         if (n.length == 1 ){
@@ -155,8 +153,7 @@ public class FM_ScorePlayer {
         if (song == null) return;
         if (prepare) {
             song.prepared = false;
-            if (song.harmonic) PlayHarmonic(song, measure_start, measure_end, notes, true);
-                          else PlayMelodic(song, measure_start, measure_end, notes, true);
+            PlayMelodic(song, measure_start, measure_end, notes, true);
         } else {
             FM_SoundPool.playing = true;
             new Thread(() -> {
@@ -168,45 +165,9 @@ public class FM_ScorePlayer {
                 try {
                     sleep(200);
                 } catch (Exception ignored) { }
-                if (song.harmonic) PlayHarmonic(song, measure_start, measure_end, notes, false);
-                              else PlayMelodic(song, measure_start, measure_end, notes, false);
+                PlayMelodic(song, measure_start, measure_end, notes, false);
             }).start();
         }
-    }
-
-    private void PlayHarmonic(final FM_Audio_Song song, int measure_start, int measure_end, int notes, Boolean prepare) {
-        if (measure_end > song.measures.size()) measure_end = song.measures.size();
-        if (measure_end == song.measures.size()) notes = 0;
-        List<FM_Audio_Note> ListNotes = new ArrayList<>();
-        for (int i = measure_start - 1; i < measure_end; i++) {
-            FM_Helper.StartMeasure();
-            for (int j = 0; j < song.measures.get(i).notes.size(); j++)
-                ListNotes.add(LoadNote(song.measures.get(i).notes.get(j)));
-        }
-        if (notes != 0) {
-            FM_Helper.StartMeasure();
-            int cnt = notes;
-            if (cnt > song.measures.get(measure_end).notes.size())
-                cnt = song.measures.get(measure_end).notes.size();
-            for (int j = 0; j < cnt; j++)
-                ListNotes.add(LoadNote(song.measures.get(measure_end).notes.get(j)));
-        }
-        song.prepared = true;
-        if (!prepare)
-            new Thread(() -> {
-                FM_SoundPool.playing = true;
-                for (FM_Audio_Note n : ListNotes) {
-                    if (!FM_SoundPool.playing) continue;
-                    if (n.audioInt != 0)
-                        soundPlayer.playKey(n.audioInt, n.NextPause);
-                    else
-                        n.audioT.Play(soundPlayer.GetDurationFromStr(n.playDuration), n.NextPause);
-                    FM_SoundPool.SleepMelodic(soundPlayer.GetDurationFromStr(n.pauseDuration));
-                    if (n.audioInt != 0)
-                        soundPlayer.stopKey(n.audioInt);
-                }
-                FM_SoundPool.playing = false;
-            }).start();
     }
 
     private void PlayMelodic(final FM_Audio_Song song, int measure_start, int measure_end, int notes, Boolean prepare) {
@@ -240,11 +201,11 @@ public class FM_ScorePlayer {
                             soundPlayer.playKey(n.audioInt, n.NextPause);
                         if (n.legato_start) in_legato = true;
                         if (n.legato_end) in_legato = false;
-                        FM_SoundPool.SleepMelodic(soundPlayer.GetDurationFromStr(n.playDuration));
+                        FM_SoundPool.SleepMelodic(n.playDuration);
                         if (!n.legato_start) soundPlayer.stopKey(n.audioInt);
                     } else {
-                        n.audioT.Play(soundPlayer.GetDurationFromStr(n.playDuration), n.NextPause);
-                        FM_SoundPool.SleepMelodic(soundPlayer.GetDurationFromStr(n.pauseDuration));
+                        n.audioT.Play(n.playDuration, n.NextPause);
+                        FM_SoundPool.SleepMelodic(n.pauseDuration);
                     }
                 }
                 FM_SoundPool.playing = false;
@@ -326,8 +287,8 @@ public class FM_ScorePlayer {
         if (song.measures.size()<2) return true;
         int r_duration = 0;
         int f_duration = 0;
-        for (int i = 0; i < song.measures.get(1).notes.size(); i++) r_duration = r_duration + soundPlayer.GetDurationFromStr(song.measures.get(1).notes.get(i).pauseDuration);
-        for (int i = 0; i < song.measures.get(0).notes.size(); i++) f_duration = f_duration + soundPlayer.GetDurationFromStr(song.measures.get(0).notes.get(i).pauseDuration);
+        for (int i = 0; i < song.measures.get(1).notes.size(); i++) r_duration = r_duration + (int) song.measures.get(1).notes.get(i).pauseDuration;
+        for (int i = 0; i < song.measures.get(0).notes.size(); i++) f_duration = f_duration + (int) song.measures.get(0).notes.get(i).pauseDuration;
         return Math.abs(r_duration - f_duration) < 5;
     }
 

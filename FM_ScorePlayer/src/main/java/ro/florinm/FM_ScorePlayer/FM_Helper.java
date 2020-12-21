@@ -181,8 +181,8 @@ class FM_Helper {
                     }
                     n.note = note.substring(1);
                     n.duration = duration.substring(1);
-                    n.playDuration = duration.substring(1);
-                    n.pauseDuration = duration.substring(1);
+                    n.playDuration = FM_SoundPool.GetDurationFromStr(duration.substring(1));
+                    n.pauseDuration = FM_SoundPool.GetDurationFromStr(duration.substring(1));
                     m.notes.add(n);
                 }
             }
@@ -269,8 +269,8 @@ class FM_Helper {
                     n.duration = duration.substring(1);
                     if (legato.substring(1).equals("legato_start")) n.legato_start = true;
                     if (legato.substring(1).equals("legato_end")) n.legato_end = true;
-                    n.playDuration = duration.substring(1);
-                    n.pauseDuration = duration.substring(1);
+                    n.playDuration = FM_SoundPool.GetDurationFromStr(duration.substring(1));
+                    n.pauseDuration = FM_SoundPool.GetDurationFromStr(duration.substring(1));
                     m.notes.add(n);
                 }
             }
