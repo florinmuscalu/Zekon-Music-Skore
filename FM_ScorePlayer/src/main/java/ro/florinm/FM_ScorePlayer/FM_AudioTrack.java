@@ -944,8 +944,10 @@ class FM_SoundPool {
     }
 
     public static int GetDurationFromStr(String duration) {
+        float d = (60.0f / TEMPO) * (time_signature_d / 4.0f) * 1000.0f;
         duration = duration.toLowerCase();
-        float d = 1000f * (60.0f * time_signature_n) / (TEMPO * time_signature_d);
+        //wrong below
+        //float d = 1000f * (60.0f * time_signature_n) / (TEMPO * time_signature_d);
         if (duration.endsWith("r")) d = d * 1f;
         if (duration.endsWith("d")) d = d *1.5f;
         if (duration.endsWith("t")) d = d * 2f / 3;

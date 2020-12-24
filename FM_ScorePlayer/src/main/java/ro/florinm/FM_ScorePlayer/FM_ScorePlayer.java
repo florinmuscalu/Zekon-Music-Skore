@@ -71,7 +71,8 @@ public class FM_ScorePlayer {
     }
 
     public long getTempo(boolean ms){
-        float multiply = (60.0f * FM_SoundPool.time_signature_n) / (FM_SoundPool.TEMPO * FM_SoundPool.time_signature_d);
+        float multiply = (60.0f / FM_SoundPool.TEMPO) * (FM_SoundPool.time_signature_d / 4.0f);
+        //float multiply = (60.0f * FM_SoundPool.time_signature_n) / (FM_SoundPool.TEMPO * FM_SoundPool.time_signature_d);
         return (long) (multiply * 1000f);
     }
 
