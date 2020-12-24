@@ -54,7 +54,6 @@ class FM_AudioTrack {
     protected int AccessIndex = 0; //Used to remove old, unused tracks
     private final FM_AudioSubTrack track1, track2, track3, track4, track5, track6, track7;
     Boolean loading;
-    Boolean playing = false;
     Context context;
     short[] output;
 
@@ -303,7 +302,6 @@ class FM_AudioTrack {
         //if (playing) return;
         if (output.length == 0) return;
         new Thread(() -> {
-            playing = true;
             try {
                 while (loading) sleep(2);
             } catch (Exception ignored) {
@@ -326,7 +324,6 @@ class FM_AudioTrack {
             audioTrack.write(output, 0, output.length);
             audioTrack.play();
             FM_SoundPool.SleepMelodic(duration);
-            playing = false;
             float d = 0;
             int fall = FM_SoundPool.FALLBACK_DURATION;
             if (NextPause) fall = FM_SoundPool.FALLBACK_DURATION / 5;
@@ -366,13 +363,6 @@ class FM_SoundPool {
 
     public void ClearAudioTracks(){
         Tracks.clear();
-    }
-
-    public FM_AudioTrack CreateTrack(List<Integer> tracks, int d) {
-        FM_AudioSubTrack[] track;
-        track = new FM_AudioSubTrack[7];
-        for (int i = 0; i < tracks.size(); i++) if (tracks.get(i) != -1)  track[i] = new FM_AudioSubTrack(tracks.get(i), d);
-        return CheckAndCreate(track);
     }
 
     public FM_AudioTrack CreateTrack(int[] tracks, int d) {
@@ -904,12 +894,7 @@ class FM_SoundPool {
     }
 
     public void playKey(int key) {
-        if (key == -1) return;
-        if (isKeyNotPlaying(key)) {
-            PlayThread thread = new PlayThread(key, false);
-            thread.start();
-            threadMap.put(key, thread);
-        }
+        playKey(key, false);
     }
 
     public void playKey(int key, boolean NextPause) {
@@ -926,7 +911,7 @@ class FM_SoundPool {
         try {
             PlayThread thread = threadMap.get(key);
             if (thread != null) {
-                thread.stop = 1;
+                thread.Stop();
                 threadMap.remove(key);
             }
         } catch (Exception ignored) {}
@@ -934,46 +919,6 @@ class FM_SoundPool {
 
     public boolean isKeyNotPlaying(int key) {
         return threadMap.get(key) == null;
-    }
-
-    class PlayThread extends Thread {
-        private final int key;
-        private final float pressure;
-        public int stop = 0;
-        private final boolean NextPause;
-        public PlayThread(int key) {
-            NextPause = false;
-            this.key = key;
-            this.pressure = 1;
-        }
-        public PlayThread(int key, boolean NextPause) {
-            this.NextPause = NextPause;
-            this.key = key;
-            this.pressure = 1;
-        }
-
-        @Override
-        public void run() {
-            try {
-                int stream = sndPool.play(soundMap.get(key), pressure, pressure, 100, 0, 1);
-                while (stop == 0) sleep(20);
-                if (stop == 1) {
-                    int d = 0;
-                    int fall = FALLBACK_DURATION;
-                    if (NextPause) fall = FALLBACK_DURATION / 5;
-                    while (d < fall) {
-                        sleep(2);
-                        float p = pressure - pressure * d / fall;
-                        sndPool.setVolume(stream, p, p);
-                        d += 2;
-                    }
-                    sndPool.setVolume(stream, 0, 0);
-                    sndPool.stop(stream);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private String TranslateKey(String Key) {
@@ -984,14 +929,6 @@ class FM_SoundPool {
         Key = Key.replace("sol", "g");
         Key = Key.replace("la", "a");
         Key = Key.replace("si", "b");
-
-        Key = Key.replace("DO", "C");
-        Key = Key.replace("RE", "D");
-        Key = Key.replace("MI", "E");
-        Key = Key.replace("FA", "F");
-        Key = Key.replace("SOL", "G");
-        Key = Key.replace("LA", "A");
-        Key = Key.replace("SI", "B");
         return Key;
     }
 
@@ -1023,15 +960,15 @@ class FM_SoundPool {
 
     public static void SleepMelodic(long duration) {
         try {
-            if (duration<10) {
-                sleep(10);
+            if (duration<2) {
+                sleep(2);
                 return;
             }
             long d = 0;
             while (d < duration) {
                 if (!playing) return;
-                sleep(5);
-                d = d + 5;
+                sleep(2);
+                d = d + 2;
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -1043,8 +980,49 @@ class FM_SoundPool {
         for (int i = 0; i < threadMap.size(); i++) {
             PlayThread thread = threadMap.get(i);
             if (thread != null) {
-                thread.stop = 1;
+                thread.Stop();
                 threadMap.remove(i);
+            }
+        }
+    }
+
+    class PlayThread extends Thread {
+        private final int key;
+        private final float volume;
+        private int stop;
+        private final boolean NextPause;
+
+        public PlayThread(int key, boolean NextPause) {
+            this.NextPause = NextPause;
+            this.key = key;
+            this.volume = 1;
+            this.stop = 0;
+        }
+
+        public void Stop() {
+            stop = 1;
+        }
+
+        @Override
+        public void run() {
+            try {
+                int stream = sndPool.play(soundMap.get(key), volume, volume, 100, 0, 1);
+                while (stop == 0) sleep(2);
+                if (stop == 1) {
+                    int d = 0;
+                    int fall = FALLBACK_DURATION;
+                    if (NextPause) fall = FALLBACK_DURATION / 5;
+                    while (d < fall) {
+                        sleep(2);
+                        float p = volume - volume * d / fall;
+                        sndPool.setVolume(stream, p, p);
+                        d += 2;
+                    }
+                    sndPool.setVolume(stream, 0, 0);
+                    sndPool.stop(stream);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

@@ -51,15 +51,15 @@ public class FM_ScorePlayer {
      */
     public void setTempo(int tempo) {
         temp_tempo = tempo;
-        if (soundPlayer != null) soundPlayer.TEMPO = tempo;
+        if (soundPlayer != null) FM_SoundPool.TEMPO = tempo;
     }
 
     public void setTimeSignature(int n, int d) {
         temp_timesig_n = n;
         temp_timesig_d = d;
         if (soundPlayer != null) {
-            soundPlayer.time_signature_n = n;
-            soundPlayer.time_signature_d = d;
+            FM_SoundPool.time_signature_n = n;
+            FM_SoundPool.time_signature_d = d;
         }
     }
 
@@ -67,11 +67,11 @@ public class FM_ScorePlayer {
      * @return get the tempo used for playing the song.
      */
     public int getTempo(){
-        return soundPlayer.TEMPO;
+        return FM_SoundPool.TEMPO;
     }
 
     public long getTempo(boolean ms){
-        float multiply = (60.0f * soundPlayer.time_signature_n) / (soundPlayer.TEMPO * soundPlayer.time_signature_d);
+        float multiply = (60.0f * FM_SoundPool.time_signature_n) / (FM_SoundPool.TEMPO * FM_SoundPool.time_signature_d);
         return (long) (multiply * 1000f);
     }
 
@@ -256,7 +256,7 @@ public class FM_ScorePlayer {
         if (!prepare) FM_SoundPool.playing = true;
         new Thread(() -> {
             int d = (int) duration;
-            if (duration == -1) d = (int) soundPlayer.TEMPO;
+            if (duration == -1) d = (int) FM_SoundPool.TEMPO;
             String[] k = keys.replace("[", "").replace("]", "").replace("\"", "").replace("\\", "").toLowerCase().split(",");
             final int[] Tracks = new int[k.length];
             for (int i = 0; i < k.length; i++) Tracks[i] = soundPlayer.GetIndex(k[i].trim());
