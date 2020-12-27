@@ -90,13 +90,21 @@ public class FM_Note extends FM_BaseNote {
 
     public String asStringAccidental(){
         String s1 = "";
-        if (accidental == FM_Accidental.Natural) s1 = FM_Const.Natural+" ";
-        if (accidental == FM_Accidental.Flat) s1 = FM_Const.Flat+" ";
-        if (accidental == FM_Accidental.Sharp) s1 = FM_Const.Sharp+" ";
-        if (accidental == FM_Accidental.DoubleSharp) s1 = FM_Const.DoubleSharp+" ";
-        if (accidental == FM_Accidental.DoubleFlat) s1 = FM_Const.DoubleFlat+" ";
-        if (accidental == FM_Accidental.TripleSharp) s1 = FM_Const.Sharp+" "+FM_Const.DoubleSharp+" ";
-        if (accidental == FM_Accidental.TripleFlat) s1 = FM_Const.TripleFlat+" ";
+        String b = "";
+        String e = "";
+        int accidental = this.accidental;
+        if (accidental > 100) {
+            b = FM_Const.ParenthesisLeft;
+            e = FM_Const.ParenthesisRight;
+            accidental = accidental - 100;
+        }
+        if (accidental == FM_Accidental.Natural) s1 = b + FM_Const.Natural + e + " ";
+        if (accidental == FM_Accidental.Flat) s1 = b + FM_Const.Flat + e + " ";
+        if (accidental == FM_Accidental.Sharp) s1 = b + FM_Const.Sharp + e + " ";
+        if (accidental == FM_Accidental.DoubleSharp) s1 = b + FM_Const.DoubleSharp + e + " ";
+        if (accidental == FM_Accidental.DoubleFlat) s1 = b + FM_Const.DoubleFlat + e + " ";
+        if (accidental == FM_Accidental.TripleSharp) s1 = b + FM_Const.Sharp+" "+FM_Const.DoubleSharp + e + " ";
+        if (accidental == FM_Accidental.TripleFlat) s1 = b + FM_Const.TripleFlat + e + " ";
         return s1;
     }
 

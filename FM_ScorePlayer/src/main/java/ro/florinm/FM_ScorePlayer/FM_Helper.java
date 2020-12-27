@@ -179,7 +179,7 @@ class FM_Helper {
                         note = note + "," + b.getString(j);
                         duration = duration + "," + b.getString(j + 1);
                     }
-                    n.note = note.substring(1);
+                    n.note = note.substring(1).replace("(","").replace(")","");
                     n.duration = duration.substring(1);
                     n.playDuration = FM_SoundPool.GetDurationFromStr(duration.substring(1));
                     n.pauseDuration = FM_SoundPool.GetDurationFromStr(duration.substring(1));
@@ -265,7 +265,7 @@ class FM_Helper {
                         duration = duration + "," + b.getString(j + 1);
                         legato = legato + "," + b.getString(j + 2);
                     }
-                    n.note = note.substring(1);
+                    n.note = note.substring(1).replace("(","").replace(")","");
                     n.duration = duration.substring(1);
                     if (legato.substring(1).equals("legato_start")) n.legato_start = true;
                     if (legato.substring(1).equals("legato_end")) n.legato_end = true;

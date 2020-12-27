@@ -28,6 +28,10 @@ public class FM_Const {
     public static final String TrebleClef = "\uD834\uDD1E";
     public static final String BassClef = "\uD834\uDD22";
 
+    //parenthesis
+    public static final String ParenthesisLeft = "\ue092";
+    public static final String ParenthesisRight = "\ue093";
+
     //brackets
     public static final String Bracket = "\ue000";
 
@@ -174,13 +178,15 @@ public class FM_Const {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
         key = s[pos].substring(1);
-        if (key.contains("###")) return FM_Accidental.TripleSharp;
-        if (key.contains("##")) return FM_Accidental.DoubleSharp;
-        if (key.contains("#")) return FM_Accidental.Sharp;
-        if (key.contains("bbb")) return FM_Accidental.TripleFlat;
-        if (key.contains("bb")) return FM_Accidental.DoubleFlat;
-        if (key.contains("b")) return FM_Accidental.Flat;
-        if (key.contains("n")) return FM_Accidental.Natural;
+        int courtesy = 0;
+        if (key.contains("(")) courtesy = FM_Accidental.Courtesy;
+        if (key.contains("###")) return courtesy + FM_Accidental.TripleSharp;
+        if (key.contains("##")) return courtesy + FM_Accidental.DoubleSharp;
+        if (key.contains("#")) return courtesy + FM_Accidental.Sharp;
+        if (key.contains("bbb")) return courtesy + FM_Accidental.TripleFlat;
+        if (key.contains("bb")) return courtesy + FM_Accidental.DoubleFlat;
+        if (key.contains("b")) return courtesy + FM_Accidental.Flat;
+        if (key.contains("n")) return courtesy + FM_Accidental.Natural;
         return FM_Accidental.None;
     }
 
