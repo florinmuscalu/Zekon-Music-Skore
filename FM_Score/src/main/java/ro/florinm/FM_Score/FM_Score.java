@@ -874,13 +874,11 @@ public class FM_Score extends View {
     }
 
     private boolean inTuple = false;
-    private int inTuple_size = 3;
     private int currentTuple = 0;
     List<FM_BaseNote> TupleNotes;
 
-    public void BeginTuple(int size) {
+    public void BeginTuple() {
         inTuple = true;
-        inTuple_size = size;
         TupleNotes = new ArrayList<>();
     }
 
@@ -890,7 +888,6 @@ public class FM_Score extends View {
 
     public void EndTuple() {
         inTuple = false;
-        if (TupleNotes.size() != inTuple_size) return;
         for (int i = 0; i < TupleNotes.size(); i++)
             if (!(TupleNotes.get(i) instanceof FM_Note)) return;
         int staff = TupleNotes.get(0).staff;
@@ -898,7 +895,7 @@ public class FM_Score extends View {
         for (int i = 0; i < TupleNotes.size(); i++)
             if ((TupleNotes.get(i).staff != staff) || (((FM_Note) TupleNotes.get(i)).duration != duration))
                 return;
-        FM_Tuple t = new FM_Tuple(this, inTuple_size, currentTuple);
+        FM_Tuple t = new FM_Tuple(this, TupleNotes.size(), currentTuple);
         currentTuple++;
         for (int i = 0; i < TupleNotes.size(); i++) {
             ((FM_Note) TupleNotes.get(i)).tuple = true;
@@ -1076,7 +1073,7 @@ public class FM_Score extends View {
 
             if (!beam1.equals(beam) && !beam1.equals("")) BeginBeam();
             if (!tie1.equals(tie) && !tie1.equals("")) BeginTie();
-            if (!tuple1.equals(tuple) && !tuple1.equals("")) BeginTuple(3);
+            if (!tuple1.equals(tuple) && !tuple1.equals("")) BeginTuple();
 
             beam = beam1;
             tie = tie1;

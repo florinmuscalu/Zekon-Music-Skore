@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
         s.addStaffNote(new FM_Note(s, FM_NoteValue.LA, 5, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE,  true), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 5, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE,  true), FM_ClefValue.TREBLE);
         new FM_BarNote(s);
-        s.BeginTuple(5);
+        s.BeginTuple();
         s.addStaffNote(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.None, FM_DurationValue.NOTE_QUARTER, false), FM_ClefValue.TREBLE);
         s.AddToBeam((FM_Note) s.getLastNote());
         s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 5, FM_Accidental.None, FM_DurationValue.NOTE_QUARTER,  false), FM_ClefValue.TREBLE);
@@ -261,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
         s.addStaffNote(new FM_Note(s, FM_NoteValue.FA, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true), FM_ClefValue.TREBLE);
         new FM_BarNote(s);
         s.BeginBeam();
-        s.BeginTuple(3);
+        s.BeginTuple();
         s.addStaffNote(new FM_Note(s, FM_NoteValue.FA, 4, FM_Accidental.None, FM_DurationValue.NOTE_EIGHT, true), FM_ClefValue.TREBLE);
         s.AddToBeam((FM_Note) s.getLastNote());
         s.AddToTuple((FM_Note) s.getLastNote());
@@ -365,7 +365,7 @@ public class MainActivity extends AppCompatActivity {
         s.AddToBeam((FM_Note) s.getLastNote());
         s.EndBeam();
 
-        s.BeginTuple(3);
+        s.BeginTuple();
         s.addStaffNote(new FM_Note(s, FM_NoteValue.RE, 4, FM_Accidental.None, FM_DurationValue.NOTE_HALF,  true), FM_ClefValue.TREBLE);
         s.AddToTuple((FM_Note) s.getLastNote());
         s.addStaffNote(new FM_Note(s, FM_NoteValue.MI, 4, FM_Accidental.None, FM_DurationValue.NOTE_HALF,  true), FM_ClefValue.TREBLE);
@@ -385,7 +385,7 @@ public class MainActivity extends AppCompatActivity {
         s.AddToBeam((FM_Note) s.getLastNote());
         s.EndBeam();
 
-        s.BeginTuple(3);
+        s.BeginTuple();
         s.addStaffNote(new FM_Note(s, FM_NoteValue.RE, 4, FM_Accidental.None, FM_DurationValue.NOTE_HALF,  false), FM_ClefValue.TREBLE);
         s.AddToTuple((FM_Note) s.getLastNote());
         s.addStaffNote(new FM_Note(s, FM_NoteValue.MI, 4, FM_Accidental.None, FM_DurationValue.NOTE_HALF,  false), FM_ClefValue.TREBLE);

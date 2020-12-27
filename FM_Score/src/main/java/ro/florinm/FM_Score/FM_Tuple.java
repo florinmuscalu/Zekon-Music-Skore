@@ -85,6 +85,7 @@ public class FM_Tuple {
 
         String text = FM_Const._3;
         if (size == 5) text = FM_Const._5;
+        if (size == 2) text = FM_Const._2;
 
         Path topPath;
         if (!n.get(0).beam) {
