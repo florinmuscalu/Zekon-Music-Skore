@@ -84,7 +84,10 @@ public class FM_Tuple {
         }
 
         String text = FM_Const._3;
+        if (size == 7) text = FM_Const._7;
+        if (size == 6) text = FM_Const._6;
         if (size == 5) text = FM_Const._5;
+        if (size == 4) text = FM_Const._4;
         if (size == 2) text = FM_Const._2;
 
         Path topPath;

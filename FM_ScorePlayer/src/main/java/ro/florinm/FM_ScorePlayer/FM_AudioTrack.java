@@ -951,7 +951,10 @@ class FM_SoundPool {
         if (duration.endsWith("r")) d = d * 1f;
         if (duration.endsWith("d")) d = d *1.5f;
         if (duration.endsWith("t3")) d = d * 2f / 3;
+
         if (duration.endsWith("t2")) d = d * 3f / 4;
+        if (duration.endsWith("t4")) d = d * 3f / 4;
+
         if (duration.startsWith("w")) return (int) (d *  1);
         if (duration.startsWith("h")) return (int) (d *  1 / 2f);
         if (duration.startsWith("q")) return (int) (d *  1 / 4f);
