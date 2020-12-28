@@ -944,19 +944,20 @@ class FM_SoundPool {
     }
 
     public static int GetDurationFromStr(String duration) {
-        float d = (60.0f / TEMPO) * (time_signature_d / 4.0f) * 1000.0f;
+        float d = (60.0f / TEMPO) * (time_signature_d / 4.0f) * 4000.0f;
         duration = duration.toLowerCase();
         //wrong below
         //float d = 1000f * (60.0f * time_signature_n) / (TEMPO * time_signature_d);
         if (duration.endsWith("r")) d = d * 1f;
         if (duration.endsWith("d")) d = d *1.5f;
-        if (duration.endsWith("t")) d = d * 2f / 3;
-        if (duration.startsWith("w")) return (int) (d * 4);
-        if (duration.startsWith("h")) return (int) (d * 2);
-        if (duration.startsWith("q")) return (int) (d * 1);
-        if (duration.startsWith("8")) return (int) (d * 0.5f);
-        if (duration.startsWith("16")) return (int) (d * 0.25f);
-        if (duration.startsWith("32")) return (int) (d * 0.125f);
+        if (duration.endsWith("t3")) d = d * 2f / 3;
+        if (duration.endsWith("t2")) d = d * 3f / 4;
+        if (duration.startsWith("w")) return (int) (d *  1);
+        if (duration.startsWith("h")) return (int) (d *  1 / 2f);
+        if (duration.startsWith("q")) return (int) (d *  1 / 4f);
+        if (duration.startsWith("8")) return (int) (d *  1 / 8f);
+        if (duration.startsWith("16")) return (int) (d * 1 / 16f);
+        if (duration.startsWith("32")) return (int) (d * 1 / 32f);
         return 0;
     }
 

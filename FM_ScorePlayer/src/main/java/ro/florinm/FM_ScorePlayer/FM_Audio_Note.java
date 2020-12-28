@@ -1,6 +1,7 @@
 package ro.florinm.FM_ScorePlayer;
 
 public class FM_Audio_Note {
+    public String voice;
     public String note;
     public String duration;
     public long playDuration;

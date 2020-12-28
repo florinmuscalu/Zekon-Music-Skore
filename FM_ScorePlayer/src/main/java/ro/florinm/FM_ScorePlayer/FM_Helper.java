@@ -3,6 +3,9 @@ package ro.florinm.FM_ScorePlayer;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class FM_Helper {
     static String do_a = "";
     static String re_a = "";
@@ -135,20 +138,17 @@ class FM_Helper {
                             if (i == 0) still_to_go = false;
                             break;
                         }
-//                        int pg = tmp.getInt(8);
-//                        if (current_group == pg) {
-//                            value.put(tmp.getString(0));
-//                            value.put(tmp.getString(1));
-//                            keys.remove(i);
-//                            i = i - 1;
-//                        }
-//                        i = i + 1;
-
                         int pg = tmp.getInt(8);
                         if (current_group == pg) {
                             value.put(tmp.getString(0));
                             String triolet = "";
-                            if (!tmp.getString(5).equals("")) triolet = "t";
+                            String t = tmp.getString(5).toLowerCase();
+                            if (!t.equals("")) {
+                                triolet = "t";
+                                //if the tuple ends with a (above) or b (below) then default to triolet
+                                if (t.endsWith("a") || t.endsWith("b")) triolet = triolet + "3";
+                                else triolet = triolet + t.substring(t.length()-1);
+                            }
                             value.put(tmp.getString(1) + triolet);
                             if (!tmp.getString(3).equals("")) {
                                 if (!in_legato) value.put("legato_start");
@@ -197,15 +197,14 @@ class FM_Helper {
         FM_Audio_Song song = new FM_Audio_Song();
         song.harmonic = false;
         song.keysignature = keysignature;
-        JSONArray a = new JSONArray();
+        JSONArray result = new JSONArray();
         try {
             boolean in_legato = false;
             while (keys.length() > 0) {
-                JSONArray b = (JSONArray) keys.get(0);
-                if (b.getString(0).startsWith("BAR")) {
+                if (((JSONArray) keys.get(0)).getString(0).startsWith("BAR")) {
                     JSONArray value = new JSONArray();
                     value.put("BAR");
-                    a.put(value);
+                    result.put(value);
                     keys.remove(0);
                     continue;
                 }
@@ -223,35 +222,43 @@ class FM_Helper {
                         if (i > keys.length() - 1) {
                             break;
                         }
-                        JSONArray tmp = (JSONArray) keys.get(i);
-                        if (tmp.getString(0).startsWith("BAR")) {
+                        JSONArray current_key = (JSONArray) keys.get(i);
+                        if (current_key.getString(0).startsWith("BAR")) {
                             if (i == 0) still_to_go = false;
                             break;
                         }
-                        int pg = tmp.getInt(8);
+                        String voice = current_key.getString(6)+current_key.getString(7);
+                        int pg = current_key.getInt(8);
                         if (current_group == pg) {
-                            value.put(tmp.getString(0));
+                            value.put(current_key.getString(0));
                             String triolet = "";
-                            if (!tmp.getString(5).equals("")) triolet = "t";
-                            value.put(tmp.getString(1) + triolet);
-                            if (!tmp.getString(3).equals("")) {
+                            String t = current_key.getString(5).toLowerCase();
+                            if (!t.equals("")) {
+                                triolet = "t";
+                                //if the tuple ends with a (above) or b (below) then default to triolet
+                                if (t.endsWith("a") || t.endsWith("b")) triolet = triolet + "3";
+                                else triolet = triolet + t.substring(t.length()-1);
+                            }
+                            value.put(current_key.getString(1) + triolet);
+                            if (!current_key.getString(3).equals("")) {
                                 if (!in_legato) value.put("legato_start");
                                 else value.put("legato_end");
                                 in_legato = !in_legato;
                             } else value.put("");
+                            value.put(voice);
                             keys.remove(i);
                             i = i - 1;
                         }
                         i = i + 1;
                     }
-                    a.put(value);
+                    result.put(value);
                 }
             }
 
             FM_Audio_Measure m = new FM_Audio_Measure();
             song.measures.add(m);
-            for (int i = 0; i < a.length(); i++) {
-                JSONArray b = (JSONArray) a.get(i);
+            for (int i = 0; i < result.length(); i++) {
+                JSONArray b = (JSONArray) result.get(i);
                 if (b.length() == 1 && b.getString(0).startsWith("BAR")) {
                     m = new FM_Audio_Measure();
                     song.measures.add(m);
@@ -260,11 +267,14 @@ class FM_Helper {
                     String note = "";
                     String duration = "";
                     String legato = "";
-                    for (int j = 0; j < b.length(); j = j + 3) {
+                    String voice = "";
+                    for (int j = 0; j < b.length(); j = j + 4) {
                         note = note + "," + b.getString(j);
                         duration = duration + "," + b.getString(j + 1);
                         legato = legato + "," + b.getString(j + 2);
+                        voice = voice + "," + b.getString(j + 3);
                     }
+                    n.voice = voice.substring(1);
                     n.note = note.substring(1).replace("(","").replace(")","");
                     n.duration = duration.substring(1);
                     if (legato.substring(1).equals("legato_start")) n.legato_start = true;
