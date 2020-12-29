@@ -21,9 +21,9 @@ public class FM_ScorePlayer {
      * @param context The Application's context.
      */
 
-    public FM_ScorePlayer(Context context, FM_Score score) {
+    public FM_ScorePlayer(Context context) {
         super();
-        this.score = score;
+        this.score = null;
         SoundsLoaded = 0;
         temp_tempo = 60;
         temp_timesig_n = 4;
@@ -35,6 +35,10 @@ public class FM_ScorePlayer {
             setTempo(temp_tempo);
             setTimeSignature(temp_timesig_n, temp_timesig_d);
         }).start();
+    }
+
+    public void ProgressSetScore(FM_Score score){
+        this.score = score;
     }
 
     /**
@@ -87,6 +91,7 @@ public class FM_ScorePlayer {
      */
     public void LoadFromJson(JSONObject obj, boolean harmonic) {
         song = null;
+        score = null;
         new Thread(() -> {
             try {
                 while (SoundsLoaded != 100) sleep(25);

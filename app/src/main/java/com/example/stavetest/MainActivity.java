@@ -202,8 +202,9 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception ignored) {}
 
         s.LoadFromJson(obj);
-        player = new FM_ScorePlayer(getApplicationContext(), s);
+        player = new FM_ScorePlayer(getApplicationContext());
         player.LoadFromJson(obj, false);
+        player.ProgressSetScore(s);
         player.setTempo(100);
     }
 
