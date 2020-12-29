@@ -2,6 +2,7 @@ package ro.florinm.FM_Score;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -74,7 +75,7 @@ public class FM_Score extends View {
     float pivotPointY = 0f;
 
     private boolean TrimLastLine;
-
+    private int progressBar = -1;
     @FM_BoundingBoxType
     private int DrawBoundingBox;
 
@@ -91,6 +92,7 @@ public class FM_Score extends View {
         Font.setColor(Color);
         Lines = 1;
         TrimLastLine = false;
+        progressBar = -1;
         StaffCount = FM_StaffCount._1;
         setVoiceCount(1);
         setNoteSpacing(5);
@@ -111,6 +113,17 @@ public class FM_Score extends View {
         setAlign(FM_Align.ALIGN_CENTER_MEASURES);
         ShowBoundingBoxes(FM_BoundingBoxType.None);
 
+    }
+
+    public void ProgressReset(){
+        progressBar = -1;
+        invalidate();
+    }
+
+    public void ProgressAdvance() {
+        progressBar +=1;
+        if (StaveNotes.get(progressBar) instanceof FM_BarNote) progressBar += 1;
+        invalidate();
     }
 
     public void setTrimLastLine(boolean trimLastLine) {
@@ -306,6 +319,24 @@ public class FM_Score extends View {
         for (int j = 0; j < Ties.size(); j++) Ties.get(j).Draw(canvas);
         for (int j = 0; j < Tuples.size(); j++) Tuples.get(j).Draw(canvas);
         for (int j = 0; j < Beams.size(); j++) Beams.get(j).Draw(canvas);
+
+            if (progressBar > -1) {
+                int line = StaveNotes.get(progressBar).line;
+                float x = StaveNotes.get(progressBar).StartX + StaveNotes.get(progressBar).Width() + FM_Const.dpTOpx(context, 3);
+                Paint f = new Paint();
+                f.setAntiAlias(true);
+                f.setColor(android.graphics.Color.RED);
+                float ys = getPaddingVertical();
+                float ye = getPaddingVertical() + 4 * getDistanceBetweenStaveLines();
+                float mul = (getDistanceBetweenRows() + 4 * getDistanceBetweenStaveLines());
+                if (StaffCount == FM_StaffCount._2) {
+                    ye = ye + getDistanceBetweenStaves() + 4 * getDistanceBetweenStaveLines();
+                    mul = mul + getDistanceBetweenStaves() + 4 * getDistanceBetweenStaveLines();
+                }
+                ys = ys + (line - 1) * mul;
+                ye = ye + (line - 1) * mul;
+                canvas.drawRect(x, ys, x + FM_Const.dpTOpx(context, 1), ye, f);
+            }
 
         if (EndBar) {
             Font.setColor(Color);
@@ -610,6 +641,7 @@ public class FM_Score extends View {
         mPosX = 0;
         mPosY = 0;
         Lines = 1;
+        progressBar = -1;
         StaffCount = FM_StaffCount._1;
         setVoiceCount(1);
         setFirstStaveClef(FM_ClefValue.TREBLE);

@@ -42,20 +42,39 @@ public class MainActivity extends AppCompatActivity {
         s.setSecondStaveClef(FM_ClefValue.BASS);
         s.setTimeSignature(FM_TimeSignatureValue._4, FM_TimeSignatureValue._4);
         s.setKeySignature(FM_KeySignatureValue.DOb);
-        s.setDistanceBetweenStaveLines(10);
-        s.setPaddingS(2);
-        s.setPaddingE(2);
-        s.setPaddingT(5);
-        s.setNoteSpacing(10);
-        s.setTimeSignature(FM_TimeSignatureValue._2, FM_TimeSignatureValue._4);
-        s.setKeySignature(FM_KeySignatureValue.DOsharp);
-        s.setAlign(FM_Align.ALIGN_LEFT_LAST_MEASURE);
-        s.setPaddingT(5);
+
+        s.setDistanceBetweenStaveLines(7f);
         s.setCenterVertical(false);
+        s.setPaddingE(1);
+        s.setPaddingS(4);
+        s.setStartBar(true);
+        s.setEndBar(true);
         s.setMultiLine(true);
-        s.setShowBrace(true);
         s.setAllowZoomPan(true);
+        s.setNoteSpacing(5);
+        s.setDistanceBetweenStaves(10);
+        s.setDistanceBetweenRows(6);
+        s.setShowBrace(true);
         s.setTrimLastLine(true);
+        s.setAlign(FM_Align.ALIGN_LEFT_LAST_MEASURE);
+        s.clearStaffNotes();
+        s.setVisibility(View.VISIBLE);
+        s.setNoteSpacing(10);
+
+//        s.setDistanceBetweenStaveLines(10);
+//        s.setPaddingS(2);
+//        s.setPaddingE(2);
+//        s.setPaddingT(5);
+//        s.setNoteSpacing(7);
+//        s.setTimeSignature(FM_TimeSignatureValue._2, FM_TimeSignatureValue._4);
+//        s.setKeySignature(FM_KeySignatureValue.DOsharp);
+//        s.setAlign(FM_Align.ALIGN_LEFT_LAST_MEASURE);
+//        s.setPaddingT(5);
+//        s.setCenterVertical(false);
+//        s.setMultiLine(true);
+//        s.setShowBrace(true);
+//        s.setAllowZoomPan(true);
+//        s.setTrimLastLine(true);
 
         LoadJson();
 
@@ -183,9 +202,9 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception ignored) {}
 
         s.LoadFromJson(obj);
-        player = new FM_ScorePlayer(getApplicationContext());
+        player = new FM_ScorePlayer(getApplicationContext(), s);
         player.LoadFromJson(obj, false);
-        player.setTempo(200);
+        player.setTempo(100);
     }
 
     public void addRandom(){

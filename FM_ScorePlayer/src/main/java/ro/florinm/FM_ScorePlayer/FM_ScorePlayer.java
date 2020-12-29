@@ -5,6 +5,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import ro.florinm.FM_Score.FM_Score;
+
 import static java.lang.Thread.sleep;
 
 public class FM_ScorePlayer {
@@ -14,11 +16,14 @@ public class FM_ScorePlayer {
     private int temp_tempo;
     private int temp_timesig_n;
     private int temp_timesig_d;
+    private FM_Score score;
     /**
      * @param context The Application's context.
      */
-    public FM_ScorePlayer(Context context) {
+
+    public FM_ScorePlayer(Context context, FM_Score score) {
         super();
+        this.score = score;
         SoundsLoaded = 0;
         temp_tempo = 60;
         temp_timesig_n = 4;
@@ -93,6 +98,7 @@ public class FM_ScorePlayer {
                 else
                     song = FM_Helper.generatMelodicSong(obj.optString("keysignature", "DO"), obj.getJSONArray("keys"));
                 Prepare();
+                if (score != null) score.ProgressReset();
             } catch (Exception ignored) {}
         }).start();
     }
@@ -195,8 +201,10 @@ public class FM_ScorePlayer {
             new Thread(() -> {
                 boolean in_legato = false;
                 FM_SoundPool.playing = true;
+                if (score != null) score.ProgressReset();
                 for (FM_Audio_Note n : ListNotes) {
                     if (!FM_SoundPool.playing) continue;
+                    if (score != null) score.ProgressAdvance();
                     if (n.audioInt != 0) {
                         if (!(n.legato_end && in_legato))
                             soundPlayer.playKey(n.audioInt, n.NextPause);
@@ -209,6 +217,7 @@ public class FM_ScorePlayer {
                         FM_SoundPool.SleepMelodic(n.pauseDuration);
                     }
                 }
+                if (score != null) score.ProgressReset();
                 FM_SoundPool.playing = false;
             }).start();
     }
