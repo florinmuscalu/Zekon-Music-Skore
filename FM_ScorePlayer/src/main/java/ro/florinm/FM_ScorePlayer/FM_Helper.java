@@ -103,7 +103,7 @@ class FM_Helper {
         return ret;
     }
 
-    static FM_Audio_Song generateHarmonicSong(String keysignature, JSONArray keys) {
+    static FM_Audio_Song generateHarmonicSong(String keysignature, JSONArray keys, int tempo) {
         FM_Audio_Song song = new FM_Audio_Song();
         song.harmonic = true;
         song.keysignature = keysignature;
@@ -181,8 +181,8 @@ class FM_Helper {
                     }
                     n.note = note.substring(1).replace("(","").replace(")","");
                     n.duration = duration.substring(1);
-                    n.playDuration = FM_SoundPool.GetDurationFromStr(duration.substring(1));
-                    n.pauseDuration = FM_SoundPool.GetDurationFromStr(duration.substring(1));
+                    n.playDuration = FM_SoundPool.GetDurationFromStr(duration.substring(1), tempo, 0);
+                    n.pauseDuration = FM_SoundPool.GetDurationFromStr(duration.substring(1), tempo, 0);
                     m.notes.add(n);
                 }
             }
@@ -193,7 +193,7 @@ class FM_Helper {
     }
 
 
-    static FM_Audio_Song generatMelodicSong(String keysignature, JSONArray keys) {
+    static FM_Audio_Song generatMelodicSong(String keysignature, JSONArray keys, int tempo) {
         FM_Audio_Song song = new FM_Audio_Song();
         song.harmonic = false;
         song.keysignature = keysignature;
@@ -279,8 +279,8 @@ class FM_Helper {
                     n.duration = duration.substring(1);
                     if (legato.substring(1).equals("legato_start")) n.legato_start = true;
                     if (legato.substring(1).equals("legato_end")) n.legato_end = true;
-                    n.playDuration = FM_SoundPool.GetDurationFromStr(duration.substring(1));
-                    n.pauseDuration = FM_SoundPool.GetDurationFromStr(duration.substring(1));
+                    n.playDuration = FM_SoundPool.GetDurationFromStr(duration.substring(1), tempo, 0);
+                    n.pauseDuration = FM_SoundPool.GetDurationFromStr(duration.substring(1), tempo, 0);
                     m.notes.add(n);
                 }
             }

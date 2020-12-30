@@ -203,9 +203,8 @@ public class MainActivity extends AppCompatActivity {
 
         s.LoadFromJson(obj);
         player = new FM_ScorePlayer(getApplicationContext());
-        player.LoadFromJson(obj, false);
+        player.LoadFromJson(obj, false, 60);
         player.ProgressSetScore(s);
-        player.setTempo(100);
     }
 
     public void addRandom(){
@@ -536,8 +535,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void OnClick(View v){
-        player.Prepare();
-        player.Play();
+        player.Play(120);
     }
 
     public void OnClickBBox(View v){

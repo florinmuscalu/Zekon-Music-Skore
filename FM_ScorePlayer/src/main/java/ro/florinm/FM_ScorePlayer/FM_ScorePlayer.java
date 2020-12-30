@@ -13,7 +13,6 @@ public class FM_ScorePlayer {
     private FM_Audio_Song song;
     private FM_SoundPool soundPlayer;
     static int SoundsLoaded;
-    private int temp_tempo;
     private int temp_timesig_n;
     private int temp_timesig_d;
     private FM_Score score;
@@ -25,14 +24,12 @@ public class FM_ScorePlayer {
         super();
         this.score = null;
         SoundsLoaded = 0;
-        temp_tempo = 60;
         temp_timesig_n = 4;
         temp_timesig_d = 4;
         soundPlayer = null;
         FM_SoundPool.playing = false;
         new Thread(() -> {
             soundPlayer = new FM_SoundPool(context);
-            setTempo(temp_tempo);
             setTimeSignature(temp_timesig_n, temp_timesig_d);
         }).start();
     }
@@ -55,32 +52,21 @@ public class FM_ScorePlayer {
         return FM_SoundPool.playing;
     }
 
-    /**
-     * @param tempo the tempo used for playing the song.
-     */
-    public void setTempo(int tempo) {
-        temp_tempo = tempo;
-        if (soundPlayer != null) FM_SoundPool.TEMPO = tempo;
-    }
-
     public void setTimeSignature(int n, int d) {
         temp_timesig_n = n;
         temp_timesig_d = d;
         if (soundPlayer != null) {
             FM_SoundPool.time_signature_n = n;
-            FM_SoundPool.time_signature_d = d;
+            FM_SoundPool.TIME_SIGNATURE_D = d;
         }
     }
 
     /**
      * @return get the tempo used for playing the song.
      */
-    public int getTempo(){
-        return FM_SoundPool.TEMPO;
-    }
 
-    public long getTempo(boolean ms){
-        float multiply = (60.0f / FM_SoundPool.TEMPO) * (FM_SoundPool.time_signature_d / 4.0f);
+    public long getTempoDuration(int tempo){
+        float multiply = (60.0f / tempo) * (FM_SoundPool.TIME_SIGNATURE_D / 4.0f);
         //float multiply = (60.0f * FM_SoundPool.time_signature_n) / (FM_SoundPool.TEMPO * FM_SoundPool.time_signature_d);
         return (long) (multiply * 1000f);
     }
@@ -89,7 +75,7 @@ public class FM_ScorePlayer {
      * @param obj The song in Json format. Check the documentation for how the Json should look like.
      * @param harmonic Set it to true if obj contains a harmonic melody. If it's melodic, set it to false
      */
-    public void LoadFromJson(JSONObject obj, boolean harmonic) {
+    public void LoadFromJson(JSONObject obj, boolean harmonic, int tempo) {
         song = null;
         score = null;
         new Thread(() -> {
@@ -99,40 +85,40 @@ public class FM_ScorePlayer {
                 String timesignature = obj.optString("timesignature", "4/4");
                 setTimeSignature(FM_Helper.getTimeSignature_n(timesignature), FM_Helper.getTimeSignature_d(timesignature));
                 if (harmonic)
-                    song = FM_Helper.generateHarmonicSong(obj.optString("keysignature", "DO"), obj.getJSONArray("keys"));
+                    song = FM_Helper.generateHarmonicSong(obj.optString("keysignature", "DO"), obj.getJSONArray("keys"), tempo);
                 else
-                    song = FM_Helper.generatMelodicSong(obj.optString("keysignature", "DO"), obj.getJSONArray("keys"));
-                Prepare();
+                    song = FM_Helper.generatMelodicSong(obj.optString("keysignature", "DO"), obj.getJSONArray("keys"), tempo);
+                Prepare(tempo);
                 if (score != null) score.ProgressReset();
             } catch (Exception ignored) {}
         }).start();
     }
 
-    public void Play() {
-        if (song != null) Play(1, song.measures.size(), 0, false);
+    public void Play(int tempo) {
+        if (song != null) Play(1, song.measures.size(), 0, false, tempo);
     }
 
-    public void Prepare() {
-        if (song != null) Play(1, song.measures.size(), 0, true);
+    public void Prepare(int tempo) {
+        if (song != null) Play(1, song.measures.size(), 0, true, tempo);
     }
 
-    public void Play(int measure_start, int measure_end) {
-        if (song != null) Play(measure_start, measure_end, 0, false);
+    public void Play(int measure_start, int measure_end, int tempo) {
+        if (song != null) Play(measure_start, measure_end, 0, false, tempo);
     }
 
-    public void Prepare(int measure_start, int measure_end) {
-        if (song != null) Play(measure_start, measure_end, 0, true);
+    public void Prepare(int measure_start, int measure_end, int tempo) {
+        if (song != null) Play(measure_start, measure_end, 0, true, tempo);
     }
 
-    public void Play(int measure_start, int measure_end, int notes) {
-        if (song != null) Play(measure_start, measure_end, notes, false);
+    public void Play(int measure_start, int measure_end, int notes, int tempo) {
+        if (song != null) Play(measure_start, measure_end, notes, false, tempo);
     }
 
-    public void Prepare(int measure_start, int measure_end, int notes) {
-        if (song != null) Play(measure_start, measure_end, notes, true);
+    public void Prepare(int measure_start, int measure_end, int notes, int tempo) {
+        if (song != null) Play(measure_start, measure_end, notes, true, tempo);
     }
 
-    private FM_Audio_Note LoadNote(FM_Audio_Note note) {
+    private FM_Audio_Note LoadNote(FM_Audio_Note note, int tempo) {
         FM_Audio_Note ret;
         String[] n = note.note.split(",");
         n = FM_Helper.computeNote(song.keysignature, n);
@@ -140,11 +126,11 @@ public class FM_ScorePlayer {
         ret = note;
         List<Integer> tracks = new ArrayList<>();
         ret.audioInt = 0;
-        ret.pauseDuration = FM_SoundPool.GetDurationFromStr(d[0]);
-        ret.playDuration = FM_SoundPool.GetDurationFromStr(d[0]);
+        ret.pauseDuration = FM_SoundPool.GetDurationFromStr(d[0], tempo, 0);
+        ret.playDuration = FM_SoundPool.GetDurationFromStr(d[0], tempo, 0);
         for (String s : d) {
-            if (ret.pauseDuration > FM_SoundPool.GetDurationFromStr(s)) ret.pauseDuration = FM_SoundPool.GetDurationFromStr(s);
-            if (ret.playDuration  < FM_SoundPool.GetDurationFromStr(s)) ret.playDuration =  FM_SoundPool.GetDurationFromStr(s);
+            if (ret.pauseDuration > FM_SoundPool.GetDurationFromStr(s, tempo, 0)) ret.pauseDuration = FM_SoundPool.GetDurationFromStr(s, tempo,0);
+            if (ret.playDuration  < FM_SoundPool.GetDurationFromStr(s, tempo, 0)) ret.playDuration =  FM_SoundPool.GetDurationFromStr(s, tempo,0);
         }
         
         if (n.length == 1 ){
@@ -154,18 +140,18 @@ public class FM_ScorePlayer {
         else {
             for (String s : n) tracks.add(soundPlayer.GetIndex(s.trim()));
             ret.audioT = null;
-            ret.audioT = soundPlayer.CreateTrack(tracks, d);
+            ret.audioT = soundPlayer.CreateTrack(tracks, d, tempo);
         }
         return ret;
     }
 
-    private void Play(int measure_start, int measure_end, int notes, Boolean prepare) {
+    private void Play(int measure_start, int measure_end, int notes, Boolean prepare, int tempo) {
         if (FM_SoundPool.playing) return;
         if (SoundsLoaded != 100) return;
         if (song == null) return;
         if (prepare) {
             song.prepared = false;
-            PlayMelodic(song, measure_start, measure_end, notes, true);
+            PlayMelodic(song, measure_start, measure_end, notes, true, tempo);
         } else {
             FM_SoundPool.playing = true;
             new Thread(() -> {
@@ -177,19 +163,19 @@ public class FM_ScorePlayer {
                 try {
                     sleep(200);
                 } catch (Exception ignored) { }
-                PlayMelodic(song, measure_start, measure_end, notes, false);
+                PlayMelodic(song, measure_start, measure_end, notes, false, tempo);
             }).start();
         }
     }
 
-    private void PlayMelodic(final FM_Audio_Song song, int measure_start, int measure_end, int notes, Boolean prepare) {
+    private void PlayMelodic(final FM_Audio_Song song, int measure_start, int measure_end, int notes, Boolean prepare, int tempo) {
         if (measure_end > song.measures.size()) measure_end = song.measures.size();
         if (measure_end == song.measures.size()) notes = 0;
         List<FM_Audio_Note> ListNotes = new ArrayList<>();
         for (int i = measure_start - 1; i < measure_end; i++) {
             FM_Helper.StartMeasure();
             for (int j = 0; j < song.measures.get(i).notes.size(); j++)
-                ListNotes.add(LoadNote(song.measures.get(i).notes.get(j)));
+                ListNotes.add(LoadNote(song.measures.get(i).notes.get(j), tempo));
         }
         if (notes != 0) {
             FM_Helper.StartMeasure();
@@ -197,7 +183,7 @@ public class FM_ScorePlayer {
             if (cnt > song.measures.get(measure_end).notes.size())
                 cnt = song.measures.get(measure_end).notes.size();
             for (int j = 0; j < cnt; j++)
-                ListNotes.add(LoadNote(song.measures.get(measure_end).notes.get(j)));
+                ListNotes.add(LoadNote(song.measures.get(measure_end).notes.get(j), tempo));
         }
         for (int i = 1; i < ListNotes.size(); i++) if (ListNotes.get(i).audioInt == -1) ListNotes.get(i - 1).NextPause = true;
         song.prepared = true;
@@ -266,12 +252,11 @@ public class FM_ScorePlayer {
      * @param prepare - play or prepare?
      * @param duration - the duration for each key. If duration is -1, use the TEMPO_DURATION as duration
      */
-    public void PlayKeys(final String keys, final Boolean simultaneously, final Boolean prepare, final long duration) {
+    public void PlayKeys(final String keys, final Boolean simultaneously, final Boolean prepare, final String duration, final int tempo) {
         if (FM_SoundPool.playing && !prepare) return;
         if (!prepare) FM_SoundPool.playing = true;
         new Thread(() -> {
-            int d = (int) duration;
-            if (duration == -1) d = (int) FM_SoundPool.TEMPO;
+            int d = (int) FM_SoundPool.GetDurationFromStr(duration, tempo, 4);
             String[] k = keys.replace("[", "").replace("]", "").replace("\"", "").replace("\\", "").toLowerCase().split(",");
             final int[] Tracks = new int[k.length];
             for (int i = 0; i < k.length; i++) Tracks[i] = soundPlayer.GetIndex(k[i].trim());

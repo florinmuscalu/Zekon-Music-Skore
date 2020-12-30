@@ -343,9 +343,8 @@ class FM_AudioTrack {
 }
 
 class FM_SoundPool {
-    public static int TEMPO = 60;
     public static int time_signature_n;
-    public static int time_signature_d;
+    public static int TIME_SIGNATURE_D;
     public static int FALLBACK_DURATION = 250; //fallback duration for sounds
     public static int MAX_TRACKS = 500;
     private final Context context;
@@ -372,10 +371,10 @@ class FM_SoundPool {
         return CheckAndCreate(track);
     }
 
-    public FM_AudioTrack CreateTrack(List<Integer> tracks, String[] d) {
+    public FM_AudioTrack CreateTrack(List<Integer> tracks, String[] d, int tempo) {
         FM_AudioSubTrack[] track;
         track = new FM_AudioSubTrack[7];
-        for (int i = 0; i < tracks.size(); i++) if (tracks.get(i) != -1) track[i] = new FM_AudioSubTrack(tracks.get(i), GetDurationFromStr(d[i]));
+        for (int i = 0; i < tracks.size(); i++) if (tracks.get(i) != -1) track[i] = new FM_AudioSubTrack(tracks.get(i), GetDurationFromStr(d[i], tempo, 0));
         return CheckAndCreate(track);
     }
 
@@ -944,7 +943,13 @@ class FM_SoundPool {
     }
 
     public static int GetDurationFromStr(String duration) {
-        float d = (60.0f / TEMPO) * (time_signature_d / 4.0f) * 4000.0f;
+        return GetDurationFromStr(duration, 0, 0);
+    }
+
+    public static int GetDurationFromStr(String duration, int tempo, int time_signature_d) {
+        if (tempo == 0) tempo = 60;
+        if (time_signature_d == 0) time_signature_d = TIME_SIGNATURE_D;
+        float d = (60.0f / tempo) * (time_signature_d / 4.0f) * 4000.0f;
         duration = duration.toLowerCase();
         //wrong below
         //float d = 1000f * (60.0f * time_signature_n) / (TEMPO * time_signature_d);
