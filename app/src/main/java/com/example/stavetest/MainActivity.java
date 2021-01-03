@@ -175,12 +175,17 @@ public class MainActivity extends AppCompatActivity {
         s.addStaffNote(new FM_BarNote(s));
     }
 
+    String[] files = {"test.json", "furelise.json"};
+    int index = 1;
+
     public void LoadJson(){
         FM_Score s = findViewById(R.id.stave);
         String furelise = "";
         BufferedReader reader = null;
+        index = index + 1;
+        if (index > 1) index = 0;
         try {
-            reader = new BufferedReader(new InputStreamReader(getAssets().open("test.json")));
+            reader = new BufferedReader(new InputStreamReader(getAssets().open(files[index])));
             String mLine;
             while ((mLine = reader.readLine()) != null) {
                 furelise += mLine;
@@ -203,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
 
         s.LoadFromJson(obj);
         player = new FM_ScorePlayer(getApplicationContext());
-        player.LoadFromJson(obj, false, 60);
+        player.LoadFromJson(obj, false, 70);
         player.ProgressSetScore(s);
     }
 
@@ -535,7 +540,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void OnClick(View v){
-        player.Play(120);
+        player.Play(70);
+    }
+
+    public void Change(View v){
+        LoadJson();
     }
 
     public void OnClickBBox(View v){

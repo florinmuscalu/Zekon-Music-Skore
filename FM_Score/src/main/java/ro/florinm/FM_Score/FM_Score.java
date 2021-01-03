@@ -1152,20 +1152,20 @@ public class FM_Score extends View {
                 if (((FM_BarNote) StaveNotes.get(i)).lineend) StaveNotes.get(i).setVisible(false);
         }
         if (measures != 0) {
-            float size1 = 0;
-            float size2 = 0;
+//            float size1 = 0;
+//            float size2 = 0;
+//            int i = 0;
+//            while (i < StaveNotes.size() && !(StaveNotes.get(i) instanceof FM_BarNote)) {
+//                size1 = size1 + FM_Const.getDurationMs(StaveNotes.get(i).duration);
+//                i++;
+//            }
+//            i++;
+//            while (i < StaveNotes.size() && !(StaveNotes.get(i) instanceof FM_BarNote)) {
+//                size2 = size2 + FM_Const.getDurationMs(StaveNotes.get(i).duration);
+//                i++;
+//            }
+//            if (Math.abs(size1 - size2) > 0.01f) measures++;
             int i = 0;
-            while (i < StaveNotes.size() && !(StaveNotes.get(i) instanceof FM_BarNote)) {
-                size1 = size1 + FM_Const.getDurationMs(StaveNotes.get(i).duration);
-                i++;
-            }
-            i++;
-            while (i < StaveNotes.size() && !(StaveNotes.get(i) instanceof FM_BarNote)) {
-                size2 = size2 + FM_Const.getDurationMs(StaveNotes.get(i).duration);
-                i++;
-            }
-            if (Math.abs(size1 - size2) > 0.01f) measures++;
-            i = 0;
             int bars = 0;
             while (i < StaveNotes.size()) {
                 if (StaveNotes.get(i) instanceof FM_BarNote) bars++;
