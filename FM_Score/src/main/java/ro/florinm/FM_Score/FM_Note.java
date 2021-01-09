@@ -196,7 +196,7 @@ public class FM_Note extends FM_BaseNote {
                 for (int i = 5; i <= offset; i++) {
                     ly = StartY1 + i * score.getDistanceBetweenStaveLines();
                     float tX = StartX + paddingLeft + width_accidental + paddingNote - score.getDistanceBetweenStaveLines() / 3;
-                    float tXe = StartX + paddingLeft + width_accidental + paddingNote + WidthNote() + score.getDistanceBetweenStaveLines() / 3;
+                    float tXe = StartX + paddingLeft + width_accidental + paddingNote + width_note_nostem + score.getDistanceBetweenStaveLines() / 3;
                     float tY = ly - FM_Const.dpTOpx(score.getContext(),0.25f);
                     float tYe = ly + FM_Const.dpTOpx(score.getContext(),0.25f);
                     canvas.drawRect(tX, tY,tXe, tYe, score.Font);
@@ -205,7 +205,7 @@ public class FM_Note extends FM_BaseNote {
                 for (int i = -1; i >= offset; i--) {
                     ly = StartY1 + i * score.getDistanceBetweenStaveLines();
                     float tX = StartX + paddingLeft + width_accidental + paddingNote - score.getDistanceBetweenStaveLines() / 3;
-                    float tXe = StartX + paddingLeft + width_accidental + paddingNote + width_note + score.getDistanceBetweenStaveLines() / 3;
+                    float tXe = StartX + paddingLeft + width_accidental + paddingNote + width_note_nostem + score.getDistanceBetweenStaveLines() / 3;
                     float tY = ly - FM_Const.dpTOpx(score.getContext(),0.25f);
                     float tYe = ly + FM_Const.dpTOpx(score.getContext(),0.25f);
                     canvas.drawRect(tX, tY,tXe, tYe, score.Font);
