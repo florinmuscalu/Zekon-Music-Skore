@@ -76,10 +76,10 @@ public class FM_Tuple {
             if (n.get(EndIndex).StemTopY != 0) ye = n.get(EndIndex).StemTopY;
 
             if (!n.get(0).beam) {
-                if (y < ye) ye = y;
+                if (y > ye) ye = y;
                 else y = ye;
-                y = y - 0.5f * score.getDistanceBetweenStaveLines();
-                ye = ye - 0.5f * score.getDistanceBetweenStaveLines();
+                y = y + 0.5f * score.getDistanceBetweenStaveLines();
+                ye = ye + 0.5f * score.getDistanceBetweenStaveLines();
             }
 //            if (ye>y) {
 //                float slope = FM_Const.slope(0, x, y, xe, ye);
