@@ -6,6 +6,7 @@ import android.graphics.Rect;
 public class FM_Note extends FM_BaseNote {
     boolean beam, tuple;
     float ys, startX;
+    float StemTopY = 0f;
 
     public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration) {
         super(FM_NoteType.NOTE, Score);

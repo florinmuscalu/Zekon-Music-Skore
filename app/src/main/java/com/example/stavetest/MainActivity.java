@@ -76,11 +76,11 @@ public class MainActivity extends AppCompatActivity {
 //        s.setAllowZoomPan(true);
 //        s.setTrimLastLine(true);
 
-        //LoadJson();
+        LoadJson();
 
 //        //1100
 //        s.BeginBeam();
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.DoubleSharp, FM_DurationValue.NOTE_SIXTEENTH_D, true), FM_ClefValue.TREBLE);
+        //s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.DoubleSharp, FM_DurationValue.NOTE_SIXTEENTH_D, true), FM_ClefValue.TREBLE);
 //        s.AddToBeam((FM_Note) s.getLastNote());
 //        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
 //        s.AddToBeam((FM_Note) s.getLastNote());

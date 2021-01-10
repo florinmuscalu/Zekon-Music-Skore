@@ -10,6 +10,7 @@ public class FM_Beam {
     int index;
     List<FM_Note> n;
     FM_Score score;
+
     public FM_Beam(FM_Score score, int index) {
         n = new ArrayList<>();
         this.index = index;
@@ -102,7 +103,7 @@ public class FM_Beam {
                 float tmpX = n.get(i).startX + n.get(i).paddingLeft + n.get(i).WidthAccidental() + n.get(i).paddingNote + n.get(i).WidthNoteNoStem();
                 float tmpY = n.get(i).ys + n.get(i).getDisplacement() * score.getDistanceBetweenStaveLines();
                 float tmpY2 = FM_Const.getY2(slope, x, y, tmpX);
-
+                n.get(i).StemTopY = tmpY2;
                 canvas.drawRect(tmpX,
                         tmpY - FM_Const.dpTOpx(score.getContext(), 1),
                         tmpX - FM_Const.dpTOpx(score.getContext(), 1),
@@ -114,7 +115,7 @@ public class FM_Beam {
                 float tmpX = n.get(i).startX + n.get(i).paddingLeft + n.get(i).WidthAccidental() + n.get(i).paddingNote;
                 float tmpY = n.get(i).ys + n.get(i).getDisplacement() * score.getDistanceBetweenStaveLines();
                 float tmpY2 = FM_Const.getY2(slope, x, y, tmpX);
-
+                n.get(i).StemTopY = tmpY2;
                 canvas.drawRect(tmpX,
                         tmpY + FM_Const.dpTOpx(score.getContext(), 1),
                         tmpX + FM_Const.dpTOpx(score.getContext(), 1),

@@ -317,8 +317,8 @@ public class FM_Score extends View {
 
         for (int i = 0; i < StaveNotes.size(); i++) StaveNotes.get(i).DrawNote(canvas);
         for (int j = 0; j < Ties.size(); j++) Ties.get(j).Draw(canvas);
-        for (int j = 0; j < Tuples.size(); j++) Tuples.get(j).Draw(canvas);
         for (int j = 0; j < Beams.size(); j++) Beams.get(j).Draw(canvas);
+        for (int j = 0; j < Tuples.size(); j++) Tuples.get(j).Draw(canvas);
 
             if (progressBar > -1) {
                 int line = StaveNotes.get(progressBar).line;
@@ -895,9 +895,9 @@ public class FM_Score extends View {
     public void EndTie() {
         inTie = false;
         if (TieNotes.size() != 2) return;
-        if (TieNotes.get(0).staff != TieNotes.get(1).staff || TieNotes.get(0).octave != TieNotes.get(1).octave || !TieNotes.get(0).note.equals(TieNotes.get(1).note)
-                || !TieNotes.get(0).asStringAccidental().equals(TieNotes.get(1).asStringAccidental()))
-            return;
+        //String n1 = TieNotes.get(0).note;
+        //String n2 = TieNotes.get(0).note;
+        if (TieNotes.get(0).staff != TieNotes.get(1).staff || TieNotes.get(0).octave != TieNotes.get(1).octave || !TieNotes.get(0).note.equals(TieNotes.get(1).note)) return;
         FM_Tie t = new FM_Tie(this, currentTie);
         currentTie++;
         t.AddStart(TieNotes.get(0));

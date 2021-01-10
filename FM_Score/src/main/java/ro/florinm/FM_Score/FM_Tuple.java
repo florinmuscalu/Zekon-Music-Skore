@@ -34,26 +34,37 @@ public class FM_Tuple {
         if (n.get(0).stem_up) {
             x = x + 0.5f * score.getDistanceBetweenStaveLines();
             xe = xe + 0.5f * score.getDistanceBetweenStaveLines();
+
             y =  n.get(0).ys +          (n.get(0).getDisplacement() - StemLength) *        score.getDistanceBetweenStaveLines();
             ye = n.get(EndIndex).ys +   (n.get(EndIndex).getDisplacement() - StemLength) * score.getDistanceBetweenStaveLines();
-            if (ye>y) {
-                float slope = FM_Const.slope(0, x, y, xe, ye);
-                ye = FM_Const.getY2(slope, x, y, xe);
+
+            if (n.get(0).StemTopY != 0) y = n.get(0).StemTopY;
+            if (n.get(EndIndex).StemTopY != 0) ye = n.get(EndIndex).StemTopY;
+
+            if (!n.get(0).beam) {
+                if (y < ye) ye = y;
+                else y = ye;
+                y = y - 0.5f * score.getDistanceBetweenStaveLines();
+                ye = ye - 0.5f * score.getDistanceBetweenStaveLines();
             }
-            else {
-                float slope = FM_Const.slope(0, xe, ye, x, y);
-                y = FM_Const.getY2(slope, xe, ye, x);
-            }
-            float yMiddleMin = n.get(1).ys + (n.get(1).getDisplacement() - StemLength) * score.getDistanceBetweenStaveLines();
-            for (int i = 2; i < n.size() - 1; i++) {
-                float yMiddle = n.get(i).ys + (n.get(i).getDisplacement() - StemLength) * score.getDistanceBetweenStaveLines();
-                if (yMiddle < yMiddleMin) yMiddleMin = yMiddle;
-            }
-            if ((y + ye) / 2 > yMiddleMin) {
-                float diff = (y + ye) / 2 - yMiddleMin;
-                y = y - diff;
-                ye = ye - diff;
-            }
+//            if (ye>y) {
+//                float slope = FM_Const.slope(0, x, y, xe, ye);
+//                ye = FM_Const.getY2(slope, x, y, xe);
+//            }
+//            else {
+//                float slope = FM_Const.slope(0, xe, ye, x, y);
+//                y = FM_Const.getY2(slope, xe, ye, x);
+//            }
+//            float yMiddleMin = n.get(1).ys + (n.get(1).getDisplacement() - StemLength) * score.getDistanceBetweenStaveLines();
+//            for (int i = 2; i < n.size() - 1; i++) {
+//                float yMiddle = n.get(i).ys + (n.get(i).getDisplacement() - StemLength) * score.getDistanceBetweenStaveLines();
+//                if (yMiddle < yMiddleMin) yMiddleMin = yMiddle;
+//            }
+//            if ((y + ye) / 2 > yMiddleMin) {
+//                float diff = (y + ye) / 2 - yMiddleMin;
+//                y = y - diff;
+//                ye = ye - diff;
+//            }
         } else {
             x = x - 0.5f * score.getDistanceBetweenStaveLines() ;
             xe = xe - 0.5f * score.getDistanceBetweenStaveLines();
@@ -61,26 +72,35 @@ public class FM_Tuple {
             y = n.get(0).ys +           (n.get(0).getDisplacement() + StemLength) * score.getDistanceBetweenStaveLines();
             ye = n.get(EndIndex).ys +   (n.get(EndIndex).getDisplacement() + StemLength) * score.getDistanceBetweenStaveLines();
 
-            if (ye<y) {
-                float slope = FM_Const.slope(0, x, y, xe, ye);
-                ye = FM_Const.getY2(slope, x, y, xe);
-            }
-            else {
-                float slope = FM_Const.slope(0, xe, ye, x, y);
-                y = FM_Const.getY2(slope, xe, ye, x);
-            }
+            if (n.get(0).StemTopY != 0) y = n.get(0).StemTopY;
+            if (n.get(EndIndex).StemTopY != 0) ye = n.get(EndIndex).StemTopY;
 
-            float yMiddleMin = n.get(1).ys + (n.get(1).getDisplacement() + StemLength) * score.getDistanceBetweenStaveLines();
+            if (!n.get(0).beam) {
+                if (y < ye) ye = y;
+                else y = ye;
+                y = y - 0.5f * score.getDistanceBetweenStaveLines();
+                ye = ye - 0.5f * score.getDistanceBetweenStaveLines();
+            }
+//            if (ye>y) {
+//                float slope = FM_Const.slope(0, x, y, xe, ye);
+//                ye = FM_Const.getY2(slope, x, y, xe);
+//            }
+//            else {
+//                float slope = FM_Const.slope(0, xe, ye, x, y);
+//                y = FM_Const.getY2(slope, xe, ye, x);
+//            }
 
-            for (int i = 2; i < n.size() - 1; i++) {
-                float yMiddle = n.get(i).ys + (n.get(i).getDisplacement() + StemLength) * score.getDistanceBetweenStaveLines();
-                if (yMiddle > yMiddleMin) yMiddleMin = yMiddle;
-            }
-            if ((y + ye) / 2 < yMiddleMin) {
-                float diff = (y + ye) / 2 - yMiddleMin;
-                y = y - diff;
-                ye = ye - diff;
-            }
+//            float yMiddleMin = n.get(1).ys + (n.get(1).getDisplacement() + StemLength) * score.getDistanceBetweenStaveLines();
+//
+//            for (int i = 2; i < n.size() - 1; i++) {
+//                float yMiddle = n.get(i).ys + (n.get(i).getDisplacement() + StemLength) * score.getDistanceBetweenStaveLines();
+//                if (yMiddle > yMiddleMin) yMiddleMin = yMiddle;
+//            }
+//            if ((y + ye) / 2 < yMiddleMin) {
+//                float diff = (y + ye) / 2 - yMiddleMin;
+//                y = y - diff;
+//                ye = ye - diff;
+//            }
         }
 
         String text = FM_Const._3;
