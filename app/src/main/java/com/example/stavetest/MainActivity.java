@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
 //        s.setAllowZoomPan(true);
 //        s.setTrimLastLine(true);
 
+        s.setVisibility(View.INVISIBLE);
         LoadJson();
 
 //        //1100
@@ -557,8 +558,14 @@ public class MainActivity extends AppCompatActivity {
     boolean show = false;
     public void OnClickVisible(View v){
         FM_Score s = findViewById(R.id.stave);
-        if (show) s.ShowScore(0);
-        else s.ShowScore(2);
+        if (show) {
+            s.setVisibility(View.INVISIBLE);
+            s.ShowScore(0);
+        }
+        else {
+            s.setVisibility(View.VISIBLE);
+            s.ShowScore(2);
+        }
         show = !show;
     }
 }
