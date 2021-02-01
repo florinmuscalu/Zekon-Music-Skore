@@ -4,6 +4,7 @@ import android.content.Context;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import ro.florinm.FM_Score.FM_Score;
 
@@ -12,7 +13,7 @@ import static java.lang.Thread.sleep;
 public class FM_ScorePlayer {
     private FM_Audio_Song song;
     private FM_SoundPool soundPlayer;
-    static int SoundsLoaded;
+    static volatile int SoundsLoaded;
     private int temp_timesig_n;
     private int temp_timesig_d;
     private FM_Score score;
@@ -150,16 +151,14 @@ public class FM_ScorePlayer {
         if (SoundsLoaded != 100) return;
         if (song == null) return;
         if (prepare) {
-            song.prepared = false;
+            song.prepared = new CountDownLatch(1);
             PlayMelodic(song, measure_start, measure_end, notes, true, tempo);
         } else {
             FM_SoundPool.playing = true;
             new Thread(() -> {
-                while (!song.prepared)
-                    try {
-                        sleep(10);
-                    } catch (Exception ignored) { }
-
+                try {
+                    song.prepared.await();
+                } catch (Exception ignored) { }
                 try {
                     sleep(200);
                 } catch (Exception ignored) { }
@@ -186,7 +185,7 @@ public class FM_ScorePlayer {
                 ListNotes.add(LoadNote(song.measures.get(measure_end).notes.get(j), tempo));
         }
         for (int i = 1; i < ListNotes.size(); i++) if (ListNotes.get(i).audioInt == -1) ListNotes.get(i - 1).NextPause = true;
-        song.prepared = true;
+        song.prepared.countDown();
 
         if (!prepare)
             new Thread(() -> {

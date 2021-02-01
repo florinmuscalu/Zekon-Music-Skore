@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.Thread.sleep;
@@ -360,25 +361,28 @@ class FM_SoundPool {
             if (Tracks.get(i).AccessIndex > MAX_TRACKS) Tracks.remove(i);
     }
 
-    public void ClearAudioTracks(){
+    public void ClearAudioTracks() {
         Tracks.clear();
     }
 
     public FM_AudioTrack CreateTrack(int[] tracks, int d) {
         FM_AudioSubTrack[] track;
         track = new FM_AudioSubTrack[7];
-        for (int i = 0; i < tracks.length; i++) if (tracks[i] != -1) track[i] = new FM_AudioSubTrack(tracks[i], d);
+        for (int i = 0; i < tracks.length; i++)
+            if (tracks[i] != -1) track[i] = new FM_AudioSubTrack(tracks[i], d);
         return CheckAndCreate(track);
     }
 
     public FM_AudioTrack CreateTrack(List<Integer> tracks, String[] d, int tempo) {
         FM_AudioSubTrack[] track;
         track = new FM_AudioSubTrack[7];
-        for (int i = 0; i < tracks.size(); i++) if (tracks.get(i) != -1) track[i] = new FM_AudioSubTrack(tracks.get(i), GetDurationFromStr(d[i], tempo, 0));
+        for (int i = 0; i < tracks.size(); i++)
+            if (tracks.get(i) != -1)
+                track[i] = new FM_AudioSubTrack(tracks.get(i), GetDurationFromStr(d[i], tempo, 0));
         return CheckAndCreate(track);
     }
 
-    private FM_AudioTrack CheckAndCreate(FM_AudioSubTrack[] track){
+    private FM_AudioTrack CheckAndCreate(FM_AudioSubTrack[] track) {
         FM_AudioTrack t;
         for (int i = 0; i < Tracks.size(); i++)
             if (Tracks.get(i).Check(track[0], track[1], track[2], track[3], track[4], track[5], track[6])) {
@@ -754,105 +758,105 @@ class FM_SoundPool {
         KeyMapping.put("a##/5", 62);
         KeyMapping.put("cb/6", 62);
 
-        KeyMapping.put("c/6", 52+12);
-        KeyMapping.put("cn/6", 52+12);
-        KeyMapping.put("b#/5", 52+12);
-        KeyMapping.put("dbb/6", 52+12);
-        KeyMapping.put("a###/5", 52+12);
-        KeyMapping.put("c#/6", 54+12);
-        KeyMapping.put("b##/5", 54+12);
-        KeyMapping.put("db/6", 54+12);
-        KeyMapping.put("d/6", 53+12);
-        KeyMapping.put("dn/6", 53+12);
-        KeyMapping.put("c##/6", 53+12);
-        KeyMapping.put("ebb/6", 53+12);
-        KeyMapping.put("b###/5", 53+12);
-        KeyMapping.put("d#/6", 56+12);
-        KeyMapping.put("eb/6", 56+12);
-        KeyMapping.put("fbb/6", 56+12);
-        KeyMapping.put("c###/6", 56+12);
-        KeyMapping.put("e/6", 55+12);
-        KeyMapping.put("en/6", 55+12);
-        KeyMapping.put("d##/6", 55+12);
-        KeyMapping.put("fb/6", 55+12);
-        KeyMapping.put("f/6", 57+12);
-        KeyMapping.put("fn/6", 57+12);
-        KeyMapping.put("e#/6", 57+12);
-        KeyMapping.put("gbb/6", 57+12);
-        KeyMapping.put("d###/6", 57+12);
-        KeyMapping.put("f#/6", 59+12);
-        KeyMapping.put("e##/6", 59+12);
-        KeyMapping.put("gb/6", 59+12);
-        KeyMapping.put("g/6", 58+12);
-        KeyMapping.put("gn/6", 58+12);
-        KeyMapping.put("f##/6", 58+12);
-        KeyMapping.put("abb/6", 58+12);
-        KeyMapping.put("e###/6", 58+12);
-        KeyMapping.put("g#/6", 61+12);
-        KeyMapping.put("ab/6", 61+12);
-        KeyMapping.put("f###/6", 61+12);
-        KeyMapping.put("a/6", 60+12);
-        KeyMapping.put("an/6", 60+12);
-        KeyMapping.put("g##/6", 60+12);
-        KeyMapping.put("bbb/6", 60+12);
-        KeyMapping.put("a#/6", 63+12);
-        KeyMapping.put("bb/6", 63+12);
-        KeyMapping.put("cbb/7", 63+12);
-        KeyMapping.put("g###/6", 63+12);
-        KeyMapping.put("b/6", 62+12);
-        KeyMapping.put("bn/6", 62+12);
-        KeyMapping.put("a##/6", 62+12);
-        KeyMapping.put("cb/7", 62+12);
+        KeyMapping.put("c/6", 52 + 12);
+        KeyMapping.put("cn/6", 52 + 12);
+        KeyMapping.put("b#/5", 52 + 12);
+        KeyMapping.put("dbb/6", 52 + 12);
+        KeyMapping.put("a###/5", 52 + 12);
+        KeyMapping.put("c#/6", 54 + 12);
+        KeyMapping.put("b##/5", 54 + 12);
+        KeyMapping.put("db/6", 54 + 12);
+        KeyMapping.put("d/6", 53 + 12);
+        KeyMapping.put("dn/6", 53 + 12);
+        KeyMapping.put("c##/6", 53 + 12);
+        KeyMapping.put("ebb/6", 53 + 12);
+        KeyMapping.put("b###/5", 53 + 12);
+        KeyMapping.put("d#/6", 56 + 12);
+        KeyMapping.put("eb/6", 56 + 12);
+        KeyMapping.put("fbb/6", 56 + 12);
+        KeyMapping.put("c###/6", 56 + 12);
+        KeyMapping.put("e/6", 55 + 12);
+        KeyMapping.put("en/6", 55 + 12);
+        KeyMapping.put("d##/6", 55 + 12);
+        KeyMapping.put("fb/6", 55 + 12);
+        KeyMapping.put("f/6", 57 + 12);
+        KeyMapping.put("fn/6", 57 + 12);
+        KeyMapping.put("e#/6", 57 + 12);
+        KeyMapping.put("gbb/6", 57 + 12);
+        KeyMapping.put("d###/6", 57 + 12);
+        KeyMapping.put("f#/6", 59 + 12);
+        KeyMapping.put("e##/6", 59 + 12);
+        KeyMapping.put("gb/6", 59 + 12);
+        KeyMapping.put("g/6", 58 + 12);
+        KeyMapping.put("gn/6", 58 + 12);
+        KeyMapping.put("f##/6", 58 + 12);
+        KeyMapping.put("abb/6", 58 + 12);
+        KeyMapping.put("e###/6", 58 + 12);
+        KeyMapping.put("g#/6", 61 + 12);
+        KeyMapping.put("ab/6", 61 + 12);
+        KeyMapping.put("f###/6", 61 + 12);
+        KeyMapping.put("a/6", 60 + 12);
+        KeyMapping.put("an/6", 60 + 12);
+        KeyMapping.put("g##/6", 60 + 12);
+        KeyMapping.put("bbb/6", 60 + 12);
+        KeyMapping.put("a#/6", 63 + 12);
+        KeyMapping.put("bb/6", 63 + 12);
+        KeyMapping.put("cbb/7", 63 + 12);
+        KeyMapping.put("g###/6", 63 + 12);
+        KeyMapping.put("b/6", 62 + 12);
+        KeyMapping.put("bn/6", 62 + 12);
+        KeyMapping.put("a##/6", 62 + 12);
+        KeyMapping.put("cb/7", 62 + 12);
 
-        KeyMapping.put("c/7", 52+12+12);
-        KeyMapping.put("cn/7", 52+12+12);
-        KeyMapping.put("b#/6", 52+12+12);
-        KeyMapping.put("dbb/7", 52+12+12);
-        KeyMapping.put("a###/6", 52+12+12);
-        KeyMapping.put("c#/7", 54+12+12);
-        KeyMapping.put("b##/6", 54+12+12);
-        KeyMapping.put("db/7", 54+12+12);
-        KeyMapping.put("d/7", 53+12+12);
-        KeyMapping.put("dn/7", 53+12+12);
-        KeyMapping.put("c##/7", 53+12+12);
-        KeyMapping.put("ebb/7", 53+12+12);
-        KeyMapping.put("b###/6", 53+12+12);
-        KeyMapping.put("d#/7", 56+12+12);
-        KeyMapping.put("eb/7", 56+12+12);
-        KeyMapping.put("fbb/7", 56+12+12);
-        KeyMapping.put("c###/7", 56+12+12);
-        KeyMapping.put("e/7", 55+12+12);
-        KeyMapping.put("en/7", 55+12+12);
-        KeyMapping.put("d##/7", 55+12+12);
-        KeyMapping.put("fb/7", 55+12+12);
-        KeyMapping.put("f/7", 57+12+12);
-        KeyMapping.put("fn/7", 57+12+12);
-        KeyMapping.put("e#/7", 57+12+12);
-        KeyMapping.put("gbb/7", 57+12+12);
-        KeyMapping.put("d###/7", 57+12+12);
-        KeyMapping.put("f#/7", 59+12+12);
-        KeyMapping.put("e##/7", 59+12+12);
-        KeyMapping.put("gb/7", 59+12+12);
-        KeyMapping.put("g/7", 58+12+12);
-        KeyMapping.put("gn/7", 58+12+12);
-        KeyMapping.put("f##/7", 58+12+12);
-        KeyMapping.put("abb/7", 58+12+12);
-        KeyMapping.put("e###/7", 58+12+12);
-        KeyMapping.put("g#/7", 61+12+12);
-        KeyMapping.put("ab/7", 61+12+12);
-        KeyMapping.put("f###/7", 61+12+12);
-        KeyMapping.put("a/7", 60+12+12);
-        KeyMapping.put("an/7", 60+12+12);
-        KeyMapping.put("g##/7", 60+12+12);
-        KeyMapping.put("bbb/7", 60+12+12);
-        KeyMapping.put("a#/7", 63+12+12);
-        KeyMapping.put("bb/7", 63+12+12);
-        KeyMapping.put("cbb/8", 63+12+12);
-        KeyMapping.put("g###/7", 63+12+12);
-        KeyMapping.put("b/7", 62+12+12);
-        KeyMapping.put("bn/7", 62+12+12);
-        KeyMapping.put("a##/7", 62+12+12);
-        KeyMapping.put("cb/8", 62+12+12);
+        KeyMapping.put("c/7", 52 + 12 + 12);
+        KeyMapping.put("cn/7", 52 + 12 + 12);
+        KeyMapping.put("b#/6", 52 + 12 + 12);
+        KeyMapping.put("dbb/7", 52 + 12 + 12);
+        KeyMapping.put("a###/6", 52 + 12 + 12);
+        KeyMapping.put("c#/7", 54 + 12 + 12);
+        KeyMapping.put("b##/6", 54 + 12 + 12);
+        KeyMapping.put("db/7", 54 + 12 + 12);
+        KeyMapping.put("d/7", 53 + 12 + 12);
+        KeyMapping.put("dn/7", 53 + 12 + 12);
+        KeyMapping.put("c##/7", 53 + 12 + 12);
+        KeyMapping.put("ebb/7", 53 + 12 + 12);
+        KeyMapping.put("b###/6", 53 + 12 + 12);
+        KeyMapping.put("d#/7", 56 + 12 + 12);
+        KeyMapping.put("eb/7", 56 + 12 + 12);
+        KeyMapping.put("fbb/7", 56 + 12 + 12);
+        KeyMapping.put("c###/7", 56 + 12 + 12);
+        KeyMapping.put("e/7", 55 + 12 + 12);
+        KeyMapping.put("en/7", 55 + 12 + 12);
+        KeyMapping.put("d##/7", 55 + 12 + 12);
+        KeyMapping.put("fb/7", 55 + 12 + 12);
+        KeyMapping.put("f/7", 57 + 12 + 12);
+        KeyMapping.put("fn/7", 57 + 12 + 12);
+        KeyMapping.put("e#/7", 57 + 12 + 12);
+        KeyMapping.put("gbb/7", 57 + 12 + 12);
+        KeyMapping.put("d###/7", 57 + 12 + 12);
+        KeyMapping.put("f#/7", 59 + 12 + 12);
+        KeyMapping.put("e##/7", 59 + 12 + 12);
+        KeyMapping.put("gb/7", 59 + 12 + 12);
+        KeyMapping.put("g/7", 58 + 12 + 12);
+        KeyMapping.put("gn/7", 58 + 12 + 12);
+        KeyMapping.put("f##/7", 58 + 12 + 12);
+        KeyMapping.put("abb/7", 58 + 12 + 12);
+        KeyMapping.put("e###/7", 58 + 12 + 12);
+        KeyMapping.put("g#/7", 61 + 12 + 12);
+        KeyMapping.put("ab/7", 61 + 12 + 12);
+        KeyMapping.put("f###/7", 61 + 12 + 12);
+        KeyMapping.put("a/7", 60 + 12 + 12);
+        KeyMapping.put("an/7", 60 + 12 + 12);
+        KeyMapping.put("g##/7", 60 + 12 + 12);
+        KeyMapping.put("bbb/7", 60 + 12 + 12);
+        KeyMapping.put("a#/7", 63 + 12 + 12);
+        KeyMapping.put("bb/7", 63 + 12 + 12);
+        KeyMapping.put("cbb/8", 63 + 12 + 12);
+        KeyMapping.put("g###/7", 63 + 12 + 12);
+        KeyMapping.put("b/7", 62 + 12 + 12);
+        KeyMapping.put("bn/7", 62 + 12 + 12);
+        KeyMapping.put("a##/7", 62 + 12 + 12);
+        KeyMapping.put("cb/8", 62 + 12 + 12);
 
         KeyMapping.put("c/8", 88);
         KeyMapping.put("cn/8", 88);
@@ -888,7 +892,8 @@ class FM_SoundPool {
             try {
                 fileDescriptor = assetManager.openFd(assetFiles.get(i));
                 soundMap.put(i, sndPool.load(fileDescriptor, 1));
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
         }
     }
 
@@ -913,7 +918,8 @@ class FM_SoundPool {
                 thread.Stop();
                 threadMap.remove(key);
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     public boolean isKeyNotPlaying(int key) {
@@ -954,16 +960,16 @@ class FM_SoundPool {
         //wrong below
         //float d = 1000f * (60.0f * time_signature_n) / (TEMPO * time_signature_d);
         if (duration.endsWith("r")) d = d * 1f;
-        if (duration.endsWith("d")) d = d *1.5f;
+        if (duration.endsWith("d")) d = d * 1.5f;
         if (duration.endsWith("t3")) d = d * 2f / 3;
 
         if (duration.endsWith("t2")) d = d * 3f / 4;
         if (duration.endsWith("t4")) d = d * 3f / 4;
 
-        if (duration.startsWith("w")) return (int) (d *  1);
-        if (duration.startsWith("h")) return (int) (d *  1 / 2f);
-        if (duration.startsWith("q")) return (int) (d *  1 / 4f);
-        if (duration.startsWith("8")) return (int) (d *  1 / 8f);
+        if (duration.startsWith("w")) return (int) (d * 1);
+        if (duration.startsWith("h")) return (int) (d * 1 / 2f);
+        if (duration.startsWith("q")) return (int) (d * 1 / 4f);
+        if (duration.startsWith("8")) return (int) (d * 1 / 8f);
         if (duration.startsWith("16")) return (int) (d * 1 / 16f);
         if (duration.startsWith("32")) return (int) (d * 1 / 32f);
         return 0;
@@ -971,7 +977,7 @@ class FM_SoundPool {
 
     public static void SleepMelodic(long duration) {
         try {
-            if (duration<2) {
+            if (duration < 2) {
                 sleep(2);
                 return;
             }
@@ -1000,41 +1006,38 @@ class FM_SoundPool {
     class PlayThread extends Thread {
         private final int key;
         private final float volume;
-        private int stop;
+        private CountDownLatch stop;
         private final boolean NextPause;
 
         public PlayThread(int key, boolean NextPause) {
             this.NextPause = NextPause;
             this.key = key;
             this.volume = 1;
-            this.stop = 0;
+            this.stop = new CountDownLatch(1);
         }
 
         public void Stop() {
-            stop = 1;
+            stop.countDown();
         }
 
         @Override
         public void run() {
             try {
                 int stream = sndPool.play(soundMap.get(key), volume, volume, 100, 0, 1);
-                while (stop == 0) sleep(2);
-                if (stop == 1) {
-                    int d = 0;
-                    int fall = FALLBACK_DURATION;
-                    if (NextPause) fall = FALLBACK_DURATION / 5;
-                    while (d < fall) {
-                        sleep(2);
-                        float p = volume - volume * d / fall;
-                        sndPool.setVolume(stream, p, p);
-                        d += 2;
-                    }
-                    sndPool.setVolume(stream, 0, 0);
-                    sndPool.stop(stream);
+                stop.await();
+                //start fallback sequence
+                int d = 0;
+                int fall = FALLBACK_DURATION;
+                if (NextPause) fall = FALLBACK_DURATION / 5;
+                while (d < fall) {
+                    sleep(2);
+                    float p = volume - volume * d / fall;
+                    sndPool.setVolume(stream, p, p);
+                    d += 2;
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                sndPool.setVolume(stream, 0, 0);
+                sndPool.stop(stream);
+            } catch (Exception ignored) { }
         }
     }
 }

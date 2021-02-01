@@ -19,9 +19,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import static android.view.MotionEvent.INVALID_POINTER_ID;
-import static java.lang.Thread.sleep;
 
 public class FM_Score extends View {
     @FM_TimeSignatureValue
@@ -79,7 +79,7 @@ public class FM_Score extends View {
     @FM_BoundingBoxType
     private int DrawBoundingBox;
 
-    private volatile boolean finishedDraw = false;
+    private CountDownLatch finishedDraw = null;
 
     public FM_Score(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -352,7 +352,7 @@ public class FM_Score extends View {
             }
         }
         canvas.restore();
-        finishedDraw = true;
+        if (finishedDraw != null) finishedDraw.countDown();
     }
 
     public int getColor() {
@@ -1168,7 +1168,7 @@ public class FM_Score extends View {
     }
 
     public void ShowScore(int measures) {
-        finishedDraw = false;
+        finishedDraw = new CountDownLatch(1);
         new Thread(() -> {
             for (int i = 0; i < StaveNotes.size(); i++) {
                 StaveNotes.get(i).setVisible(true);
@@ -1176,11 +1176,10 @@ public class FM_Score extends View {
                     StaveNotes.get(i).setVisible(false);
             }
             this.post(this::invalidate);
-            while (!finishedDraw) {
-                try {
-                    sleep(1);
-                } catch (Exception ignored) {
-                }
+            try {
+                finishedDraw.await();
+                finishedDraw = null;
+            } catch (Exception ignored) {
             }
             if (measures != 0) {
                 int i = 0;
