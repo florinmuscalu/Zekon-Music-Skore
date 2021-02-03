@@ -671,7 +671,7 @@ public class FM_Score extends View {
 
 
     public void addStaffNote(FM_BaseNote n) {
-        addStaffNote(n, FirstStaveClef);
+        addStaffNote(n, 0);
     }
 
     public void addStaffNote(FM_BaseNote n, int staff) {
