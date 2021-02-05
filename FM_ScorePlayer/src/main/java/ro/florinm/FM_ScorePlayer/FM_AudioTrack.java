@@ -878,13 +878,13 @@ class FM_SoundPool {
                 .setMaxStreams(20)
                 .build();
 
-        FM_ScorePlayer.SoundsLoaded = 0;
+        FM_ScorePlayer.getInstance(context).SoundsLoaded = 0;
         AtomicInteger loaded_count = new AtomicInteger();
         sndPool.setOnLoadCompleteListener((soundPool, sampleId, status) -> {
             if (status == 0) {
                 loaded_count.getAndIncrement();
                 float f = loaded_count.floatValue();
-                FM_ScorePlayer.SoundsLoaded = (int) ((f / 88.0f) * 100);
+                FM_ScorePlayer.getInstance(context).SoundsLoaded = (int) ((f / 88.0f) * 100);
             }
         });
         AssetFileDescriptor fileDescriptor;

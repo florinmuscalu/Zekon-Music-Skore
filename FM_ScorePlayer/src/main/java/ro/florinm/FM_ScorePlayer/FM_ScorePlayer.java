@@ -11,28 +11,37 @@ import ro.florinm.FM_Score.FM_Score;
 import static java.lang.Thread.sleep;
 
 public class FM_ScorePlayer {
+    private static FM_ScorePlayer mInstance = null;
     private FM_Audio_Song song;
     private FM_SoundPool soundPlayer;
-    static volatile int SoundsLoaded;
+    volatile int SoundsLoaded;
     private int temp_timesig_n;
     private int temp_timesig_d;
     private FM_Score score;
+
+
+    private FM_ScorePlayer() {}
     /**
      * @param context The Application's context.
      */
-
-    public FM_ScorePlayer(Context context) {
-        super();
-        this.score = null;
-        SoundsLoaded = 0;
-        temp_timesig_n = 4;
-        temp_timesig_d = 4;
-        soundPlayer = null;
-        FM_SoundPool.playing = false;
-        new Thread(() -> {
-            soundPlayer = new FM_SoundPool(context);
-            setTimeSignature(temp_timesig_n, temp_timesig_d);
-        }).start();
+    public static FM_ScorePlayer getInstance(Context context) {
+        if (mInstance == null) {
+            synchronized (FM_ScorePlayer.class) {
+                if (mInstance == null) {
+                    mInstance = new FM_ScorePlayer();
+                    mInstance.score = null;
+                    mInstance.SoundsLoaded = 0;
+                    mInstance.temp_timesig_n = 4;
+                    mInstance.temp_timesig_d = 4;
+                    mInstance.soundPlayer = null;
+                    new Thread(() -> {
+                        mInstance.soundPlayer = new FM_SoundPool(context);
+                        mInstance.setTimeSignature(mInstance.temp_timesig_n, mInstance.temp_timesig_d);
+                    }).start();
+                }
+            }
+        }
+        return mInstance;
     }
 
     public void ProgressSetScore(FM_Score score){

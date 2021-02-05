@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception ignored) {}
 
         s.LoadFromJson(obj);
-        player = new FM_ScorePlayer(getApplicationContext());
+        player = FM_ScorePlayer.getInstance(getApplicationContext());
         player.LoadFromJson(obj, false, 70);
         player.ProgressSetScore(s);
     }
@@ -564,7 +564,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             s.setVisibility(View.VISIBLE);
-            s.ShowScore(2);
+            s.ShowScore(0);
         }
         show = !show;
     }
