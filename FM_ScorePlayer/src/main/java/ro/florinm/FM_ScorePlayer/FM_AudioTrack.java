@@ -7,6 +7,7 @@ import android.media.AudioAttributes;
 import android.media.AudioFormat;
 import android.media.AudioTrack;
 import android.media.SoundPool;
+import android.os.SystemClock;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 
@@ -21,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static java.lang.Thread.sleep;
 
 class FM_AudioSubTrack implements Comparable<FM_AudioSubTrack>{
     public int track;
@@ -303,10 +302,7 @@ class FM_AudioTrack {
         //if (playing) return;
         if (output.length == 0) return;
         new Thread(() -> {
-            try {
-                while (loading) sleep(2);
-            } catch (Exception ignored) {
-            }
+            while (loading) SystemClock.sleep(2);
             AudioTrack audioTrack = new AudioTrack.Builder()
                     .setTransferMode(AudioTrack.MODE_STATIC)
                     .setPerformanceMode(AudioTrack.PERFORMANCE_MODE_LOW_LATENCY)
@@ -328,12 +324,10 @@ class FM_AudioTrack {
             float d = 0;
             int fall = FM_SoundPool.FALLBACK_DURATION;
             if (NextPause) fall = FM_SoundPool.FALLBACK_DURATION / 5;
+            float ffall = fall;
             while (d < fall) {
-                try {
-                    sleep(2);
-                } catch (Exception ignored) {
-                }
-                float p = 1 - d / fall;
+                SystemClock.sleep(2);
+                float p = 1 - (1.0f *d) / ffall;
                 audioTrack.setVolume(p);
                 d += 2;
             }
@@ -976,19 +970,15 @@ class FM_SoundPool {
     }
 
     public static void SleepMelodic(long duration) {
-        try {
-            if (duration < 2) {
-                sleep(2);
-                return;
-            }
-            long d = 0;
-            while (d < duration) {
-                if (!playing) return;
-                sleep(2);
-                d = d + 2;
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (duration < 2) {
+            SystemClock.sleep(2);
+            return;
+        }
+        long d = 0;
+        while (d < duration) {
+            if (!playing) return;
+            SystemClock.sleep(2);
+            d = d + 2;
         }
     }
 
@@ -1012,7 +1002,7 @@ class FM_SoundPool {
         public PlayThread(int key, boolean NextPause) {
             this.NextPause = NextPause;
             this.key = key;
-            this.volume = 1;
+            this.volume = 1.0f;
             this.stop = new CountDownLatch(1);
         }
 
@@ -1022,22 +1012,23 @@ class FM_SoundPool {
 
         @Override
         public void run() {
+            int stream = sndPool.play(soundMap.get(key), volume, volume, 100, 0, 1);
             try {
-                int stream = sndPool.play(soundMap.get(key), volume, volume, 100, 0, 1);
                 stop.await();
-                //start fallback sequence
-                int d = 0;
-                int fall = FALLBACK_DURATION;
-                if (NextPause) fall = FALLBACK_DURATION / 5;
-                while (d < fall) {
-                    sleep(2);
-                    float p = volume - volume * d / fall;
-                    sndPool.setVolume(stream, p, p);
-                    d += 2;
-                }
-                sndPool.setVolume(stream, 0, 0);
-                sndPool.stop(stream);
-            } catch (Exception ignored) { }
+            } catch (InterruptedException ignored) {}
+            //start fallback sequence
+            int d = 0;
+            int fall = FALLBACK_DURATION;
+            if (NextPause) fall = FALLBACK_DURATION / 5;
+            float f_fall = fall;
+            while (d < fall) {
+                SystemClock.sleep(2);
+                float p = volume - (1.0f * volume * d) / f_fall;
+                sndPool.setVolume(stream, p, p);
+                d += 2;
+            }
+            sndPool.setVolume(stream, 0, 0);
+            sndPool.stop(stream);
         }
     }
 }

@@ -1,14 +1,12 @@
 package ro.florinm.FM_ScorePlayer;
 
 import android.content.Context;
+import android.os.SystemClock;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-
 import ro.florinm.FM_Score.FM_Score;
-
-import static java.lang.Thread.sleep;
 
 public class FM_ScorePlayer {
     private static FM_ScorePlayer mInstance = null;
@@ -90,7 +88,7 @@ public class FM_ScorePlayer {
         score = null;
         new Thread(() -> {
             try {
-                while (SoundsLoaded != 100) sleep(25);
+                while (SoundsLoaded != 100) SystemClock.sleep(25);
                 soundPlayer.ClearAudioTracks();
                 String timesignature = obj.optString("timesignature", "4/4");
                 setTimeSignature(FM_Helper.getTimeSignature_n(timesignature), FM_Helper.getTimeSignature_d(timesignature));
@@ -168,9 +166,7 @@ public class FM_ScorePlayer {
                 try {
                     song.prepared.await();
                 } catch (Exception ignored) { }
-                try {
-                    sleep(200);
-                } catch (Exception ignored) { }
+                SystemClock.sleep(200);
                 PlayMelodic(song, measure_start, measure_end, notes, false, tempo);
             }).start();
         }
