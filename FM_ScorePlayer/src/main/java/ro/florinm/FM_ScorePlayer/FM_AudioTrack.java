@@ -955,10 +955,12 @@ class FM_SoundPool {
         //float d = 1000f * (60.0f * time_signature_n) / (TEMPO * time_signature_d);
         if (duration.endsWith("r")) d = d * 1f;
         if (duration.endsWith("d")) d = d * 1.5f;
-        if (duration.endsWith("t3")) d = d * 2f / 3;
+        if (duration.endsWith("t3")) d = d * 2f / 3.0f;
+        if (duration.endsWith("t5")) d = d * 4f / 5.0f;
+        if (duration.endsWith("t6")) d = d * 4f / 6.0f;
 
-        if (duration.endsWith("t2")) d = d * 3f / 4;
-        if (duration.endsWith("t4")) d = d * 3f / 4;
+        if (duration.endsWith("t2")) d = d * 3f / 4.0f;
+        if (duration.endsWith("t4")) d = d * 3f / 4.0f;
 
         if (duration.startsWith("w")) return (int) (d * 1);
         if (duration.startsWith("h")) return (int) (d * 1 / 2f);
