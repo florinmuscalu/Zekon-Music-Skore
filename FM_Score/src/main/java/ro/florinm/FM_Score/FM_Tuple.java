@@ -10,12 +10,14 @@ public class FM_Tuple {
     int index;
     List<FM_Note> n;
     int size;
+    int position;       //0 - above, 1 - below
     FM_Score score;
 
-    public FM_Tuple(FM_Score score, int size, int index) {
+    public FM_Tuple(FM_Score score, int size, int index, int position) {
         n = new ArrayList<>();
         this.size = size;
         this.index = index;
+        this.position = position;
         this.score = score;
     }
 
@@ -29,15 +31,17 @@ public class FM_Tuple {
         float StaveLineHalfWidth = FM_Const.dpTOpx(score.getContext(), 0.25f);
         int EndIndex = n.size() - 1;
         float StemLength = 2.5f;
-        x = n.get(0).startX + n.get(0).paddingLeft + n.get(0).WidthAccidental() + n.get(0).paddingNote;
-        xe = n.get(EndIndex).startX + n.get(EndIndex).paddingLeft + n.get(EndIndex).WidthAccidental() + n.get(EndIndex).paddingNote + n.get(EndIndex).WidthNote();
-        if (n.get(0).stem_up) {
-            x = x + 0.5f * score.getDistanceBetweenStaveLines();
-            xe = xe + 0.5f * score.getDistanceBetweenStaveLines();
+        x = n.get(0).Left() + n.get(0).WidthAccidental() - 0.5f * score.getDistanceBetweenStaveLines();
+        xe = n.get(EndIndex).Right() + 0.5f * score.getDistanceBetweenStaveLines();
 
-            y =  n.get(0).ys +          (n.get(0).getDisplacement() - StemLength) *        score.getDistanceBetweenStaveLines();
-            ye = n.get(EndIndex).ys +   (n.get(EndIndex).getDisplacement() - StemLength) * score.getDistanceBetweenStaveLines();
-            if (!n.get(EndIndex).stem_up) ye = y;
+        if (position == 0) {
+            if (n.get(0).stem_up) x = x + score.getDistanceBetweenStaveLines();
+            y =  n.get(0).Top();
+            if (n.get(0).Bottom() < y) y =n.get(0).Bottom();
+            ye = n.get(EndIndex).Top();
+            if (n.get(EndIndex).Bottom() < ye) ye =n.get(EndIndex).Bottom();
+            y = y + 0.5f * score.getDistanceBetweenStaveLines();
+            ye = ye + 0.5f * score.getDistanceBetweenStaveLines();
 
             if (!n.get(0).beam) {
                 if (ye > y) {
@@ -67,12 +71,14 @@ public class FM_Tuple {
                 ye = n.get(EndIndex).StemTopY;
             }
         } else {
-            x = x - 0.5f * score.getDistanceBetweenStaveLines();
-            xe = xe - 0.5f * score.getDistanceBetweenStaveLines();
+            if (!n.get(EndIndex).stem_up) xe = xe - score.getDistanceBetweenStaveLines();
 
-            y = n.get(0).ys + (n.get(0).getDisplacement() + StemLength) * score.getDistanceBetweenStaveLines();
-            ye = n.get(EndIndex).ys + (n.get(EndIndex).getDisplacement() + StemLength) * score.getDistanceBetweenStaveLines();
-            if (n.get(EndIndex).stem_up) ye = y;
+            y =  n.get(0).Top();
+            if (n.get(0).Bottom() > y) y =n.get(0).Bottom();
+            ye = n.get(EndIndex).Top();
+            if (n.get(EndIndex).Bottom() > ye) ye =n.get(EndIndex).Bottom();
+            y = y - 0.5f * score.getDistanceBetweenStaveLines();
+            ye = ye - 0.5f * score.getDistanceBetweenStaveLines();
 
             if (!n.get(0).beam) {
                 if (ye < y) {
@@ -113,7 +119,7 @@ public class FM_Tuple {
 
         Path topPath;
         if (!n.get(0).beam) {
-            if (n.get(0).stem_up) {
+            if (position == 0) {
                 canvas.drawRect(x - StaveLineHalfWidth, y, x + StaveLineHalfWidth, y - score.getDistanceBetweenStaveLines(), score.Font);
                 canvas.drawRect(xe - StaveLineHalfWidth, ye, xe + StaveLineHalfWidth, ye - score.getDistanceBetweenStaveLines(), score.Font);
             } else {
@@ -128,7 +134,7 @@ public class FM_Tuple {
         float slope = FM_Const.slope(0, x, y - score.getDistanceBetweenStaveLines(), xe, ye - score.getDistanceBetweenStaveLines());
 
         if (!n.get(0).beam) {
-            if (n.get(0).stem_up) {
+            if (position == 0) {
                 topPath = new Path();
                 topPath.reset();
                 topPath.moveTo(x, y - score.getDistanceBetweenStaveLines() + 2 * StaveLineHalfWidth);
@@ -166,7 +172,7 @@ public class FM_Tuple {
             }
         }
         //canvas.drawLine(x, y - stave.getDistanceBetweenStaveLines(), xe,ye - stave.getDistanceBetweenStaveLines() , stave.StaveFont);
-        if (n.get(0).stem_up) canvas.drawText(text, (x + xe) / 2 - w / 2, (y + ye) / 2 - 1.2f * score.getDistanceBetweenStaveLines(), score.Font);
+        if (position == 0) canvas.drawText(text, (x + xe) / 2 - w / 2, (y + ye) / 2 - 1.2f * score.getDistanceBetweenStaveLines(), score.Font);
         else canvas.drawText(text, (x + xe) / 2 - w / 2, (y + ye) / 2 + 0.8f * score.getDistanceBetweenStaveLines(), score.Font);
     }
 }

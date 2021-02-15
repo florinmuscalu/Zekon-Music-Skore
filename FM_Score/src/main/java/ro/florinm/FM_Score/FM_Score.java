@@ -929,12 +929,15 @@ public class FM_Score extends View {
     }
 
     private boolean inTuple = false;
+    private int TuplePosition = 0;
     private int currentTuple = 0;
     List<FM_BaseNote> TupleNotes;
 
-    public void BeginTuple() {
+    public void BeginTuple(String s) {
         inTuple = true;
         TupleNotes = new ArrayList<>();
+        TuplePosition = 1;
+        if (s.toLowerCase().contains("a")) TuplePosition = 0;
     }
 
     public void AddToTuple(FM_Note n) {
@@ -950,7 +953,7 @@ public class FM_Score extends View {
         for (int i = 0; i < TupleNotes.size(); i++)
             if ((TupleNotes.get(i).staff != staff) || (((FM_Note) TupleNotes.get(i)).duration != duration))
                 return;
-        FM_Tuple t = new FM_Tuple(this, TupleNotes.size(), currentTuple);
+        FM_Tuple t = new FM_Tuple(this, TupleNotes.size(), currentTuple, TuplePosition);
         currentTuple++;
         for (int i = 0; i < TupleNotes.size(); i++) {
             ((FM_Note) TupleNotes.get(i)).tuple = true;
@@ -1128,7 +1131,7 @@ public class FM_Score extends View {
 
             if (!beam1.equals(beam) && !beam1.equals("")) BeginBeam();
             if (!tie1.equals(tie) && !tie1.equals("")) BeginTie();
-            if (!tuple1.equals(tuple) && !tuple1.equals("")) BeginTuple();
+            if (!tuple1.equals(tuple) && !tuple1.equals("")) BeginTuple(tuple1);
 
             beam = beam1;
             tie = tie1;
