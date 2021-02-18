@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class FM_AudioSubTrack implements Comparable<FM_AudioSubTrack>{
@@ -302,7 +304,7 @@ class FM_AudioTrack {
         //if (playing) return;
         if (output.length == 0) return;
         new Thread(() -> {
-            while (loading) SystemClock.sleep(2);
+            while (loading) SystemClock.sleep(10);
             AudioTrack audioTrack = new AudioTrack.Builder()
                     .setTransferMode(AudioTrack.MODE_STATIC)
                     .setPerformanceMode(AudioTrack.PERFORMANCE_MODE_LOW_LATENCY)
@@ -972,16 +974,11 @@ class FM_SoundPool {
     }
 
     public static void SleepMelodic(long duration) {
-        if (duration < 2) {
-            SystemClock.sleep(2);
-            return;
-        }
-        long d = 0;
-        while (d < duration) {
-            if (!playing) return;
-            SystemClock.sleep(2);
-            d = d + 2;
-        }
+        try {
+            CountDownLatch l = new CountDownLatch(1);
+            Executors.newScheduledThreadPool(1).schedule(l::countDown, duration, TimeUnit.MILLISECONDS);
+            l.await();
+        } catch (Exception ignored) {}
     }
 
     public void StopAllSound() {
