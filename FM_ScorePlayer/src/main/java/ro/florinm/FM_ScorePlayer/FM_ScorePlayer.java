@@ -205,11 +205,11 @@ public class FM_ScorePlayer {
                             soundPlayer.playKey(n.audioInt, n.NextPause);
                         if (n.legato_start) in_legato = true;
                         if (n.legato_end) in_legato = false;
-                        FM_SoundPool.SleepMelodic(n.playDuration);
+                        FM_SoundPool.CustomDelay(n.playDuration);
                         if (!n.legato_start) soundPlayer.stopKey(n.audioInt);
                     } else {
                         n.audioT.Play(n.playDuration, n.NextPause);
-                        FM_SoundPool.SleepMelodic(n.pauseDuration);
+                        FM_SoundPool.CustomDelay(n.pauseDuration);
                     }
                 }
                 if (score != null) score.ProgressReset();
@@ -269,7 +269,7 @@ public class FM_ScorePlayer {
                     for (int i : Tracks) {
                         if (FM_SoundPool.playing) {
                             playKey(i);
-                            FM_SoundPool.SleepMelodic(d);
+                            FM_SoundPool.CustomDelay(d);
                             stopKey(i);
                         }
                     }
@@ -280,7 +280,7 @@ public class FM_ScorePlayer {
                 if (!prepare && t != null) {
                     FM_SoundPool.playing = true;
                     t.Play(d, false);
-                    FM_SoundPool.SleepMelodic(d);
+                    FM_SoundPool.CustomDelay(d);
                     FM_SoundPool.playing = false;
                 }
             }

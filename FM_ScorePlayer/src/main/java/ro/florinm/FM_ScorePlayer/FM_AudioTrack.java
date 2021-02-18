@@ -10,7 +10,6 @@ import android.media.SoundPool;
 import android.os.SystemClock;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,8 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class FM_AudioSubTrack implements Comparable<FM_AudioSubTrack>{
@@ -322,13 +319,13 @@ class FM_AudioTrack {
             audioTrack.setPlaybackHeadPosition(44);
             audioTrack.write(output, 0, output.length);
             audioTrack.play();
-            FM_SoundPool.SleepMelodic(duration);
+            FM_SoundPool.CustomDelay(duration);
             float d = 0;
             int fall = FM_SoundPool.FALLBACK_DURATION;
             if (NextPause) fall = FM_SoundPool.FALLBACK_DURATION / 5;
             float ffall = fall;
             while (d < fall) {
-                SystemClock.sleep(2);
+                FM_SoundPool.CustomDelay(2);
                 float p = 1 - (1.0f *d) / ffall;
                 audioTrack.setVolume(p);
                 d += 2;
@@ -973,12 +970,12 @@ class FM_SoundPool {
         return 0;
     }
 
-    public static void SleepMelodic(long duration) {
-        try {
-            CountDownLatch l = new CountDownLatch(1);
-            Executors.newScheduledThreadPool(1).schedule(l::countDown, duration, TimeUnit.MILLISECONDS);
-            l.await();
-        } catch (Exception ignored) {}
+    public static void CustomDelay(long duration) {
+        long current = System.nanoTime();
+        long end = current + duration * 1000000;
+        while (current < end) {
+            current = System.nanoTime();
+        }
     }
 
     public void StopAllSound() {
@@ -1021,7 +1018,7 @@ class FM_SoundPool {
             if (NextPause) fall = FALLBACK_DURATION / 5;
             float f_fall = fall;
             while (d < fall) {
-                SystemClock.sleep(2);
+                CustomDelay(2);
                 float p = volume - (1.0f * volume * d) / f_fall;
                 sndPool.setVolume(stream, p, p);
                 d += 2;
