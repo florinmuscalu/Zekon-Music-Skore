@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     String[] files = {"test.json", "furelise.json"};
-    int index = -1;
+    int index = 0;
 
     public void LoadJson(){
         FM_Score s = findViewById(R.id.stave);
