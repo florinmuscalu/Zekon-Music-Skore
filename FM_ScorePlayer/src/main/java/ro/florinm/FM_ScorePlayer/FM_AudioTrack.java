@@ -975,7 +975,7 @@ class FM_SoundPool {
         long end = current + duration * 1000000;
         while (current < end) {
             current = System.nanoTime();
-            if (!playing) return (current - start) / 1000000f;
+            if (!playing) return duration;
         }
         return (current - start) / 1000000f;
     }
