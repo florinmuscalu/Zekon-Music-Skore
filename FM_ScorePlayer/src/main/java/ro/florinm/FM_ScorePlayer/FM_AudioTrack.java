@@ -319,13 +319,13 @@ class FM_AudioTrack {
             audioTrack.setPlaybackHeadPosition(44);
             audioTrack.write(output, 0, output.length);
             audioTrack.play();
-            FM_SoundPool.CustomDelay(duration);
+            FM_SoundPool.CustomDelay(duration, false);
             float d = 0;
             float fall = FM_SoundPool.FALLBACK_DURATION;
             if (NextPause)
                 fall = fall / 5f;
             while (d < fall) {
-                d += FM_SoundPool.CustomDelay(2);
+                d += FM_SoundPool.CustomDelay(2, true);
                 float p = 1 - d / fall;
                 audioTrack.setVolume(p);
             }
@@ -969,13 +969,13 @@ class FM_SoundPool {
         return 0;
     }
 
-    public static float CustomDelay(long duration) {
+    public static float CustomDelay(long duration, boolean coolDown) {
         long current = System.nanoTime();
         long start = current;
         long end = current + duration * 1000000;
         while (current < end) {
             current = System.nanoTime();
-            if (!playing) return duration;
+            if ((!coolDown) && (!playing)) return duration;
         }
         return (current - start) / 1000000f;
     }
@@ -1018,7 +1018,7 @@ class FM_SoundPool {
             if (NextPause)
                 fall = fall / 5f;
             while (d < fall) {
-                d += CustomDelay(2);
+                d += CustomDelay(2, true);
                 float p = 1f - d / fall;
                 sndPool.setVolume(stream, p, p);
             }
