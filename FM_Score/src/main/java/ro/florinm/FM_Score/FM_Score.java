@@ -1,12 +1,14 @@
 package ro.florinm.FM_Score;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -536,10 +538,21 @@ public class FM_Score extends View {
                 mActivePointerId = INVALID_POINTER_ID;
                 if (isAClick(startX, event.getX(), startY, event.getY())) {
                     if (AllowZoomControls) {
-                        if (event.getX() > width - 110 && event.getX() < width - 10 && event.getY() > height - 110 && event.getY() < height - 10)
+                        boolean save = false;
+                        if (event.getX() > width - 110 && event.getX() < width - 10 && event.getY() > height - 110 && event.getY() < height - 10) {
                             setDistanceBetweenStaveLines(FM_Const.pxTOdp(context, _DistanceBetweenStaffLines + 1f));
-                        if (event.getX() > width - 220 && event.getX() < width - 120 && event.getY() > height - 110 && event.getY() < height - 10)
+                            save = true;
+                        }
+                        if (event.getX() > width - 220 && event.getX() < width - 120 && event.getY() > height - 110 && event.getY() < height - 10) {
                             setDistanceBetweenStaveLines(FM_Const.pxTOdp(context, _DistanceBetweenStaffLines - 1f));
+                            save = true;
+                        }
+                        if (save) {
+                            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+                            SharedPreferences.Editor editor = settings.edit();
+                            editor.putFloat("zoom_level", FM_Const.pxTOdp(context, _DistanceBetweenStaffLines));
+                            editor.apply();
+                        }
                     }
                     super.performClick();
                     return super.onTouchEvent(event);
@@ -1045,6 +1058,11 @@ public class FM_Score extends View {
 
     public void setAllowZoomControls(boolean allowZoomControls) {
         AllowZoomControls = allowZoomControls;
+        if (allowZoomControls) {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+            float d = settings.getFloat("zoom_level", FM_Const.pxTOdp(context, _DistanceBetweenStaffLines));
+            setDistanceBetweenStaveLines(d);
+        }
         invalidate();
     }
     public void setAllowZoomPan(boolean allowZoomPan) {
