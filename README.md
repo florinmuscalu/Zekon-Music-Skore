@@ -31,3 +31,6 @@ dependencies {
     <version>v1.0</version>
 </dependency>
 ```
+
+## Resources
+To learn and contribute, check out the [Wiki](https://github.com/florinmuscalu/FM_Score/wiki)
