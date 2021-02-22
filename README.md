@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-	implementation 'com.github.florinmuscalu:FM_Score:v1.0'
+	implementation 'com.github.florinmuscalu:FM_Score:0.4.6'
 }
 ```
 
