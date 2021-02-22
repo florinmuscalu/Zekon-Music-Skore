@@ -206,7 +206,7 @@ public class FM_ScorePlayer {
                         if (n.legato_start) in_legato = true;
                         if (n.legato_end) in_legato = false;
                         FM_SoundPool.CustomDelay(n.playDuration, false);
-                        if (!n.legato_start) soundPlayer.stopKey(n.audioInt);
+                        if (!n.legato_start || !FM_SoundPool.playing) soundPlayer.stopKey(n.audioInt);
                     } else {
                         n.audioT.Play(n.playDuration, n.NextPause);
                         FM_SoundPool.CustomDelay(n.pauseDuration, false);
