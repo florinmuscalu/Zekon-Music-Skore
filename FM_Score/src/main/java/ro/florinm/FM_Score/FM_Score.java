@@ -537,8 +537,8 @@ public class FM_Score extends View {
             case MotionEvent.ACTION_UP: {
                 mActivePointerId = INVALID_POINTER_ID;
                 if (isAClick(startX, event.getX(), startY, event.getY())) {
+                    boolean save = false;
                     if (AllowZoomControls) {
-                        boolean save = false;
                         if (event.getX() > width - 110 && event.getX() < width - 10 && event.getY() > height - 110 && event.getY() < height - 10) {
                             setDistanceBetweenStaveLines(FM_Const.pxTOdp(context, _DistanceBetweenStaffLines + 1f));
                             save = true;
@@ -554,7 +554,7 @@ public class FM_Score extends View {
                             editor.apply();
                         }
                     }
-                    super.performClick();
+                    if (!save) super.performClick();
                     return super.onTouchEvent(event);
                 }
                 break;
