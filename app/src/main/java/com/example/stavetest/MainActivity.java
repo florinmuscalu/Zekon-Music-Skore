@@ -553,7 +553,8 @@ public class MainActivity extends AppCompatActivity {
         int i = s.getShowBoundingBoxes();
         i = i + 1;
         if (i > 2) i = 0;
-        s.ShowBoundingBoxes(i);
+        //s.ShowBoundingBoxes(i);
+        s.setAllowZoomControls(! s.isAllowZoomControls());
     }
     boolean show = false;
     public void OnClickVisible(View v){

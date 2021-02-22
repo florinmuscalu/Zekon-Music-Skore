@@ -81,6 +81,12 @@ public class FM_Const {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
     }
 
+    public static float pxTOdp(Context context, float px) {
+        Resources r = context.getResources();
+        float tmp = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, r.getDisplayMetrics());
+        return px / tmp;
+    }
+
     public static int distanceBetweenNotes(FM_BaseNote n1, FM_BaseNote n2) {
         if (n1.staff != n2.staff) return 10;
         return (n1.note - n2.note) + ((n1.octave - n2.octave) * 7);

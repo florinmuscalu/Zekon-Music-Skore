@@ -57,7 +57,7 @@ public class FM_Score extends View {
     private boolean CenterVertical = true;
     private boolean MultiLine = false;
     private boolean AllowZoomPan = false;
-
+    private boolean AllowZoomControls = false;
     private final List<FM_BaseNote> StaveNotes = new ArrayList<>();
     private final List<FM_Tie> Ties = new ArrayList<>();
     private final List<FM_Tuple> Tuples = new ArrayList<>();
@@ -352,6 +352,22 @@ public class FM_Score extends View {
             }
         }
         canvas.restore();
+
+        if (AllowZoomControls) {
+            Paint zoomBtnFnt = new Paint();
+            zoomBtnFnt.setStrokeWidth(2);
+            zoomBtnFnt.setStyle(Paint.Style.STROKE);
+            zoomBtnFnt.setColor(android.graphics.Color.argb(150, 50, 50, 50));
+            zoomBtnFnt.setAntiAlias(true);
+            canvas.drawRoundRect(width - 110, height - 110, width - 10, height - 10, 10, 10, zoomBtnFnt);
+            canvas.drawRoundRect(width - 220, height - 110, width - 120, height - 10, 10, 10,zoomBtnFnt);
+
+            zoomBtnFnt.setColor(android.graphics.Color.argb(200, 0, 0, 0));
+            zoomBtnFnt.setStrokeWidth(5);
+            canvas.drawLine(width - 90, height - 60, width - 30, height - 60, zoomBtnFnt);
+            canvas.drawLine(width - 60, height - 90, width - 60, height - 30, zoomBtnFnt);
+            canvas.drawLine(width - 190, height - 60, width - 150, height - 60, zoomBtnFnt);
+        }
         if (finishedDraw != null) finishedDraw.countDown();
     }
 
@@ -420,8 +436,11 @@ public class FM_Score extends View {
     }
 
     public void setDistanceBetweenStaveLines(float d) {
+        if (d < 5) d = 5;
+        if (d > 20) d = 20;
         _DistanceBetweenStaffLines = FM_Const.dpTOpx(context, d);
         Font.setTextSize(FM_Const.dpTOpx(context, 5 * d));
+        this.ComputeLines();
         invalidate();
         //requestLayout();
     }
@@ -516,6 +535,12 @@ public class FM_Score extends View {
             case MotionEvent.ACTION_UP: {
                 mActivePointerId = INVALID_POINTER_ID;
                 if (isAClick(startX, event.getX(), startY, event.getY())) {
+                    if (AllowZoomControls) {
+                        if (event.getX() > width - 110 && event.getX() < width - 10 && event.getY() > height - 110 && event.getY() < height - 10)
+                            setDistanceBetweenStaveLines(FM_Const.pxTOdp(context, _DistanceBetweenStaffLines + 1f));
+                        if (event.getX() > width - 220 && event.getX() < width - 120 && event.getY() > height - 110 && event.getY() < height - 10)
+                            setDistanceBetweenStaveLines(FM_Const.pxTOdp(context, _DistanceBetweenStaffLines - 1f));
+                    }
                     super.performClick();
                     return super.onTouchEvent(event);
                 }
@@ -1014,7 +1039,14 @@ public class FM_Score extends View {
     public boolean isAllowZoomPan() {
         return AllowZoomPan;
     }
+    public boolean isAllowZoomControls() {
+        return AllowZoomControls;
+    }
 
+    public void setAllowZoomControls(boolean allowZoomControls) {
+        AllowZoomControls = allowZoomControls;
+        invalidate();
+    }
     public void setAllowZoomPan(boolean allowZoomPan) {
         AllowZoomPan = allowZoomPan;
     }
