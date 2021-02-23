@@ -31,7 +31,7 @@ class FM_AudioSubTrack implements Comparable<FM_AudioSubTrack>{
         this.duration = duration;
     }
     @Override
-    boolean equals(Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
@@ -43,7 +43,7 @@ class FM_AudioSubTrack implements Comparable<FM_AudioSubTrack>{
     }
 
     @Override
-    int compareTo(FM_AudioSubTrack f) {
+    public int compareTo(FM_AudioSubTrack f) {
         if (track > f.track || track == f.track) return 1;
         return -1;
     }
@@ -1007,7 +1007,7 @@ class FM_SoundPool {
         }
 
         @Override
-        void run() {
+        public void run() {
             int stream = sndPool.play(soundMap.get(key), 1, 1, 100, 0, 1);
             try {
                 stop.await();
