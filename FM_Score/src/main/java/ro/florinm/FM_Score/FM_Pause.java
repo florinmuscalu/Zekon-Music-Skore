@@ -54,7 +54,7 @@ public class FM_Pause extends FM_BaseNote {
         return s2;
     }
 
-    float WidthAccidental() {
+    protected float WidthAccidental() {
         return 0;
     }
     protected float WidthNoteNoStem(){

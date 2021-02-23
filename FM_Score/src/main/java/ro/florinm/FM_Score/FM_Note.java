@@ -147,19 +147,19 @@ public class FM_Note extends FM_BaseNote {
     }
 
 
-    float WidthAccidental() {
+    protected float WidthAccidental() {
         FM_Const.AdjustFont(score, FM_Const.Sharp, 2);
         return score.Font.measureText(asStringAccidental());
     }
-    float WidthNoteNoStem() {
+    protected float WidthNoteNoStem() {
         FM_Const.AdjustFont(score, asStringNote(false), 1);
         return score.Font.measureText(asStringNote(false));
     }
-    float WidthNote() {
+    protected float WidthNote() {
         FM_Const.AdjustFont(score, asStringNote(false), 1);
         return score.Font.measureText(asStringNote(stem));
     }
-    float WidthDot() {
+    protected float WidthDot() {
         FM_Const.AdjustFont(score, FM_Const.Sharp, 2);
         return score.Font.measureText(asStringDot());
     }
