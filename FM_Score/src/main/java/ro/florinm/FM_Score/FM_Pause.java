@@ -15,7 +15,7 @@ public class FM_Pause extends FM_BaseNote {
         this.color = Color;
     }
 
-    public float getDisplacement() {
+    float getDisplacement() {
         if (duration == 1 || duration == 51) return 1.0f;
         if (duration == 2 || duration == 52) return 2.0f;
         if (duration == 4 || duration == 54) return 2.0f;
@@ -26,7 +26,7 @@ public class FM_Pause extends FM_BaseNote {
         return 2.0f;
     }
 
-    public String asString() {
+    String asString() {
         String s = "";
         if (duration == 1 || duration == 51) return FM_Const.Pause_1;
         if (duration == 2 || duration == 52) return FM_Const.Pause_2;
@@ -48,13 +48,13 @@ public class FM_Pause extends FM_BaseNote {
         return s;
     }
 
-    public String asStringDot(){
+    String asStringDot(){
         String s2 = "";
         if (duration>50) s2 = " " + FM_Const.Dot;
         return s2;
     }
 
-    public float WidthAccidental() {
+    float WidthAccidental() {
         return 0;
     }
     protected float WidthNoteNoStem(){
@@ -85,7 +85,7 @@ public class FM_Pause extends FM_BaseNote {
         return bounds.top;
     }
 
-    public void DrawNote(Canvas canvas) {
+    void DrawNote(Canvas canvas) {
         if (!isVisible()) return;
         super.DrawNote(canvas);
 
@@ -94,16 +94,16 @@ public class FM_Pause extends FM_BaseNote {
         score.Font.setColor(score.getColor());
         canvas.drawText(asStringDot(),  StartX + paddingLeft + WidthAccidental() + paddingNote + WidthNote() + paddingDot, StartY1 + (getDisplacement() + 0.5f) * score.getDistanceBetweenStaveLines(), score.Font);
     }
-    public float Left(){
+    float Left(){
         return StartX + paddingLeft;
     };
-    public float Bottom() {
+    float Bottom() {
         return StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines() + BottomMargin();
     }
-    public float Right() {
+    float Right() {
         return StartX + paddingLeft + WidthAccidental() + paddingNote + WidthNote() + paddingDot + WidthDot();
     }
-    public float Top(){
+    float Top(){
         return StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines() + TopMargin();
     }
 }

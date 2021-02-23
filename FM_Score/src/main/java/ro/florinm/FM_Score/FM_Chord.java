@@ -6,22 +6,22 @@ import android.provider.ContactsContract;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FM_Chord extends FM_BaseNote {
+class FM_Chord extends FM_BaseNote {
     List<FM_BaseNote> Notes;
 
-    public FM_Chord(FM_Score Score) {
+    FM_Chord(FM_Score Score) {
         super(FM_NoteType.CHORD, Score);
         this.Notes = new ArrayList<>();
         duration = 0;
     }
 
-    public void addNote(FM_BaseNote note){
+    void addNote(FM_BaseNote note){
         Notes.add(note);
         if (FM_Const.getDurationMs(note.duration) > FM_Const.getDurationMs(duration))
             duration = note.duration;
     }
 
-    public void Compute() {
+    void Compute() {
         FM_BaseNote tmp;
         for (int i = 0; i < Notes.size() - 1; i++)
             for (int j = i + 1; j < Notes.size(); j++) {
@@ -117,12 +117,12 @@ public class FM_Chord extends FM_BaseNote {
             }
     }
 
-    public String asString() {
+    String asString() {
         return "";
     }
 
     @Override
-    public float Width() {
+    float Width() {
         int i = 0;
         float w = 0;
         float maxW = 0;
@@ -133,15 +133,15 @@ public class FM_Chord extends FM_BaseNote {
         }
         return maxW;
     }
-    public float WidthAccidental() {
+    protected float WidthAccidental() {
         return 0f;
     }
 
-    public float WidthNote() {
+    protected float WidthNote() {
         return 0f;
     }
 
-    public float WidthAllNoDot() {
+    protected float WidthAllNoDot() {
         return 0f;
     }
     protected float WidthNoteNoStem(){
@@ -152,7 +152,7 @@ public class FM_Chord extends FM_BaseNote {
     }
 
     @Override
-    public void SetDrawParameters(float x, float ys1, float ys2) {
+    protected void SetDrawParameters(float x, float ys1, float ys2) {
         StartX = x;
         StartY1 = ys1;
         StartY2 = ys2;
@@ -162,7 +162,7 @@ public class FM_Chord extends FM_BaseNote {
         }
     }
 
-    public void DrawNote(Canvas canvas) {
+    void DrawNote(Canvas canvas) {
         if (!isVisible()) return;
         for (int i = 0; i< Notes.size(); i++) {
             if (Notes.get(i).staff == 0) Notes.get(i).DrawNote(canvas);
@@ -172,26 +172,26 @@ public class FM_Chord extends FM_BaseNote {
     }
 
     @Override
-    public float getDisplacement() {
+    float getDisplacement() {
         return 0;
     }
-    public float Left(){
+    float Left(){
         float left = Notes.get(0).Left();
         for (int i = 0; i< Notes.size(); i++) if (Notes.get(i).Left() < left) left = Notes.get(i).Left();
         return left;
     };
-    public float Bottom() {
+    float Bottom() {
         float bottom = Notes.get(0).Bottom();
         for (int i = 0; i< Notes.size(); i++) if (Notes.get(i).Bottom() < bottom) bottom = Notes.get(i).Bottom();
         for (int i = 0; i< Notes.size(); i++) if (Notes.get(i).Top() < bottom) bottom = Notes.get(i).Top();
         return bottom;
     }
-    public float Right() {
+    float Right() {
         float right = Notes.get(0).Right();
         for (int i = 0; i< Notes.size(); i++) if (Notes.get(i).Right() > right) right = Notes.get(i).Right();
         return right;
     }
-    public float Top(){
+    float Top(){
         float top = Notes.get(0).Top();
         for (int i = 0; i< Notes.size(); i++) if (Notes.get(i).Top() > top) top = Notes.get(i).Top();
         for (int i = 0; i< Notes.size(); i++) if (Notes.get(i).Bottom() > top) top = Notes.get(i).Bottom();

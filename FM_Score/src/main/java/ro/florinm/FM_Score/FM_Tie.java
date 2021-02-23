@@ -5,25 +5,25 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 
-public class FM_Tie {
+class FM_Tie {
     FM_Note s, e;
     int index;
     FM_Score score;
-    public FM_Tie(FM_Score score, int index) {
+    FM_Tie(FM_Score score, int index) {
         s = null;
         e = null;
         this.score = score;
         this.index = index;
     }
 
-    public void AddStart(FM_Note s){
+    void AddStart(FM_Note s){
         this.s = s;
     }
-    public void AddEnd(FM_Note e){
+    void AddEnd(FM_Note e){
         this.e = e;
     }
 
-    public void Draw(Canvas canvas) {
+    void Draw(Canvas canvas) {
         if (!s.visible) return;
         float x = s.startX + s.paddingLeft + s.WidthAccidental() + s.paddingNote + s.WidthNote();
         float xe = e.startX + e.paddingLeft + e.WidthAccidental() + e.paddingNote;

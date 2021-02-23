@@ -6,73 +6,73 @@ import android.graphics.Rect;
 import android.util.TypedValue;
 
 public class FM_Const {
-    public static final int DEFAULT_EXTRA_PADDING = 5;
+    static final int DEFAULT_EXTRA_PADDING = 5;
     //notes
-    public static final String _1Note = "\ue0a2";
-    public static final String _2Note_up = "\ue1d3";
-    public static final String _2Note_down = "\ue1d4";
-    public static final String _4Note_up = "\ue1D5";
-    public static final String _4Note_down = "\ue1d6";
-    public static final String _8Note_up = "\ue1d7";
-    public static final String _8Note_down = "\ue1d8";
-    public static final String _16Note_up = "\ue1d9";
-    public static final String _16Note_down = "\ue1da";
-    public static final String _32Note_up = "\ue1db";
-    public static final String _32Note_down = "\ue1dc";
-    public static final String FillNote = "\ue1af";
-    public static final String EmptyNote = "\ue1b0";
+    static final String _1Note = "\ue0a2";
+    static final String _2Note_up = "\ue1d3";
+    static final String _2Note_down = "\ue1d4";
+    static final String _4Note_up = "\ue1D5";
+    static final String _4Note_down = "\ue1d6";
+    static final String _8Note_up = "\ue1d7";
+    static final String _8Note_down = "\ue1d8";
+    static final String _16Note_up = "\ue1d9";
+    static final String _16Note_down = "\ue1da";
+    static final String _32Note_up = "\ue1db";
+    static final String _32Note_down = "\ue1dc";
+    static final String FillNote = "\ue1af";
+    static final String EmptyNote = "\ue1b0";
     //public static final String FillNote = "\ue0a4";
     //public static final String EmptyNote = "\ue0a3";
 
     //clefs
-    public static final String TrebleClef = "\uD834\uDD1E";
-    public static final String BassClef = "\uD834\uDD22";
+    static final String TrebleClef = "\uD834\uDD1E";
+    static final String BassClef = "\uD834\uDD22";
 
     //parenthesis
-    public static final String ParenthesisLeft = "\ue092";
-    public static final String ParenthesisRight = "\ue093";
+    static final String ParenthesisLeft = "\ue092";
+    static final String ParenthesisRight = "\ue093";
 
     //brackets
-    public static final String Bracket = "\ue000";
+    static final String Bracket = "\ue000";
 
     //numbers
-    public static final String _2 = "\ue082";
-    public static final String _3 = "\ue083";
-    public static final String _4 = "\ue084";
-    public static final String _5 = "\ue085";
-    public static final String _6 = "\ue086";
-    public static final String _7 = "\ue087";
-    public static final String _8 = "\ue088";
+    static final String _2 = "\ue082";
+    static final String _3 = "\ue083";
+    static final String _4 = "\ue084";
+    static final String _5 = "\ue085";
+    static final String _6 = "\ue086";
+    static final String _7 = "\ue087";
+    static final String _8 = "\ue088";
 
-    public static final String _2_b = "\ue927";
-    public static final String _3_b = "\ue928";
-    public static final String _4_b = "\ue929";
+    static final String _2_b = "\ue927";
+    static final String _3_b = "\ue928";
+    static final String _4_b = "\ue929";
 
-    public static final String _3_small = "\uea54";
-    public static final String _5_small = "\uea57";
+    static final String _3_small = "\uea54";
+    static final String _5_small = "\uea57";
 
     //accidentals
-    public static final String Flat = "\ue260";
-    public static final String Natural = "\ue261";
-    public static final String Sharp = "\ue262";
-    public static final String DoubleSharp = "\ue263";
-    public static final String DoubleFlat = "\ue264";
+    static final String Flat = "\ue260";
+    static final String Natural = "\ue261";
+    static final String Sharp = "\ue262";
+    static final String DoubleSharp = "\ue263";
+    static final String DoubleFlat = "\ue264";
     //public static final String TripleSharp = "\ue265";
-    public static final String TripleSharp = "\ue262 \ue263";
+    static final String TripleSharp = "\ue262 \ue263";
 
-    public static final String TripleFlat = "\ue266";
-    public static final String Dot = "\ue1e7";
+    static final String TripleFlat = "\ue266";
+    static final String Dot = "\ue1e7";
 
     //pauses
-    public static final String Pause_1 = "\ue4e3";
-    public static final String Pause_2 = "\ue4e4";
-    public static final String Pause_4 = "\ue4e5";
-    public static final String Pause_8 = "\ue4e6";
-    public static final String Pause_16 = "\ue4e7";
-    public static final String Pause_32 = "\ue4e8";
+    static final String Pause_1 = "\ue4e3";
+    static final String Pause_2 = "\ue4e4";
+    static final String Pause_4 = "\ue4e5";
+    static final String Pause_8 = "\ue4e6";
+    static final String Pause_16 = "\ue4e7";
+    static final String Pause_32 = "\ue4e8";
 
     //Tie
-    public static final String Tie = "\ue551";
+    static final String Tie = "\ue551";
 
     //Tuplet
 
@@ -87,37 +87,37 @@ public class FM_Const {
         return px / tmp;
     }
 
-    public static int distanceBetweenNotes(FM_BaseNote n1, FM_BaseNote n2) {
+    static int distanceBetweenNotes(FM_BaseNote n1, FM_BaseNote n2) {
         if (n1.staff != n2.staff) return 10;
         return (n1.note - n2.note) + ((n1.octave - n2.octave) * 7);
     }
 
-    public static float slope(float x1, float y1, float x2, float y2) {
+    static float slope(float x1, float y1, float x2, float y2) {
         return slope(0.2f, x1, y1, x2, y2);
     }
 
-    public static float slope(float maxSlope, float x1, float y1, float x2, float y2) {
+    static float slope(float maxSlope, float x1, float y1, float x2, float y2) {
         float ret =  (y2 - y1) / (x2 - x1);
         if (ret > maxSlope) ret =  maxSlope;
         if (ret <-maxSlope) ret = -maxSlope;
         return ret;
     }
 
-    public static float getY2(float slope, float x1, float y1, float x2) {
+    static float getY2(float slope, float x1, float y1, float x2) {
         return y1 + slope * (x2 - x1);
     }
 
-    public static int keyToNote(String key) {
+    static int keyToNote(String key) {
         return keyToNote(key, 0);
     }
 
-    public static int keyCount(String key) {
+    static int keyCount(String key) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
         return s.length;
     }
 
-    public static int keyToNote(String key, int pos) {
+    static int keyToNote(String key, int pos) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
         key = s[pos];
@@ -138,18 +138,18 @@ public class FM_Const {
         return FM_NoteValue.DO;
     }
 
-    public static int keyToOctave(String key) {
+    static int keyToOctave(String key) {
         return keyToOctave(key, 0);
     }
 
-    public static int keyToOctave(String key, int pos) {
+    static int keyToOctave(String key, int pos) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
         key = s[pos];
         return Integer.parseInt(key.substring(key.length() - 1));
     }
 
-    public static int keyToDuration(String key, int pos) {
+    static int keyToDuration(String key, int pos) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
         key = s[pos];
@@ -165,10 +165,10 @@ public class FM_Const {
         if (key.equals("qr")) return FM_DurationValue.NOTE_QUARTER;
         if (key.equals("qd")) return FM_DurationValue.NOTE_QUARTER_D;
         if (key.equals("qdr")) return FM_DurationValue.NOTE_QUARTER_D;
-        if (key.equals("8")) return FM_DurationValue.NOTE_EIGHT;
-        if (key.equals("8r")) return FM_DurationValue.NOTE_EIGHT;
-        if (key.equals("8d")) return FM_DurationValue.NOTE_EIGHT_D;
-        if (key.equals("8dr")) return FM_DurationValue.NOTE_EIGHT_D;
+        if (key.equals("8")) return FM_DurationValue.NOTE_EIGHTH;
+        if (key.equals("8r")) return FM_DurationValue.NOTE_EIGHTH;
+        if (key.equals("8d")) return FM_DurationValue.NOTE_EIGHTH_D;
+        if (key.equals("8dr")) return FM_DurationValue.NOTE_EIGHTH_D;
         if (key.equals("16")) return FM_DurationValue.NOTE_SIXTEENTH;
         if (key.equals("16r")) return FM_DurationValue.NOTE_SIXTEENTH;
         if (key.equals("16d")) return FM_DurationValue.NOTE_SIXTEENTH_D;
@@ -180,7 +180,7 @@ public class FM_Const {
         return FM_DurationValue.NOTE_WHOLE;
     }
 
-    public static int keyToAccidental(String key, int pos) {
+    static int keyToAccidental(String key, int pos) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
         key = s[pos].substring(1);
@@ -196,7 +196,7 @@ public class FM_Const {
         return FM_Accidental.None;
     }
 
-    public static boolean keyToStem(String key, int pos) {
+    static boolean keyToStem(String key, int pos) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
         key = s[pos];
@@ -204,14 +204,14 @@ public class FM_Const {
         else return false;
     }
 
-    public static String keyToElement(String key, int pos) {
+    static String keyToElement(String key, int pos) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
         key = s[pos];
         return key;
     }
 
-    public static int StringToKeySignature(String s) {
+    static int StringToKeySignature(String s) {
         s = s.toLowerCase().trim();
         if (s.equals("do")) return FM_KeySignatureValue.DO;
         if (s.equals("fa")) return FM_KeySignatureValue.FA;
@@ -258,7 +258,7 @@ public class FM_Const {
         Score.Font.setTextSize(100f * height / bounds.height());
     }
 
-    public String ConvertNote(String note, @FM_NotationSystem int NotationSystem){
+    String ConvertNote(String note, @FM_NotationSystem int NotationSystem){
         note = note.toLowerCase().trim();
         int n = 0;
         if (note.equals("c") || note.equals("do") || note.equals("ha")) n = 1;
@@ -308,7 +308,7 @@ public class FM_Const {
     }
 
     @FM_TimeSignatureValue
-    public static int getTimeSignature_n(String s){
+    static int getTimeSignature_n(String s){
         int ret = FM_TimeSignatureValue.None;
         if (s.startsWith("2")) ret = FM_TimeSignatureValue._2;
         if (s.startsWith("3")) ret = FM_TimeSignatureValue._3;
@@ -321,7 +321,7 @@ public class FM_Const {
     }
 
     @FM_TimeSignatureValue
-    public static int getTimeSignature_d(String s){
+    static int getTimeSignature_d(String s){
         int ret = FM_TimeSignatureValue.None;
         if (s.endsWith("2")) ret = FM_TimeSignatureValue._2;
         if (s.endsWith("3")) ret = FM_TimeSignatureValue._3;
@@ -340,8 +340,8 @@ public class FM_Const {
         if (duration == FM_DurationValue.NOTE_HALF_D) return 3;
         if (duration == FM_DurationValue.NOTE_QUARTER) return 1;
         if (duration == FM_DurationValue.NOTE_QUARTER_D) return 1.5f;
-        if (duration == FM_DurationValue.NOTE_EIGHT) return 0.5f;
-        if (duration == FM_DurationValue.NOTE_EIGHT_D) return 0.5f + 0.25f;
+        if (duration == FM_DurationValue.NOTE_EIGHTH) return 0.5f;
+        if (duration == FM_DurationValue.NOTE_EIGHTH_D) return 0.5f + 0.25f;
         if (duration == FM_DurationValue.NOTE_SIXTEENTH) return 0.25f;
         if (duration == FM_DurationValue.NOTE_SIXTEENTH_D) return 0.25f + 1/8f;
         if (duration == FM_DurationValue.NOTE_THIRTY_SECOND) return 1/8f;

@@ -11,17 +11,17 @@ class FM_TimeSignature extends FM_BaseNote {
     @FM_TimeSignatureValue int timesig_n;
     @FM_TimeSignatureValue int timesig_d;
 
-    public FM_TimeSignature(Context context, @FM_TimeSignatureValue int timeSig_n, @FM_TimeSignatureValue int timeSig_d, FM_Score Score) {
+    FM_TimeSignature(Context context, @FM_TimeSignatureValue int timeSig_n, @FM_TimeSignatureValue int timeSig_d, FM_Score Score) {
         super(FM_NoteType.KEY_SIGNATURE, Score);
         this.timesig_n = timeSig_n;
         this.timesig_d = timeSig_d;
     }
 
-    public float getDisplacement() {
+    float getDisplacement() {
         return 0.0f;
     }
 
-    public String asString() {
+    String asString() {
         return FM_Const._4;
     }
 
@@ -41,7 +41,7 @@ class FM_TimeSignature extends FM_BaseNote {
         return 0;
     }
 
-    public void DrawNote(Canvas canvas) {
+    void DrawNote(Canvas canvas) {
         if (!isVisible()) return;
         super.DrawNote(canvas);
 
@@ -67,16 +67,16 @@ class FM_TimeSignature extends FM_BaseNote {
         if (timesig_d == FM_TimeSignatureValue._8) canvas.drawText(FM_Const._8, dx, y + 3 * score.getDistanceBetweenStaveLines(), score.Font);
     }
 
-    public float Left(){
+    float Left(){
         return StartX + paddingLeft;
     };
-    public float Bottom() {
+    float Bottom() {
         return StartY1 + 4 * score.getDistanceBetweenStaveLines();
     }
-    public float Right() {
+    float Right() {
         return StartX + Width();
     }
-    public float Top(){
+    float Top(){
         return StartY1;
     }
 

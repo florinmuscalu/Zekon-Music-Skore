@@ -24,10 +24,10 @@ public abstract class FM_BaseNote{
     protected void setPaddingDot(float p) { paddingDot = p; }
     protected float getPaddingDot(float p) { return paddingDot; }
     protected abstract float WidthDot();
-    public float Width() { return paddingLeft + WidthAccidental() + paddingNote + WidthNote() + paddingDot + WidthDot(); }
-    public float WidthNoDot() { return paddingLeft + WidthAccidental() + paddingNote + WidthNote(); }
-    public float WidthNoStem(){ return paddingLeft + WidthAccidental() + paddingNote + WidthNoteNoStem() + paddingDot + WidthDot(); }
-    public float WidthNoDotNoStem(){ return paddingLeft + WidthAccidental() + paddingNote + WidthNoteNoStem(); }
+    float Width() { return paddingLeft + WidthAccidental() + paddingNote + WidthNote() + paddingDot + WidthDot(); }
+    float WidthNoDot() { return paddingLeft + WidthAccidental() + paddingNote + WidthNote(); }
+    float WidthNoStem(){ return paddingLeft + WidthAccidental() + paddingNote + WidthNoteNoStem() + paddingDot + WidthDot(); }
+    float WidthNoDotNoStem(){ return paddingLeft + WidthAccidental() + paddingNote + WidthNoteNoStem(); }
 
     boolean visible;
     FM_Score score;
@@ -62,29 +62,18 @@ public abstract class FM_BaseNote{
         stem_up = true;
     }
 
-    public int getAccidental() {
-        return accidental;
-    }
-    public void setAccidental(@FM_Accidental int a) {
+    void setAccidental(@FM_Accidental int a) {
         accidental = a;
     }
-
-    @FM_NoteType
-    public int getType() {
-        return type;
-    }
-
     protected void setStaff(int Staff){
         this.staff = Staff;
     }
-    protected int getStaff() {return staff; }
-
     protected void SetDrawParameters(float StartX, float StartY1, float StartY2){
         this.StartX = StartX;
         this.StartY1 = StartY1;
         this.StartY2 = StartY2;
     }
-    protected void DrawNote(Canvas canvas){
+    void DrawNote(Canvas canvas){
         score.Font.setColor(color);
         if (score.getShowBoundingBoxes() == FM_BoundingBoxType.None) return;
 
@@ -103,8 +92,12 @@ public abstract class FM_BaseNote{
             canvas.drawLine(tx, by, bx, by, p);
         }
     };
-    protected abstract float getDisplacement();
-    protected abstract String asString();
+    abstract float getDisplacement();
+    abstract String asString();
+    abstract float Left();
+    abstract float Bottom();
+    abstract float Right();
+    abstract float Top();
 
     public int getColor() {
         return color;
@@ -112,19 +105,17 @@ public abstract class FM_BaseNote{
     public void setColor(int color) {
         this.color = color;
     }
-
     public boolean isVisible() {
         return visible;
     }
-
     public void setVisible(boolean visible) {
-        //if (!visible) line = -1;
-        //else line = 1;
         this.visible = visible;
     }
-
-    protected abstract float Left();
-    protected abstract float Bottom();
-    protected abstract float Right();
-    protected abstract float Top();
+    public int getAccidental() {
+        return accidental;
+    }
+    @FM_NoteType public int getType() {
+        return type;
+    }
+    protected int getStaff() {return staff; }
 }

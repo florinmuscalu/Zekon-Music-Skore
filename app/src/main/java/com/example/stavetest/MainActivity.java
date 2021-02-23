@@ -19,6 +19,7 @@ import ro.florinm.FM_Score.FM_Align;
 import ro.florinm.FM_Score.FM_BarNote;
 import ro.florinm.FM_Score.FM_BaseNote;
 import ro.florinm.FM_Score.FM_ClefValue;
+import ro.florinm.FM_Score.FM_Const;
 import ro.florinm.FM_Score.FM_DurationValue;
 import ro.florinm.FM_Score.FM_KeySignatureValue;
 import ro.florinm.FM_Score.FM_Note;
@@ -36,24 +37,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         FM_Score s = findViewById(R.id.stave);
-        s.setBackgroundColor(Color.argb(255, 255, 255, 255));
-        s.setColor(Color.argb(255, 0, 0, 0));
+        s.setBackgroundColor(Color.argb(255, 50, 255, 255));
+        s.setColor(Color.argb(255, 50, 0, 0));
+        s.setDistanceBetweenStaveLines(7f);
+        s.setDistanceBetweenStaves(10);
+        s.setDistanceBetweenRows(6);
+        s.setPaddingE(1);
+        s.setPaddingS(4);
+
         s.setFirstStaveClef(FM_ClefValue.TREBLE);
         s.setSecondStaveClef(FM_ClefValue.BASS);
         s.setTimeSignature(FM_TimeSignatureValue._4, FM_TimeSignatureValue._4);
         s.setKeySignature(FM_KeySignatureValue.DOb);
-
-        s.setDistanceBetweenStaveLines(7f);
         s.setCenterVertical(false);
-        s.setPaddingE(1);
-        s.setPaddingS(4);
         s.setStartBar(true);
         s.setEndBar(true);
         s.setMultiLine(true);
         s.setAllowZoomPan(true);
-        s.setNoteSpacing(5);
-        s.setDistanceBetweenStaves(10);
-        s.setDistanceBetweenRows(6);
         s.setShowBrace(true);
         s.setTrimLastLine(true);
         s.setAlign(FM_Align.ALIGN_LEFT_LAST_MEASURE);
@@ -143,7 +143,6 @@ public class MainActivity extends AppCompatActivity {
 
         s.addStaffNote(new FM_BarNote(s));
 
-
         chord = new ArrayList<>();
         clefs = new ArrayList<>();
         chord.add(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, false, Color.argb(255, 255, 0, 0)));
@@ -215,14 +214,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void addRandom(){
         FM_Score s = findViewById(R.id.stave);
-        s.addStaffNote(new FM_Pause(s, FM_DurationValue.NOTE_EIGHT), FM_ClefValue.TREBLE);
+        s.addStaffNote(new FM_Pause(s, FM_DurationValue.NOTE_EIGHTH), FM_ClefValue.TREBLE);
 
 
         s.BeginTie();
         s.BeginBeam();
         List<FM_BaseNote> chord = new ArrayList<>();
         List<Integer> clefs = new ArrayList<>();
-        FM_Note n = new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.Flat, FM_DurationValue.NOTE_EIGHT,  false);
+        FM_Note n = new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.Flat, FM_DurationValue.NOTE_EIGHTH,  false);
         s.AddToTie(n);
         s.AddToBeam(n);
         chord.add(n);
@@ -233,12 +232,12 @@ public class MainActivity extends AppCompatActivity {
         clefs.add(FM_ClefValue.TREBLE);
         s.addChord(chord, clefs);
 
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.Flat, FM_DurationValue.NOTE_EIGHT, true), FM_ClefValue.TREBLE);
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.Flat, FM_DurationValue.NOTE_EIGHTH, true), FM_ClefValue.TREBLE);
         s.AddToTie((FM_Note) s.getLastNote());
         s.AddToBeam((FM_Note) s.getLastNote());
         s.EndBeam();
         s.EndTie();
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.RE, 4, FM_Accidental.None, FM_DurationValue.NOTE_EIGHT,  true), FM_ClefValue.TREBLE);
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.RE, 4, FM_Accidental.None, FM_DurationValue.NOTE_EIGHTH,  true), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.MI, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE,  true), FM_ClefValue.TREBLE);
         new FM_BarNote(s);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.FA, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE,  true), FM_ClefValue.TREBLE);
@@ -279,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
         s.BeginBeam();
         s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH,  false), FM_ClefValue.TREBLE);
         s.AddToBeam((FM_Note) s.getLastNote());
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.TripleFlat, FM_DurationValue.NOTE_EIGHT,  true), FM_ClefValue.TREBLE);
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.TripleFlat, FM_DurationValue.NOTE_EIGHTH,  true), FM_ClefValue.TREBLE);
         s.AddToBeam((FM_Note) s.getLastNote());
         s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH,  true), FM_ClefValue.TREBLE);
         s.AddToBeam((FM_Note) s.getLastNote());
@@ -288,13 +287,13 @@ public class MainActivity extends AppCompatActivity {
         new FM_BarNote(s);
         s.BeginBeam();
         s.BeginTuple("a");
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.FA, 4, FM_Accidental.None, FM_DurationValue.NOTE_EIGHT, true), FM_ClefValue.TREBLE);
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.FA, 4, FM_Accidental.None, FM_DurationValue.NOTE_EIGHTH, true), FM_ClefValue.TREBLE);
         s.AddToBeam((FM_Note) s.getLastNote());
         s.AddToTuple((FM_Note) s.getLastNote());
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.Natural, FM_DurationValue.NOTE_EIGHT, true), FM_ClefValue.TREBLE);
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.Natural, FM_DurationValue.NOTE_EIGHTH, true), FM_ClefValue.TREBLE);
         s.AddToBeam((FM_Note) s.getLastNote());
         s.AddToTuple((FM_Note) s.getLastNote());
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 5, FM_Accidental.None, FM_DurationValue.NOTE_EIGHT,  true), FM_ClefValue.TREBLE);
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 5, FM_Accidental.None, FM_DurationValue.NOTE_EIGHTH,  true), FM_ClefValue.TREBLE);
         s.AddToBeam((FM_Note) s.getLastNote());
         s.AddToTuple((FM_Note) s.getLastNote());
         s.EndTuple();
@@ -314,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
         s.addStaffNote(new FM_Pause(s, FM_DurationValue.NOTE_WHOLE), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Pause(s, FM_DurationValue.NOTE_HALF), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Pause(s, FM_DurationValue.NOTE_QUARTER), FM_ClefValue.TREBLE);
-        s.addStaffNote(new FM_Pause(s, FM_DurationValue.NOTE_EIGHT), FM_ClefValue.TREBLE);
+        s.addStaffNote(new FM_Pause(s, FM_DurationValue.NOTE_EIGHTH), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Pause(s, FM_DurationValue.NOTE_SIXTEENTH), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Pause(s, FM_DurationValue.NOTE_THIRTY_SECOND), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Pause(s, FM_DurationValue.NOTE_QUARTER), FM_ClefValue.BASS);
@@ -326,16 +325,16 @@ public class MainActivity extends AppCompatActivity {
         s.addStaffNote(new FM_Note(s, FM_NoteValue.FA, 4, FM_Accidental.None, FM_DurationValue.NOTE_QUARTER,  true), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_QUARTER_D,  true), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_BarNote(s), FM_ClefValue.TREBLE);
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.None, FM_DurationValue.NOTE_EIGHT,  true), FM_ClefValue.TREBLE);
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_EIGHT_D,  true), FM_ClefValue.TREBLE);
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.None, FM_DurationValue.NOTE_EIGHTH,  true), FM_ClefValue.TREBLE);
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_EIGHTH_D,  true), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 5, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH,  true), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.RE, 5, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH_D,  true), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.MI, 5, FM_Accidental.None, FM_DurationValue.NOTE_THIRTY_SECOND,  true), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.FA, 5, FM_Accidental.None, FM_DurationValue.NOTE_THIRTY_SECOND_D,  true), FM_ClefValue.TREBLE);
 
 
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.None, FM_DurationValue.NOTE_EIGHT,  true), FM_ClefValue.TREBLE);
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_EIGHT_D,  true), FM_ClefValue.TREBLE);
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.None, FM_DurationValue.NOTE_EIGHTH,  true), FM_ClefValue.TREBLE);
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_EIGHTH_D,  true), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 5, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH,  true), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.RE, 5, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH_D,  true), FM_ClefValue.TREBLE);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.MI, 5, FM_Accidental.None, FM_DurationValue.NOTE_THIRTY_SECOND,  true), FM_ClefValue.TREBLE);
@@ -346,7 +345,7 @@ public class MainActivity extends AppCompatActivity {
         s.addStaffNote(new FM_Pause(s, FM_DurationValue.NOTE_WHOLE), FM_ClefValue.BASS);
         s.addStaffNote(new FM_Pause(s, FM_DurationValue.NOTE_HALF), FM_ClefValue.BASS);
         s.addStaffNote(new FM_Pause(s, FM_DurationValue.NOTE_QUARTER), FM_ClefValue.BASS);
-        s.addStaffNote(new FM_Pause(s, FM_DurationValue.NOTE_EIGHT), FM_ClefValue.BASS);
+        s.addStaffNote(new FM_Pause(s, FM_DurationValue.NOTE_EIGHTH), FM_ClefValue.BASS);
         s.addStaffNote(new FM_Pause(s, FM_DurationValue.NOTE_SIXTEENTH), FM_ClefValue.BASS);
         s.addStaffNote(new FM_Pause(s, FM_DurationValue.NOTE_THIRTY_SECOND), FM_ClefValue.BASS);
         s.addStaffNote(new FM_BarNote(s), FM_ClefValue.BASS);
@@ -357,8 +356,8 @@ public class MainActivity extends AppCompatActivity {
         s.addStaffNote(new FM_Note(s, FM_NoteValue.FA, 3, FM_Accidental.None, FM_DurationValue.NOTE_QUARTER,  true), FM_ClefValue.BASS);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.SOL, 3, FM_Accidental.None, FM_DurationValue.NOTE_QUARTER_D,  true), FM_ClefValue.BASS);
         s.addStaffNote(new FM_BarNote(s), FM_ClefValue.BASS);
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.LA, 3, FM_Accidental.None, FM_DurationValue.NOTE_EIGHT,  true), FM_ClefValue.BASS);
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 3, FM_Accidental.None, FM_DurationValue.NOTE_EIGHT_D,  true), FM_ClefValue.BASS);
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.LA, 3, FM_Accidental.None, FM_DurationValue.NOTE_EIGHTH,  true), FM_ClefValue.BASS);
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.SI, 3, FM_Accidental.None, FM_DurationValue.NOTE_EIGHTH_D,  true), FM_ClefValue.BASS);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 3, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH,  true), FM_ClefValue.BASS);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.RE, 3, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH_D,  true), FM_ClefValue.BASS);
         s.addStaffNote(new FM_Note(s, FM_NoteValue.MI, 3, FM_Accidental.None, FM_DurationValue.NOTE_THIRTY_SECOND,  true), FM_ClefValue.BASS);
@@ -374,7 +373,7 @@ public class MainActivity extends AppCompatActivity {
         s.EndTie();
 
         s.BeginTie();
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 5, FM_Accidental.None, FM_DurationValue.NOTE_EIGHT,  false), FM_ClefValue.TREBLE);
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 5, FM_Accidental.None, FM_DurationValue.NOTE_EIGHTH,  false), FM_ClefValue.TREBLE);
         s.AddToTie((FM_Note) s.getLastNote());
         s.addStaffNote(new FM_Note(s, FM_NoteValue.DO, 5, FM_Accidental.None, FM_DurationValue.NOTE_QUARTER,  false), FM_ClefValue.TREBLE);
         s.AddToTie((FM_Note) s.getLastNote());
@@ -383,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
         s.addStaffNote(new FM_BarNote(s));
 
         s.BeginBeam();
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.RE, 4, FM_Accidental.None, FM_DurationValue.NOTE_EIGHT,  true), FM_ClefValue.TREBLE);
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.RE, 4, FM_Accidental.None, FM_DurationValue.NOTE_EIGHTH,  true), FM_ClefValue.TREBLE);
         s.AddToBeam((FM_Note) s.getLastNote());
         s.addStaffNote(new FM_Note(s, FM_NoteValue.MI, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH,  true), FM_ClefValue.TREBLE);
         s.AddToBeam((FM_Note) s.getLastNote());
@@ -403,7 +402,7 @@ public class MainActivity extends AppCompatActivity {
         s.addStaffNote(new FM_BarNote(s), FM_ClefValue.BASS);
 
         s.BeginBeam();
-        s.addStaffNote(new FM_Note(s, FM_NoteValue.RE, 4, FM_Accidental.None, FM_DurationValue.NOTE_EIGHT,  false), FM_ClefValue.TREBLE);
+        s.addStaffNote(new FM_Note(s, FM_NoteValue.RE, 4, FM_Accidental.None, FM_DurationValue.NOTE_EIGHTH,  false), FM_ClefValue.TREBLE);
         s.AddToBeam((FM_Note) s.getLastNote());
         s.addStaffNote(new FM_Note(s, FM_NoteValue.MI, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH,  false), FM_ClefValue.TREBLE);
         s.AddToBeam((FM_Note) s.getLastNote());

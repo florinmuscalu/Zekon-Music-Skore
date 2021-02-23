@@ -6,14 +6,14 @@ import android.graphics.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FM_Tuple {
+class FM_Tuple {
     int index;
     List<FM_Note> n;
     int size;
     int position;       //0 - above, 1 - below
     FM_Score score;
 
-    public FM_Tuple(FM_Score score, int size, int index, int position) {
+    FM_Tuple(FM_Score score, int size, int index, int position) {
         n = new ArrayList<>();
         this.size = size;
         this.index = index;
@@ -21,11 +21,11 @@ public class FM_Tuple {
         this.score = score;
     }
 
-    public void AddNote(FM_Note n) {
+    void AddNote(FM_Note n) {
         this.n.add(n);
     }
 
-    public void Draw(Canvas canvas) {
+    void Draw(Canvas canvas) {
         if (!n.get(0).visible) return;
         float x, xe, y, ye;
         float StaveLineHalfWidth = FM_Const.dpTOpx(score.getContext(), 0.25f);

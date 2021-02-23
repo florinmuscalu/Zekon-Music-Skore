@@ -3,7 +3,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -228,7 +227,7 @@ public class FM_Score extends View {
     }
 
     @Override
-    public void onSizeChanged(int width, int height, int old_width, int old_height) {
+    protected void onSizeChanged(int width, int height, int old_width, int old_height) {
         super.onSizeChanged(width, height, old_width, old_height);
         this.width = width;
         this.height = height;
@@ -765,7 +764,7 @@ public class FM_Score extends View {
         for (int i = 0; i < StaveNotes.size(); i++) {
             StaveNotes.get(i).setVisible(true);
             if (StaveNotes.get(i) instanceof FM_BarNote)
-                ((FM_BarNote) StaveNotes.get(i)).lineend = false;
+                ((FM_BarNote) StaveNotes.get(i)).lineEnd = false;
         }
 
         if (MultiLine && Align == FM_Align.ALIGN_LEFT_NOTES) {
@@ -775,7 +774,7 @@ public class FM_Score extends View {
                 float w = StaveNotes.get(i).Width() + NoteSpacing;
                 if (X + w > endX) {
                     if (last_note instanceof FM_BarNote) {
-                        ((FM_BarNote) last_note).lineend = true;
+                        ((FM_BarNote) last_note).lineEnd = true;
                         last_note.setVisible(false);
                     }
                     l++;
@@ -793,7 +792,7 @@ public class FM_Score extends View {
             }
             //If last note is a bar, hide it
             if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote) {
-                ((FM_BarNote) StaveNotes.get(StaveNotes.size() - 1)).lineend = true;
+                ((FM_BarNote) StaveNotes.get(StaveNotes.size() - 1)).lineEnd = true;
                 StaveNotes.get(StaveNotes.size() - 1).setVisible(false);
             }
         }
@@ -819,7 +818,7 @@ public class FM_Score extends View {
                     bar_cnt = 0;
                     i = last_bar;
                     StaveNotes.get(last_bar).setVisible(false);
-                    ((FM_BarNote) StaveNotes.get(last_bar)).lineend = true;
+                    ((FM_BarNote) StaveNotes.get(last_bar)).lineEnd = true;
                     continue;
                 }
                 if (StaffCount == FM_StaffCount._2)
@@ -831,7 +830,7 @@ public class FM_Score extends View {
             }
             //If last note is a bar, hide it
             if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote) {
-                ((FM_BarNote) StaveNotes.get(StaveNotes.size() - 1)).lineend = true;
+                ((FM_BarNote) StaveNotes.get(StaveNotes.size() - 1)).lineEnd = true;
                 StaveNotes.get(StaveNotes.size() - 1).setVisible(false);
             }
         }
@@ -839,7 +838,7 @@ public class FM_Score extends View {
         if (!MultiLine) {
             //If last note is a bar, hide it
             if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote) {
-                ((FM_BarNote) StaveNotes.get(StaveNotes.size() - 1)).lineend = true;
+                ((FM_BarNote) StaveNotes.get(StaveNotes.size() - 1)).lineEnd = true;
                 StaveNotes.get(StaveNotes.size() - 1).setVisible(false);
             }
         }
@@ -1225,7 +1224,7 @@ public class FM_Score extends View {
         new Thread(() -> {
             for (int i = 0; i < StaveNotes.size(); i++) {
                 StaveNotes.get(i).setVisible(true);
-                if (StaveNotes.get(i) instanceof FM_BarNote && ((FM_BarNote) StaveNotes.get(i)).lineend)
+                if (StaveNotes.get(i) instanceof FM_BarNote && ((FM_BarNote) StaveNotes.get(i)).lineEnd)
                     StaveNotes.get(i).setVisible(false);
             }
             this.post(this::invalidate);

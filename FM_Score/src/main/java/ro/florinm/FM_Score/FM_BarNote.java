@@ -3,26 +3,22 @@ package ro.florinm.FM_Score;
 import android.graphics.Canvas;
 
 public class FM_BarNote extends FM_BaseNote {
-    boolean lineend = false;        //set it to true if it is a line-end bar
-
+    protected boolean lineEnd = false;        //set it to true if it is a line-end bar
     public FM_BarNote(FM_Score score) {
         super(FM_NoteType.BAR, score);
     }
-
     public FM_BarNote(FM_Score score, int Color) {
         super(FM_NoteType.BAR, score);
         this.color = Color;
 
     }
 
-    public float getDisplacement() {
+    float getDisplacement() {
         return 0.0f;
     }
-
-    public String asString() {
+    String asString() {
         return "";
     }
-
     protected float WidthAccidental(){
         return 0;
     }
@@ -30,7 +26,6 @@ public class FM_BarNote extends FM_BaseNote {
     protected float WidthNoteNoStem() {
         return FM_Const.dpTOpx(score.getContext(),1);
     }
-
     @Override
     protected float WidthNote(){
         return WidthNoteNoStem();
@@ -38,8 +33,7 @@ public class FM_BarNote extends FM_BaseNote {
     protected float WidthDot() {
         return 0;
     }
-
-    public void DrawNote(Canvas canvas) {
+    void DrawNote(Canvas canvas) {
         if (!isVisible()) return;
         super.DrawNote(canvas);
         float BarYs = StartY1;
@@ -49,17 +43,16 @@ public class FM_BarNote extends FM_BaseNote {
         canvas.drawRect(StartX + paddingLeft, BarYs, StartX + paddingLeft + FM_Const.dpTOpx(score.getContext(),1), BarYe, score.Font);
         score.Font.setColor(score.getColor());
     }
-
-    public float Left(){
+    float Left(){
         return StartX;
     };
-    public float Bottom() {
+    float Bottom() {
         return StartY1;
     }
-    public float Right() {
+    float Right() {
         return StartX + paddingLeft + WidthNote();
     }
-    public float Top(){
+    float Top(){
         if (StartY2 == 0)
             return StartY1 + 4 * score.getDistanceBetweenStaveLines();
         return StartY2 + 4 * score.getDistanceBetweenStaveLines();

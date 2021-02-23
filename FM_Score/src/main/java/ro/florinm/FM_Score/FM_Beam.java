@@ -6,22 +6,22 @@ import android.graphics.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FM_Beam {
+class FM_Beam {
     int index;
     List<FM_Note> n;
     FM_Score score;
 
-    public FM_Beam(FM_Score score, int index) {
+    FM_Beam(FM_Score score, int index) {
         n = new ArrayList<>();
         this.index = index;
         this.score = score;
     }
 
-    public void AddNote(FM_Note n) {
+    void AddNote(FM_Note n) {
         this.n.add(n);
     }
 
-    public void Draw(Canvas canvas) {
+    void Draw(Canvas canvas) {
         if (!n.get(0).visible) return;
         float x, xe, y, ye;
         int EndIndex = n.size() - 1;

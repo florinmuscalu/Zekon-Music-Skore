@@ -16,7 +16,7 @@ class FM_KeySignature extends FM_BaseNote {
     List<Float> displacement = new ArrayList<>();
     List<Integer> accidental = new ArrayList<>();
 
-    public FM_KeySignature(Context context, @FM_ClefValue int clef, @FM_KeySignatureValue int key, FM_Score Score) {
+    FM_KeySignature(Context context, @FM_ClefValue int clef, @FM_KeySignatureValue int key, FM_Score Score) {
         super(FM_NoteType.KEY_SIGNATURE, Score);
         this.value = key;
         this.clef = clef;
@@ -90,11 +90,11 @@ class FM_KeySignature extends FM_BaseNote {
     }
 
 
-    public float getDisplacement() {
+    float getDisplacement() {
         return 0.0f;
     }
 
-    public String asString() {
+    String asString() {
         String s = "";
         for (int i = 0; i < accidental.size(); i++) {
             if (accidental.get(i) == FM_Accidental.Sharp) s = s + FM_Const.Sharp;
@@ -119,7 +119,7 @@ class FM_KeySignature extends FM_BaseNote {
         return 0;
     }
 
-    public void DrawNote(Canvas canvas) {
+    void DrawNote(Canvas canvas) {
         if (!isVisible()) return;
         super.DrawNote(canvas);
 
@@ -140,10 +140,10 @@ class FM_KeySignature extends FM_BaseNote {
         }
     }
 
-    public float Left(){
+    float Left(){
         return StartX + paddingLeft;
     };
-    public float Bottom() {
+    float Bottom() {
         float dy = 0;
         float maxdy = -100000;
         for (int i = 0; i < accidental.size(); i++) {
@@ -153,10 +153,10 @@ class FM_KeySignature extends FM_BaseNote {
         }
         return maxdy + Height();
     }
-    public float Right() {
+    float Right() {
         return StartX + Width();
     }
-    public float Top(){
+    float Top(){
         float mindy = Bottom();
         float dy = 0;
         for (int i = 0; i < accidental.size(); i++) {

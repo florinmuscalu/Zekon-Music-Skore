@@ -3,29 +3,29 @@ package ro.florinm.FM_Score;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
-public class FM_Clef extends FM_BaseNote {
+class FM_Clef extends FM_BaseNote {
     @FM_ClefValue int clef;
 
-    public FM_Clef(FM_Score Score, @FM_ClefValue int clef, int staff) {
+    FM_Clef(FM_Score Score, @FM_ClefValue int clef, int staff) {
         super(FM_NoteType.CLEF, Score);
         this.clef = clef;
         this.staff = staff;
     }
 
-    public FM_Clef(FM_Score Score, @FM_ClefValue int clef, int staff, int Color) {
+    FM_Clef(FM_Score Score, @FM_ClefValue int clef, int staff, int Color) {
         super(FM_NoteType.CLEF, Score);
         this.clef = clef;
         this.staff = staff;
         this.color = Color;
     }
 
-    public float getDisplacement() {
+    float getDisplacement() {
         if (this.clef == FM_ClefValue.TREBLE) return 3.0f;
         if (this.clef == FM_ClefValue.BASS) return 1.0f;
         return 1.0f;
     }
 
-    public String asString() {
+    String asString() {
         String s = "";
         if (this.clef == FM_ClefValue.BASS) return FM_Const.BassClef;
         if (this.clef == FM_ClefValue.TREBLE) return FM_Const.TrebleClef;
@@ -70,23 +70,23 @@ public class FM_Clef extends FM_BaseNote {
         return bounds.top;
     }
 
-    public void DrawNote(Canvas canvas) {
+    void DrawNote(Canvas canvas) {
         if (!isVisible()) return;
         super.DrawNote(canvas);
         score.Font.setColor(this.color);
         FM_Const.AdjustFont(score, FM_Const._4, 2);
         canvas.drawText(asString(), StartX + paddingLeft, StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines(), score.Font);
     }
-    public float Left(){
+    float Left(){
         return StartX;
     };
-    public float Bottom() {
+    float Bottom() {
         return StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines() + BottomMargin();
     }
-    public float Right() {
+    float Right() {
         return StartX + paddingLeft + Width();
     }
-    public float Top(){
+    float Top(){
         return StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines() + TopMargin();
     }
 }

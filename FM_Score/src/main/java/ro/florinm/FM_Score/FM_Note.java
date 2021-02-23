@@ -61,11 +61,11 @@ public class FM_Note extends FM_BaseNote {
     public int getOctave() {
         return octave;
     }
-    public void setOctave(int o) {
+    void setOctave(int o) {
         octave = o;
     }
 
-    public float getDisplacement() {
+    float getDisplacement() {
         float offset = 0.0f;
         if (note.equals(FM_NoteValue.DO)) offset = 0.0f;
         if (note.equals(FM_NoteValue.RE)) offset = -0.5f;
@@ -89,7 +89,7 @@ public class FM_Note extends FM_BaseNote {
         return 0.0f;
     }
 
-    public String asStringAccidental(){
+    String asStringAccidental(){
         String s1 = "";
         String b = "";
         String e = "";
@@ -109,17 +109,17 @@ public class FM_Note extends FM_BaseNote {
         return s1;
     }
 
-    public String asStringDot(){
+    String asStringDot(){
         String s2 = "";
         if (duration>50) s2 = " " + FM_Const.Dot;
         return s2;
     }
 
-    public String asStringNote() {
+    String asStringNote() {
         return asStringNote(stem);
     }
 
-    public String asStringNote(boolean stem){
+    String asStringNote(boolean stem){
         if (duration == 1 || duration == 51) return FM_Const._1Note;
         if (stem && !beam) {
             if (stem_up) {
@@ -142,29 +142,29 @@ public class FM_Note extends FM_BaseNote {
         return "";
     }
 
-    public String asString() {
+    String asString() {
         return asStringAccidental() + asStringNote() + asStringDot();
     }
 
 
-    public float WidthAccidental() {
+    float WidthAccidental() {
         FM_Const.AdjustFont(score, FM_Const.Sharp, 2);
         return score.Font.measureText(asStringAccidental());
     }
-    public float WidthNoteNoStem() {
+    float WidthNoteNoStem() {
         FM_Const.AdjustFont(score, asStringNote(false), 1);
         return score.Font.measureText(asStringNote(false));
     }
-    public float WidthNote() {
+    float WidthNote() {
         FM_Const.AdjustFont(score, asStringNote(false), 1);
         return score.Font.measureText(asStringNote(stem));
     }
-    public float WidthDot() {
+    float WidthDot() {
         FM_Const.AdjustFont(score, FM_Const.Sharp, 2);
         return score.Font.measureText(asStringDot());
     }
 
-    public float Height(boolean all) {
+    float Height(boolean all) {
         FM_Const.AdjustFont(score, asStringNote(false), 1);
         boolean tmp_beam = beam;
         if (all) beam = false;
@@ -175,7 +175,7 @@ public class FM_Note extends FM_BaseNote {
         return bounds.height();
     }
 
-    public void DrawNote(Canvas canvas) {
+    void DrawNote(Canvas canvas) {
         if (!isVisible()) return;
         super.DrawNote(canvas);
 
@@ -231,11 +231,11 @@ public class FM_Note extends FM_BaseNote {
         score.Font.setColor(score.getColor());
     }
 
-    public float Left(){
+    float Left(){
         return  StartX + paddingLeft;
     }
 
-    public float Bottom() {
+    float Bottom() {
         float offset = getDisplacement();
         float dy = StartY1 + offset * score.getDistanceBetweenStaveLines();
         if (stem_up) {
@@ -244,13 +244,13 @@ public class FM_Note extends FM_BaseNote {
             return dy - 0.5f * score.getDistanceBetweenStaveLines();
         }
     }
-    public float Right() {
+    float Right() {
         float w1 = StartX + paddingLeft + WidthAccidental() + paddingNote + WidthNoteNoStem() + paddingDot + WidthDot();
         float w2 = StartX + paddingLeft + WidthAccidental() + paddingNote + WidthNote();
         if (w1 > w2) return w1;
         else return w2;
     }
-    public float Top(){
+    float Top(){
         float by = Bottom();
         if (stem_up) {
             return by - Height(stem);
