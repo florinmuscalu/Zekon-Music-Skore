@@ -23,15 +23,15 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class FM_AudioSubTrack implements Comparable<FM_AudioSubTrack>{
-    public int track;
-    public int duration;
-    public FM_AudioSubTrack(int track, int duration){
+    int track;
+    int duration;
+    FM_AudioSubTrack(int track, int duration){
         super();
         this.track = track;
         this.duration = duration;
     }
     @Override
-    public boolean equals(Object obj) {
+    boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
@@ -43,7 +43,7 @@ class FM_AudioSubTrack implements Comparable<FM_AudioSubTrack>{
     }
 
     @Override
-    public int compareTo(FM_AudioSubTrack f) {
+    int compareTo(FM_AudioSubTrack f) {
         if (track > f.track || track == f.track) return 1;
         return -1;
     }
@@ -56,7 +56,7 @@ class FM_AudioTrack {
     Context context;
     short[] output;
 
-    public Boolean Check(FM_AudioSubTrack track1, FM_AudioSubTrack track2, FM_AudioSubTrack track3, FM_AudioSubTrack track4, FM_AudioSubTrack track5, FM_AudioSubTrack track6, FM_AudioSubTrack track7) {
+    Boolean Check(FM_AudioSubTrack track1, FM_AudioSubTrack track2, FM_AudioSubTrack track3, FM_AudioSubTrack track4, FM_AudioSubTrack track5, FM_AudioSubTrack track6, FM_AudioSubTrack track7) {
         List<FM_AudioSubTrack> self = new ArrayList<>();
         List<FM_AudioSubTrack> checked = new ArrayList<>();
         if (this.track1 != null) self.add(this.track1);
@@ -81,7 +81,7 @@ class FM_AudioTrack {
         return true;
     }
 
-    public FM_AudioTrack(Context context, FM_AudioSubTrack track1, FM_AudioSubTrack track2, FM_AudioSubTrack track3, FM_AudioSubTrack track4, FM_AudioSubTrack track5, FM_AudioSubTrack track6, FM_AudioSubTrack track7) {
+    FM_AudioTrack(Context context, FM_AudioSubTrack track1, FM_AudioSubTrack track2, FM_AudioSubTrack track3, FM_AudioSubTrack track4, FM_AudioSubTrack track5, FM_AudioSubTrack track6, FM_AudioSubTrack track7) {
         super();
         this.context = context;
         this.track1 = track1;
@@ -297,7 +297,7 @@ class FM_AudioTrack {
         return outputArray;
     }
 
-    public void Play(long duration, boolean NextPause) {
+    void Play(long duration, boolean NextPause) {
         //if (playing) return;
         if (output.length == 0) return;
         new Thread(() -> {
@@ -336,10 +336,10 @@ class FM_AudioTrack {
 }
 
 class FM_SoundPool {
-    public static int time_signature_n;
-    public static int TIME_SIGNATURE_D;
-    public static int FALLBACK_DURATION = 250; //fallback duration for sounds
-    public static int MAX_TRACKS = 500;
+    static int time_signature_n;
+    static int TIME_SIGNATURE_D;
+    static int FALLBACK_DURATION = 250; //fallback duration for sounds
+    static int MAX_TRACKS = 500;
     private final Context context;
     ArrayList<FM_AudioTrack> Tracks = new ArrayList<>();
 
@@ -353,11 +353,11 @@ class FM_SoundPool {
             if (Tracks.get(i).AccessIndex > MAX_TRACKS) Tracks.remove(i);
     }
 
-    public void ClearAudioTracks() {
+    void ClearAudioTracks() {
         Tracks.clear();
     }
 
-    public FM_AudioTrack CreateTrack(int[] tracks, int d) {
+    FM_AudioTrack CreateTrack(int[] tracks, int d) {
         FM_AudioSubTrack[] track;
         track = new FM_AudioSubTrack[7];
         for (int i = 0; i < tracks.length; i++)
@@ -365,7 +365,7 @@ class FM_SoundPool {
         return CheckAndCreate(track);
     }
 
-    public FM_AudioTrack CreateTrack(List<Integer> tracks, String[] d, int tempo) {
+    FM_AudioTrack CreateTrack(List<Integer> tracks, String[] d, int tempo) {
         FM_AudioSubTrack[] track;
         track = new FM_AudioSubTrack[7];
         for (int i = 0; i < tracks.size(); i++)
@@ -857,7 +857,7 @@ class FM_SoundPool {
         KeyMapping.put("a###/7", 88);
     }
 
-    public FM_SoundPool(Context context) {
+    FM_SoundPool(Context context) {
         this.context = context;
         AssetManager assetManager = context.getAssets();
         threadMap = new SparseArray<>();
@@ -889,11 +889,11 @@ class FM_SoundPool {
         }
     }
 
-    public void playKey(int key) {
+    void playKey(int key) {
         playKey(key, false);
     }
 
-    public void playKey(int key, boolean NextPause) {
+    void playKey(int key, boolean NextPause) {
         if (key == -1) return;
         if (isKeyNotPlaying(key)) {
             PlayThread thread = new PlayThread(key, NextPause);
@@ -902,7 +902,7 @@ class FM_SoundPool {
         }
     }
 
-    public void stopKey(int key) {
+    void stopKey(int key) {
         if (key == -1) return;
         try {
             PlayThread thread = threadMap.get(key);
@@ -914,7 +914,7 @@ class FM_SoundPool {
         }
     }
 
-    public boolean isKeyNotPlaying(int key) {
+    boolean isKeyNotPlaying(int key) {
         return threadMap.get(key) == null;
     }
 
@@ -929,7 +929,7 @@ class FM_SoundPool {
         return Key;
     }
 
-    public Integer GetIndex(String Key) {
+    Integer GetIndex(String Key) {
         if (Key.toLowerCase().startsWith("r/")) return -1;
         Key = TranslateKey(Key.toLowerCase());
         Key = Key.replace("n", "");
@@ -940,11 +940,11 @@ class FM_SoundPool {
             return 1;
     }
 
-    public static int GetDurationFromStr(String duration) {
+    static int GetDurationFromStr(String duration) {
         return GetDurationFromStr(duration, 0, 0);
     }
 
-    public static int GetDurationFromStr(String duration, int tempo, int time_signature_d) {
+    static int GetDurationFromStr(String duration, int tempo, int time_signature_d) {
         if (tempo == 0) tempo = 60;
         if (time_signature_d == 0) time_signature_d = TIME_SIGNATURE_D;
         float d = (60.0f / tempo) * (time_signature_d / 4.0f) * 4000.0f;
@@ -969,7 +969,7 @@ class FM_SoundPool {
         return 0;
     }
 
-    public static float CustomDelay(long duration, boolean coolDown) {
+    static float CustomDelay(long duration, boolean coolDown) {
         long current = System.nanoTime();
         long start = current;
         long end = current + duration * 1000000;
@@ -980,7 +980,7 @@ class FM_SoundPool {
         return (current - start) / 1000000f;
     }
 
-    public void StopAllSound() {
+    void StopAllSound() {
         playing = false;
         for (int i = 0; i < threadMap.size(); i++) {
             PlayThread thread = threadMap.get(i);
@@ -996,18 +996,18 @@ class FM_SoundPool {
         private final CountDownLatch stop;
         private final boolean NextPause;
 
-        public PlayThread(int key, boolean NextPause) {
+        PlayThread(int key, boolean NextPause) {
             this.NextPause = NextPause;
             this.key = key;
             this.stop = new CountDownLatch(1);
         }
 
-        public void Stop() {
+        void Stop() {
             stop.countDown();
         }
 
         @Override
-        public void run() {
+        void run() {
             int stream = sndPool.play(soundMap.get(key), 1, 1, 100, 0, 1);
             try {
                 stop.await();

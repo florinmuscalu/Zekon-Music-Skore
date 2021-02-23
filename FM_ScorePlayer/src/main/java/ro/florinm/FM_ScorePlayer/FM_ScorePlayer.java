@@ -13,8 +13,8 @@ public class FM_ScorePlayer {
     private FM_Audio_Song song;
     private FM_SoundPool soundPlayer;
     volatile int SoundsLoaded;
-    private int temp_timesig_n;
-    private int temp_timesig_d;
+    private int tempTimeSig_n;
+    private int tempTimeSig_d;
     private FM_Score score;
 
 
@@ -29,12 +29,12 @@ public class FM_ScorePlayer {
                     mInstance = new FM_ScorePlayer();
                     mInstance.score = null;
                     mInstance.SoundsLoaded = 0;
-                    mInstance.temp_timesig_n = 4;
-                    mInstance.temp_timesig_d = 4;
+                    mInstance.tempTimeSig_n = 4;
+                    mInstance.tempTimeSig_d = 4;
                     mInstance.soundPlayer = null;
                     new Thread(() -> {
                         mInstance.soundPlayer = new FM_SoundPool(context);
-                        mInstance.setTimeSignature(mInstance.temp_timesig_n, mInstance.temp_timesig_d);
+                        mInstance.setTimeSignature(mInstance.tempTimeSig_n, mInstance.tempTimeSig_d);
                     }).start();
                 }
             }
@@ -61,8 +61,8 @@ public class FM_ScorePlayer {
     }
 
     public void setTimeSignature(int n, int d) {
-        temp_timesig_n = n;
-        temp_timesig_d = d;
+        tempTimeSig_n = n;
+        tempTimeSig_d = d;
         if (soundPlayer != null) {
             FM_SoundPool.time_signature_n = n;
             FM_SoundPool.TIME_SIGNATURE_D = d;
@@ -95,7 +95,7 @@ public class FM_ScorePlayer {
                 if (harmonic)
                     song = FM_Helper.generateHarmonicSong(obj.optString("keysignature", "DO"), obj.getJSONArray("keys"), tempo);
                 else
-                    song = FM_Helper.generatMelodicSong(obj.optString("keysignature", "DO"), obj.getJSONArray("keys"), tempo);
+                    song = FM_Helper.generateMelodicSong(obj.optString("keysignature", "DO"), obj.getJSONArray("keys"), tempo);
                 Prepare(tempo);
                 if (score != null) score.ProgressReset();
             } catch (Exception ignored) {}
@@ -129,7 +129,7 @@ public class FM_ScorePlayer {
     private FM_Audio_Note LoadNote(FM_Audio_Note note, int tempo) {
         FM_Audio_Note ret;
         String[] n = note.note.split(",");
-        n = FM_Helper.computeNote(song.keysignature, n);
+        n = FM_Helper.computeNote(song.keySignature, n);
         String[] d = note.duration.split(",");
         ret = note;
         List<Integer> tracks = new ArrayList<>();

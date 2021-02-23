@@ -61,7 +61,7 @@ public class FM_Score extends View {
     private boolean AllowZoomControls = false;
     private final List<FM_BaseNote> StaveNotes = new ArrayList<>();
     private final List<FM_Tie> Ties = new ArrayList<>();
-    private final List<FM_Tuple> Tuples = new ArrayList<>();
+    private final List<FM_Tuplet> Tuplets = new ArrayList<>();
     private final List<FM_Beam> Beams = new ArrayList<>();
 
     private final ScaleGestureDetector mScaleDetector;
@@ -86,7 +86,8 @@ public class FM_Score extends View {
         super(context, attrs);
         this.context = context;
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
-        Color = android.graphics.Color.argb(255, 0, 0, 0);
+        setBackgroundColor(android.graphics.Color.argb(255, 224, 211, 175));
+        Color = android.graphics.Color.argb(255, 26, 28, 33);
         setStaveLineColor(android.graphics.Color.argb(255, 50, 50, 50));
         Typeface bravura = Typeface.createFromAsset(context.getAssets(), "bravura.otf");
         Font = new Paint();
@@ -312,7 +313,7 @@ public class FM_Score extends View {
         for (int i = 0; i < StaveNotes.size(); i++) StaveNotes.get(i).DrawNote(canvas);
         for (int j = 0; j < Ties.size(); j++) Ties.get(j).Draw(canvas);
         for (int j = 0; j < Beams.size(); j++) Beams.get(j).Draw(canvas);
-        for (int j = 0; j < Tuples.size(); j++) Tuples.get(j).Draw(canvas);
+        for (int j = 0; j < Tuplets.size(); j++) Tuplets.get(j).Draw(canvas);
 
         if (progressBar > -1) {
             int line = StaveNotes.get(progressBar).line;
@@ -680,7 +681,7 @@ public class FM_Score extends View {
 
     public void clearStaffNotes() {
         StaveNotes.clear();
-        Tuples.clear();
+        Tuplets.clear();
         Beams.clear();
         Ties.clear();
         mPosX = 0;
@@ -955,38 +956,38 @@ public class FM_Score extends View {
         Ties.add(t);
     }
 
-    private boolean inTuple = false;
-    private int TuplePosition = 0;
-    private int currentTuple = 0;
-    List<FM_BaseNote> TupleNotes;
+    private boolean inTuplet = false;
+    private int TupletPosition = 0;
+    private int currentTuplet = 0;
+    List<FM_BaseNote> TupletNotes;
 
-    public void BeginTuple(String s) {
-        inTuple = true;
-        TupleNotes = new ArrayList<>();
-        TuplePosition = 1;
-        if (s.toLowerCase().contains("a")) TuplePosition = 0;
+    public void BeginTuplet(String s) {
+        inTuplet = true;
+        TupletNotes = new ArrayList<>();
+        TupletPosition = 1;
+        if (s.toLowerCase().contains("a")) TupletPosition = 0;
     }
 
-    public void AddToTuple(FM_Note n) {
-        if (inTuple) TupleNotes.add(n);
+    public void AddToTuplet(FM_Note n) {
+        if (inTuplet) TupletNotes.add(n);
     }
 
-    public void EndTuple() {
-        inTuple = false;
-        for (int i = 0; i < TupleNotes.size(); i++)
-            if (!(TupleNotes.get(i) instanceof FM_Note)) return;
-        int staff = TupleNotes.get(0).staff;
-        int duration = ((FM_Note) TupleNotes.get(0)).duration;
-        for (int i = 0; i < TupleNotes.size(); i++)
-            if ((TupleNotes.get(i).staff != staff) || (((FM_Note) TupleNotes.get(i)).duration != duration))
+    public void EndTuplet() {
+        inTuplet = false;
+        for (int i = 0; i < TupletNotes.size(); i++)
+            if (!(TupletNotes.get(i) instanceof FM_Note)) return;
+        int staff = TupletNotes.get(0).staff;
+        int duration = ((FM_Note) TupletNotes.get(0)).duration;
+        for (int i = 0; i < TupletNotes.size(); i++)
+            if ((TupletNotes.get(i).staff != staff) || (((FM_Note) TupletNotes.get(i)).duration != duration))
                 return;
-        FM_Tuple t = new FM_Tuple(this, TupleNotes.size(), currentTuple, TuplePosition);
-        currentTuple++;
-        for (int i = 0; i < TupleNotes.size(); i++) {
-            ((FM_Note) TupleNotes.get(i)).tuple = true;
-            t.AddNote((FM_Note) TupleNotes.get(i));
+        FM_Tuplet t = new FM_Tuplet(this, TupletNotes.size(), currentTuplet, TupletPosition);
+        currentTuplet++;
+        for (int i = 0; i < TupletNotes.size(); i++) {
+            ((FM_Note) TupletNotes.get(i)).tuple = true;
+            t.AddNote((FM_Note) TupletNotes.get(i));
         }
-        Tuples.add(t);
+        Tuplets.add(t);
     }
 
     private boolean inBeam = false;
@@ -1154,7 +1155,7 @@ public class FM_Score extends View {
                 if (measure_cnt != 0 && measure_cnt == measure_pos) {
                     if (!beam.equals("")) EndBeam();
                     if (!tie.equals("")) EndTie();
-                    if (!tuple.equals("")) EndTuple();
+                    if (!tuple.equals("")) EndTuplet();
                     return 0;
                 }
                 i++;
@@ -1166,11 +1167,11 @@ public class FM_Score extends View {
 
             if (!beam.equals("") && (beam1.equals("") || !beam1.equals(beam))) EndBeam();
             if (!tie.equals("") && (tie1.equals("") || !tie1.equals(tie))) EndTie();
-            if (!tuple.equals("") && (tuple1.equals("") || !tuple1.equals(tuple))) EndTuple();
+            if (!tuple.equals("") && (tuple1.equals("") || !tuple1.equals(tuple))) EndTuplet();
 
             if (!beam1.equals(beam) && !beam1.equals("")) BeginBeam();
             if (!tie1.equals(tie) && !tie1.equals("")) BeginTie();
-            if (!tuple1.equals(tuple) && !tuple1.equals("")) BeginTuple(tuple1);
+            if (!tuple1.equals(tuple) && !tuple1.equals("")) BeginTuplet(tuple1);
 
             beam = beam1;
             tie = tie1;
@@ -1183,7 +1184,7 @@ public class FM_Score extends View {
                 n = new FM_Note(this, FM_Const.keyToNote(key_list.get(i), 0), FM_Const.keyToOctave(key_list.get(i), 0), FM_Const.keyToAccidental(key_list.get(i), 0), FM_Const.keyToDuration(key_list.get(i), 1), FM_Const.keyToStem(key_list.get(i), 2));
                 if (!beam.equals("")) AddToBeam((FM_Note) n);
                 if (!tie.equals("")) AddToTie((FM_Note) n);
-                if (!tuple.equals("")) AddToTuple((FM_Note) n);
+                if (!tuple.equals("")) AddToTuplet((FM_Note) n);
             }
             String staff_str = FM_Const.keyToElement(key_list.get(i), 6);
             int staff;
@@ -1205,7 +1206,7 @@ public class FM_Score extends View {
         Staffs.clear();
         if (!beam.equals("")) EndBeam();
         if (!tie.equals("")) EndTie();
-        if (!tuple.equals("")) EndTuple();
+        if (!tuple.equals("")) EndTuplet();
         return 0;
     }
 

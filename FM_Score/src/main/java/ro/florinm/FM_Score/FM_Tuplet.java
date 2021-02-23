@@ -6,14 +6,14 @@ import android.graphics.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-class FM_Tuple {
+class FM_Tuplet {
     int index;
     List<FM_Note> n;
     int size;
     int position;       //0 - above, 1 - below
     FM_Score score;
 
-    FM_Tuple(FM_Score score, int size, int index, int position) {
+    FM_Tuplet(FM_Score score, int size, int index, int position) {
         n = new ArrayList<>();
         this.size = size;
         this.index = index;

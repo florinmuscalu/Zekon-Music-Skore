@@ -1,14 +1,14 @@
 package ro.florinm.FM_ScorePlayer;
 
-public class FM_Audio_Note {
-    public String voice;
-    public String note;
-    public String duration;
-    public long playDuration;
-    public long pauseDuration;
-    public Boolean legato_start = false;
-    public Boolean legato_end = false;
-    public FM_AudioTrack audioT = null;
-    public int audioInt = -1;
-    public boolean NextPause;
+class FM_Audio_Note {
+    String voice;
+    String note;
+    String duration;
+    long playDuration;
+    long pauseDuration;
+    Boolean legato_start = false;
+    Boolean legato_end = false;
+    FM_AudioTrack audioT = null;
+    int audioInt = -1;
+    boolean NextPause;
 }

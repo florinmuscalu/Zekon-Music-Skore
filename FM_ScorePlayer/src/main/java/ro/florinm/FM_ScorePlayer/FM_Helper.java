@@ -3,9 +3,6 @@ package ro.florinm.FM_ScorePlayer;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.util.ArrayList;
-import java.util.List;
-
 class FM_Helper {
     static String do_a = "";
     static String re_a = "";
@@ -103,10 +100,10 @@ class FM_Helper {
         return ret;
     }
 
-    static FM_Audio_Song generateHarmonicSong(String keysignature, JSONArray keys, int tempo) {
+    static FM_Audio_Song generateHarmonicSong(String keySignature, JSONArray keys, int tempo) {
         FM_Audio_Song song = new FM_Audio_Song();
         song.harmonic = true;
-        song.keysignature = keysignature;
+        song.keySignature = keySignature;
         JSONArray a = new JSONArray();
         try {
             boolean in_legato = false;
@@ -141,15 +138,15 @@ class FM_Helper {
                         int pg = tmp.getInt(8);
                         if (current_group == pg) {
                             value.put(tmp.getString(0));
-                            String triolet = "";
+                            String tuplet = "";
                             String t = tmp.getString(5).toLowerCase();
                             if (!t.equals("")) {
-                                triolet = "t";
-                                //if the tuple ends with a (above) or b (below) then default to triolet
-                                if (t.endsWith("a") || t.endsWith("b")) triolet = triolet + "3";
-                                else triolet = triolet + t.substring(t.length()-1);
+                                tuplet = "t";
+                                //if the tuple ends with a (above) or b (below) then default to tuplet
+                                if (t.endsWith("a") || t.endsWith("b")) tuplet = tuplet + "3";
+                                else tuplet = tuplet + t.substring(t.length()-1);
                             }
-                            value.put(tmp.getString(1) + triolet);
+                            value.put(tmp.getString(1) + tuplet);
                             if (!tmp.getString(3).equals("")) {
                                 if (!in_legato) value.put("legato_start");
                                 else value.put("legato_end");
@@ -173,11 +170,11 @@ class FM_Helper {
                     song.measures.add(m);
                 } else {
                     FM_Audio_Note n = new FM_Audio_Note();
-                    String note = "";
-                    String duration = "";
+                    StringBuilder note = new StringBuilder();
+                    StringBuilder duration = new StringBuilder();
                     for (int j = 0; j < b.length(); j = j + 3) {
-                        note = note + "," + b.getString(j);
-                        duration = duration + "," + b.getString(j + 1);
+                        note.append(",").append(b.getString(j));
+                        duration.append(",").append(b.getString(j + 1));
                     }
                     n.note = note.substring(1).replace("(","").replace(")","");
                     n.duration = duration.substring(1);
@@ -193,10 +190,10 @@ class FM_Helper {
     }
 
 
-    static FM_Audio_Song generatMelodicSong(String keysignature, JSONArray keys, int tempo) {
+    static FM_Audio_Song generateMelodicSong(String keySignature, JSONArray keys, int tempo) {
         FM_Audio_Song song = new FM_Audio_Song();
         song.harmonic = false;
-        song.keysignature = keysignature;
+        song.keySignature = keySignature;
         JSONArray result = new JSONArray();
         try {
             boolean in_legato = false;
@@ -231,15 +228,15 @@ class FM_Helper {
                         int pg = current_key.getInt(8);
                         if (current_group == pg) {
                             value.put(current_key.getString(0));
-                            String triolet = "";
+                            String tuplet = "";
                             String t = current_key.getString(5).toLowerCase();
                             if (!t.equals("")) {
-                                triolet = "t";
-                                //if the tuple ends with a (above) or b (below) then default to triolet
-                                if (t.endsWith("a") || t.endsWith("b")) triolet = triolet + "3";
-                                else triolet = triolet + t.substring(t.length()-1);
+                                tuplet = "t";
+                                //if the tuple ends with a (above) or b (below) then default to tuplet
+                                if (t.endsWith("a") || t.endsWith("b")) tuplet = tuplet + "3";
+                                else tuplet = tuplet + t.substring(t.length()-1);
                             }
-                            value.put(current_key.getString(1) + triolet);
+                            value.put(current_key.getString(1) + tuplet);
                             if (!current_key.getString(3).equals("")) {
                                 if (!in_legato) value.put("legato_start");
                                 else value.put("legato_end");
@@ -264,15 +261,15 @@ class FM_Helper {
                     song.measures.add(m);
                 } else {
                     FM_Audio_Note n = new FM_Audio_Note();
-                    String note = "";
-                    String duration = "";
-                    String legato = "";
-                    String voice = "";
+                    StringBuilder note = new StringBuilder();
+                    StringBuilder duration = new StringBuilder();
+                    StringBuilder legato = new StringBuilder();
+                    StringBuilder voice = new StringBuilder();
                     for (int j = 0; j < b.length(); j = j + 4) {
-                        note = note + "," + b.getString(j);
-                        duration = duration + "," + b.getString(j + 1);
-                        legato = legato + "," + b.getString(j + 2);
-                        voice = voice + "," + b.getString(j + 3);
+                        note.append(",").append(b.getString(j));
+                        duration.append(",").append(b.getString(j + 1));
+                        legato.append(",").append(b.getString(j + 2));
+                        voice.append(",").append(b.getString(j + 3));
                     }
                     n.voice = voice.substring(1);
                     n.note = note.substring(1).replace("(","").replace(")","");
@@ -290,7 +287,7 @@ class FM_Helper {
         return song;
     }
 
-    public static int getTimeSignature_n(String s){
+    static int getTimeSignature_n(String s){
         int ret = 0;
         if (s.startsWith("2")) ret = 2;
         if (s.startsWith("3")) ret = 3;
@@ -302,7 +299,7 @@ class FM_Helper {
         return ret;
     }
 
-    public static int getTimeSignature_d(String s){
+    static int getTimeSignature_d(String s){
         int ret = 0;
         if (s.endsWith("2")) ret = 2;
         if (s.endsWith("3")) ret = 3;
