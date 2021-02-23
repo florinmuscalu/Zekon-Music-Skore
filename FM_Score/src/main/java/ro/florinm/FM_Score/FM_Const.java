@@ -107,17 +107,17 @@ public class FM_Const {
         return y1 + slope * (x2 - x1);
     }
 
-    static int keyToNote(String key) {
+    public static int keyToNote(String key) {
         return keyToNote(key, 0);
     }
 
-    static int keyCount(String key) {
+    public static int keyCount(String key) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
         return s.length;
     }
 
-    static int keyToNote(String key, int pos) {
+    public static int keyToNote(String key, int pos) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
         key = s[pos];
@@ -138,11 +138,11 @@ public class FM_Const {
         return FM_NoteValue.DO;
     }
 
-    static int keyToOctave(String key) {
+    public static int keyToOctave(String key) {
         return keyToOctave(key, 0);
     }
 
-    static int keyToOctave(String key, int pos) {
+    public static int keyToOctave(String key, int pos) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
         key = s[pos];
@@ -180,7 +180,7 @@ public class FM_Const {
         return FM_DurationValue.NOTE_WHOLE;
     }
 
-    static int keyToAccidental(String key, int pos) {
+    public static int keyToAccidental(String key, int pos) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
         key = s[pos].substring(1);
@@ -210,7 +210,7 @@ public class FM_Const {
         return key;
     }
 
-    static int StringToKeySignature(String s) {
+    public static int StringToKeySignature(String s) {
         s = s.toLowerCase().trim();
         if (s.equals("do")) return FM_KeySignatureValue.DO;
         if (s.equals("fa")) return FM_KeySignatureValue.FA;
