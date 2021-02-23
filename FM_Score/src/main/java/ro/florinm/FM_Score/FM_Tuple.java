@@ -30,7 +30,6 @@ class FM_Tuple {
         float x, xe, y, ye;
         float StaveLineHalfWidth = FM_Const.dpTOpx(score.getContext(), 0.25f);
         int EndIndex = n.size() - 1;
-        float StemLength = 2.5f;
         x = n.get(0).Left() + n.get(0).WidthAccidental() - 0.5f * score.getDistanceBetweenStaveLines();
         xe = n.get(EndIndex).Right() + 0.5f * score.getDistanceBetweenStaveLines();
 

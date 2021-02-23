@@ -1,9 +1,7 @@
 package ro.florinm.FM_Score;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.RectF;
 
 class FM_Tie {
     FM_Note s, e;
@@ -32,7 +30,6 @@ class FM_Tie {
 
         Path p;
         if (x > xe && ye > y) {     //if the notes are on different lines
-            RectF oval;
             float e = this.s.WidthNote() * 2;
             if (s.stem_up) {
                 p = new Path();
@@ -40,7 +37,6 @@ class FM_Tie {
                 p.moveTo(x, y);
                 p.cubicTo(x, y, (2 * x + e) / 2, y + score.getDistanceBetweenStaveLines() / 2, x + e, y + score.getDistanceBetweenStaveLines() / 2);
                 p.cubicTo(x + e, y + score.getDistanceBetweenStaveLines() / 2, (2 * x + e) / 2, y + score.getDistanceBetweenStaveLines(), x, y);
-                canvas.drawPath(p, score.Font);
             } else {
                 y = y - score.getDistanceBetweenStaveLines();
                 p = new Path();
@@ -48,8 +44,8 @@ class FM_Tie {
                 p.moveTo(x, y);
                 p.cubicTo(x, y, (2 * x + e) / 2, y - score.getDistanceBetweenStaveLines() / 2, x + e, y - score.getDistanceBetweenStaveLines() / 2);
                 p.cubicTo(x + e, y - score.getDistanceBetweenStaveLines() / 2, (2 * x + e) / 2, y - score.getDistanceBetweenStaveLines(), x, y);
-                canvas.drawPath(p, score.Font);
             }
+            canvas.drawPath(p, score.Font);
 
             float e1 =  this.e.WidthNote() * 2;
             if (s.stem_up) {
@@ -58,7 +54,6 @@ class FM_Tie {
                 p.moveTo(xe, ye);
                 p.cubicTo(xe, ye, (2 * xe - e1) / 2, ye + score.getDistanceBetweenStaveLines() / 2, xe - e1, ye + score.getDistanceBetweenStaveLines() / 2);
                 p.cubicTo(xe - e1, ye + score.getDistanceBetweenStaveLines() / 2, (2 * xe - e1) / 2, ye + score.getDistanceBetweenStaveLines(), xe, ye);
-                canvas.drawPath(p, score.Font);
             }
             else {
                 ye = ye - score.getDistanceBetweenStaveLines();
@@ -67,7 +62,6 @@ class FM_Tie {
                 p.moveTo(xe, ye);
                 p.cubicTo(xe, ye, (2 * xe - e1) / 2, ye - score.getDistanceBetweenStaveLines() / 2, xe - e1, ye - score.getDistanceBetweenStaveLines() / 2);
                 p.cubicTo(xe - e1, ye - score.getDistanceBetweenStaveLines() / 2, (2 * xe - e1) / 2, ye - score.getDistanceBetweenStaveLines(), xe, ye);
-                canvas.drawPath(p, score.Font);
             }
         } else {        //if the notes are on the same line
             if (s.stem_up) {
@@ -85,7 +79,7 @@ class FM_Tie {
                 p.cubicTo(x, y, (xe + x) / 2, y - score.getDistanceBetweenStaveLines() / 2, xe, ye);
                 p.cubicTo(xe, ye, (xe + x) / 2, y - score.getDistanceBetweenStaveLines(), x, y);
             }
-            canvas.drawPath(p, score.Font);
         }
+        canvas.drawPath(p, score.Font);
     }
 }

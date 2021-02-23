@@ -21,7 +21,7 @@ class FM_Clef extends FM_BaseNote {
 
     float getDisplacement() {
         if (this.clef == FM_ClefValue.TREBLE) return 3.0f;
-        if (this.clef == FM_ClefValue.BASS) return 1.0f;
+        else if (this.clef == FM_ClefValue.BASS) return 1.0f;
         return 1.0f;
     }
 
@@ -79,7 +79,7 @@ class FM_Clef extends FM_BaseNote {
     }
     float Left(){
         return StartX;
-    };
+    }
     float Bottom() {
         return StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines() + BottomMargin();
     }

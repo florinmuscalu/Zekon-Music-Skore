@@ -1,7 +1,6 @@
 package ro.florinm.FM_Score;
 
 import android.graphics.Canvas;
-import android.provider.ContactsContract;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +39,7 @@ class FM_Chord extends FM_BaseNote {
             for (int j = i + 1; j < Notes.size(); j++) {
                 int distance = Math.abs(FM_Const.distanceBetweenNotes(Notes.get(i), Notes.get(j)));
                 if (distance == 0) {
-                    Notes.get(j).setAccidental(FM_Accidental.None);      //remove accidental
+                    Notes.get(j).RemoveAccidental();      //remove accidental
                     if (Notes.get(i).duration == Notes.get(j).duration && Notes.get(i).duration > 50) {
                         Notes.get(j).duration = Notes.get(j).duration - 50;
                     }
@@ -50,7 +49,7 @@ class FM_Chord extends FM_BaseNote {
         //Step 3
         //Get the maximum width without the DOT
         float maxW = 0;
-        float w = 0;
+        float w;
         for (int i = 0; i < Notes.size(); i++) {
             w = Notes.get(i).WidthNoDotNoStem() - Notes.get(i).WidthNoteNoStem() / 2f;
             if (w > maxW) maxW = w;
@@ -106,7 +105,7 @@ class FM_Chord extends FM_BaseNote {
         //Step 8
         //if any of the notes has a negative padding, move all of them right
         float minP = 0;
-        float p = 0;
+        float p;
         for (int i = 0; i < Notes.size(); i++) {
             p = Notes.get(i).paddingLeft;
             if (p < 0 && p < minP) minP = p;
@@ -124,7 +123,7 @@ class FM_Chord extends FM_BaseNote {
     @Override
     float Width() {
         int i = 0;
-        float w = 0;
+        float w;
         float maxW = 0;
         while (i < Notes.size()) {
             w = Notes.get(i).Width();
@@ -179,7 +178,7 @@ class FM_Chord extends FM_BaseNote {
         float left = Notes.get(0).Left();
         for (int i = 0; i< Notes.size(); i++) if (Notes.get(i).Left() < left) left = Notes.get(i).Left();
         return left;
-    };
+    }
     float Bottom() {
         float bottom = Notes.get(0).Bottom();
         for (int i = 0; i< Notes.size(); i++) if (Notes.get(i).Bottom() < bottom) bottom = Notes.get(i).Bottom();

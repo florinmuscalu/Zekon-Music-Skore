@@ -76,7 +76,7 @@ public class FM_Score extends View {
     float pivotPointY = 0f;
 
     private boolean TrimLastLine;
-    private int progressBar = -1;
+    private int progressBar;
     @FM_BoundingBoxType
     private int DrawBoundingBox;
 
@@ -213,17 +213,7 @@ public class FM_Score extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        try {
-            /*if (!CenterVertical) {
-                int MaxHeight = (int) getDrawHeight();
-                if (MaxHeight < height) MaxHeight = height;
-                heightMeasureSpec = MeasureSpec.makeMeasureSpec(MaxHeight, MeasureSpec.AT_MOST);
-                getLayoutParams().height = MaxHeight;
-            }*/
-        } catch (Exception ignored) {
-        } finally {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        }
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override
@@ -621,8 +611,8 @@ public class FM_Score extends View {
 
     public void setKeySignature(Integer keySignature) {
         KeySignature = keySignature;
-        FirstStaffKey = new FM_KeySignature(context, FirstStaveClef, keySignature, this);
-        SecondStaffKey = new FM_KeySignature(context, SecondStaveClef, keySignature, this);
+        FirstStaffKey = new FM_KeySignature( FirstStaveClef, keySignature, this);
+        SecondStaffKey = new FM_KeySignature(SecondStaveClef, keySignature, this);
         //invalidate();
         //requestLayout();
     }
@@ -881,7 +871,7 @@ public class FM_Score extends View {
             for (int i = 1; i <= Lines; i++) {
                 float X = getStartX(i);
                 int cnt = 0;
-                float diff, w1, we;
+                float diff, w1;
                 w1 = -1;
                 for (int j = 0; j < StaveNotes.size(); j++)
                     if (StaveNotes.get(j).line == i) {
@@ -1119,8 +1109,8 @@ public class FM_Score extends View {
     public int LoadFromJson(JSONObject obj) {
         List<String> key_list = new ArrayList<>();
         List<String> clef_list = new ArrayList<>();
-        String keysignature = "";
-        String timesignature = "";
+        String keysignature;
+        String timesignature;
         try {
             JSONArray keys = obj.getJSONArray("keys");
             for (int k = 0; k < keys.length(); k++) key_list.add(keys.getJSONArray(k).toString());

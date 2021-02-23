@@ -17,16 +17,14 @@ public abstract class FM_BaseNote{
     protected abstract float WidthAccidental();
     protected float paddingNote;
     protected void setPaddingNote(float p) { paddingNote = p; }
-    protected float getPaddingNote() { return paddingNote; }
     protected abstract float WidthNoteNoStem();
     protected abstract float WidthNote();
     protected float paddingDot;
     protected void setPaddingDot(float p) { paddingDot = p; }
-    protected float getPaddingDot(float p) { return paddingDot; }
     protected abstract float WidthDot();
     float Width() { return paddingLeft + WidthAccidental() + paddingNote + WidthNote() + paddingDot + WidthDot(); }
-    float WidthNoDot() { return paddingLeft + WidthAccidental() + paddingNote + WidthNote(); }
-    float WidthNoStem(){ return paddingLeft + WidthAccidental() + paddingNote + WidthNoteNoStem() + paddingDot + WidthDot(); }
+    //float WidthNoDot() { return paddingLeft + WidthAccidental() + paddingNote + WidthNote(); }
+    //float WidthNoStem(){ return paddingLeft + WidthAccidental() + paddingNote + WidthNoteNoStem() + paddingDot + WidthDot(); }
     float WidthNoDotNoStem(){ return paddingLeft + WidthAccidental() + paddingNote + WidthNoteNoStem(); }
 
     boolean visible;
@@ -62,11 +60,8 @@ public abstract class FM_BaseNote{
         stem_up = true;
     }
 
-    void setAccidental(@FM_Accidental int a) {
-        accidental = a;
-    }
-    protected void setStaff(int Staff){
-        this.staff = Staff;
+    void RemoveAccidental() {
+        accidental = FM_Accidental.None;
     }
     protected void SetDrawParameters(float StartX, float StartY1, float StartY2){
         this.StartX = StartX;
@@ -91,7 +86,7 @@ public abstract class FM_BaseNote{
             canvas.drawLine(tx, ty, tx, by, p);
             canvas.drawLine(tx, by, bx, by, p);
         }
-    };
+    }
     abstract float getDisplacement();
     abstract String asString();
     abstract float Left();
@@ -117,5 +112,5 @@ public abstract class FM_BaseNote{
     @FM_NoteType public int getType() {
         return type;
     }
-    protected int getStaff() {return staff; }
+    public int getStaff() {return staff; }
 }

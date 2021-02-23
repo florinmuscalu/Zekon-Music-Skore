@@ -1,9 +1,6 @@
 package ro.florinm.FM_Score;
-
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +13,7 @@ class FM_KeySignature extends FM_BaseNote {
     List<Float> displacement = new ArrayList<>();
     List<Integer> accidental = new ArrayList<>();
 
-    FM_KeySignature(Context context, @FM_ClefValue int clef, @FM_KeySignatureValue int key, FM_Score Score) {
+    FM_KeySignature(@FM_ClefValue int clef, @FM_KeySignatureValue int key, FM_Score Score) {
         super(FM_NoteType.KEY_SIGNATURE, Score);
         this.value = key;
         this.clef = clef;
@@ -95,12 +92,12 @@ class FM_KeySignature extends FM_BaseNote {
     }
 
     String asString() {
-        String s = "";
+        StringBuilder s = new StringBuilder();
         for (int i = 0; i < accidental.size(); i++) {
-            if (accidental.get(i) == FM_Accidental.Sharp) s = s + FM_Const.Sharp;
-            if (accidental.get(i) == FM_Accidental.Flat) s = s + FM_Const.Flat;
+            if (accidental.get(i) == FM_Accidental.Sharp) s.append(FM_Const.Sharp);
+            if (accidental.get(i) == FM_Accidental.Flat) s.append(FM_Const.Flat);
         }
-        return s;
+        return s.toString();
     }
 
     protected float WidthAccidental(){
@@ -142,23 +139,23 @@ class FM_KeySignature extends FM_BaseNote {
 
     float Left(){
         return StartX + paddingLeft;
-    };
+    }
     float Bottom() {
-        float dy = 0;
-        float maxdy = -100000;
+        float dy;
+        float maxDy = -100000;
         for (int i = 0; i < accidental.size(); i++) {
             float offset = displacement.get(i);
             dy = StartY1 + offset * score.getDistanceBetweenStaveLines();
-            if (dy > maxdy) maxdy = dy;
+            if (dy > maxDy) maxDy = dy;
         }
-        return maxdy + Height();
+        return maxDy + Height();
     }
     float Right() {
         return StartX + Width();
     }
     float Top(){
         float mindy = Bottom();
-        float dy = 0;
+        float dy;
         for (int i = 0; i < accidental.size(); i++) {
             float offset = displacement.get(i);
             dy = StartY1 + offset * score.getDistanceBetweenStaveLines();

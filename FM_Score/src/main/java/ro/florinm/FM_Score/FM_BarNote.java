@@ -45,7 +45,7 @@ public class FM_BarNote extends FM_BaseNote {
     }
     float Left(){
         return StartX;
-    };
+    }
     float Bottom() {
         return StartY1;
     }

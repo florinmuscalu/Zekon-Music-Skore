@@ -17,12 +17,21 @@ public class FM_Pause extends FM_BaseNote {
 
     float getDisplacement() {
         if (duration == 1 || duration == 51) return 1.0f;
-        if (duration == 2 || duration == 52) return 2.0f;
-        if (duration == 4 || duration == 54) return 2.0f;
-        if (duration == 8 || duration == 58) return 2.0f;
-        if (duration == 16 || duration == 66) return 1.0f;
-        if (duration == 32 || duration == 82) return 2.0f;
-
+        else {
+            if (duration == 2 || duration == 52) return 2.0f;
+            else {
+                if (duration == 4 || duration == 54) return 2.0f;
+                else {
+                    if (duration == 8 || duration == 58) return 2.0f;
+                    else {
+                        if (duration == 16 || duration == 66) return 1.0f;
+                        else {
+                            if (duration == 32 || duration == 82) return 2.0f;
+                        }
+                    }
+                }
+            }
+        }
         return 2.0f;
     }
 
@@ -96,7 +105,7 @@ public class FM_Pause extends FM_BaseNote {
     }
     float Left(){
         return StartX + paddingLeft;
-    };
+    }
     float Bottom() {
         return StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines() + BottomMargin();
     }

@@ -200,8 +200,7 @@ public class FM_Const {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
         key = s[pos];
-        if (key.equals("up")) return true;
-        else return false;
+        return key.equals("up");
     }
 
     static String keyToElement(String key, int pos) {

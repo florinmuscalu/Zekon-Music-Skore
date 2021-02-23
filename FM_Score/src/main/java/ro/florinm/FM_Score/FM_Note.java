@@ -190,14 +190,13 @@ public class FM_Note extends FM_BaseNote {
         dy = StartY1 + offset * score.getDistanceBetweenStaveLines();
 
         float width_accidental = WidthAccidental();
-        float width_note = WidthNote();
-        float width_note_nostem = WidthNoteNoStem();
+        float widthNoteNoStem = WidthNoteNoStem();
         if (l) {
             if (offset >= 5.0f)
                 for (int i = 5; i <= offset; i++) {
                     ly = StartY1 + i * score.getDistanceBetweenStaveLines();
                     float tX = StartX + paddingLeft + width_accidental + paddingNote - score.getDistanceBetweenStaveLines() / 3;
-                    float tXe = StartX + paddingLeft + width_accidental + paddingNote + width_note_nostem + score.getDistanceBetweenStaveLines() / 3;
+                    float tXe = StartX + paddingLeft + width_accidental + paddingNote + widthNoteNoStem + score.getDistanceBetweenStaveLines() / 3;
                     float tY = ly - FM_Const.dpTOpx(score.getContext(),0.25f);
                     float tYe = ly + FM_Const.dpTOpx(score.getContext(),0.25f);
                     canvas.drawRect(tX, tY,tXe, tYe, score.Font);
@@ -206,7 +205,7 @@ public class FM_Note extends FM_BaseNote {
                 for (int i = -1; i >= offset; i--) {
                     ly = StartY1 + i * score.getDistanceBetweenStaveLines();
                     float tX = StartX + paddingLeft + width_accidental + paddingNote - score.getDistanceBetweenStaveLines() / 3;
-                    float tXe = StartX + paddingLeft + width_accidental + paddingNote + width_note_nostem + score.getDistanceBetweenStaveLines() / 3;
+                    float tXe = StartX + paddingLeft + width_accidental + paddingNote + widthNoteNoStem + score.getDistanceBetweenStaveLines() / 3;
                     float tY = ly - FM_Const.dpTOpx(score.getContext(),0.25f);
                     float tYe = ly + FM_Const.dpTOpx(score.getContext(),0.25f);
                     canvas.drawRect(tX, tY,tXe, tYe, score.Font);
@@ -226,7 +225,7 @@ public class FM_Note extends FM_BaseNote {
                 if (stem_up) adjustDotY = -score.getDistanceBetweenStaveLines() * 0.2f;
                 else adjustDotY = +score.getDistanceBetweenStaveLines() * 0.2f;
             }
-            canvas.drawText(asStringDot(), StartX + paddingLeft + width_accidental + paddingNote + width_note_nostem + paddingDot, dy + adjustDotY, score.Font);
+            canvas.drawText(asStringDot(), StartX + paddingLeft + width_accidental + paddingNote + widthNoteNoStem + paddingDot, dy + adjustDotY, score.Font);
         }
         score.Font.setColor(score.getColor());
     }
@@ -247,8 +246,7 @@ public class FM_Note extends FM_BaseNote {
     float Right() {
         float w1 = StartX + paddingLeft + WidthAccidental() + paddingNote + WidthNoteNoStem() + paddingDot + WidthDot();
         float w2 = StartX + paddingLeft + WidthAccidental() + paddingNote + WidthNote();
-        if (w1 > w2) return w1;
-        else return w2;
+        return Math.max(w1, w2);
     }
     float Top(){
         float by = Bottom();
