@@ -1,7 +1,7 @@
 # FM Score
 
 ## What is FM Score?
-An Android Java library for rendering music notation, as well as for listening to it. Copyright (c) 2020 Florin Muscalu
+An Android Java library for rendering music notation, as well as for listening to it. Copyright (c) 2020 - 2021 Florin Muscalu
 
 ## Quick Start
 
@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-	implementation 'com.github.florinmuscalu:FM_Score:0.4.6'
+	implementation 'com.github.florinmuscalu:FM_Score:0.4.7'
 }
 ```
 
@@ -28,7 +28,7 @@ dependencies {
 <dependency>
     <groupId>com.github.florinmuscalu</groupId>
     <artifactId>FM_Score</artifactId>
-    <version>v1.0</version>
+    <version>0.4.7</version>
 </dependency>
 ```
 
