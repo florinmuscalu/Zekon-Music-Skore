@@ -948,6 +948,7 @@ class FM_SoundPool {
     static int GetDurationInMs(@FM_DurationValue int duration, String tupletStr, int tempo, int time_signature_d) {
         if (tempo == 0) tempo = 60;
         if (time_signature_d == 0) time_signature_d = TIME_SIGNATURE_D;
+        if (time_signature_d == 0) time_signature_d = 4;
         float d = (60.0f / tempo) * (time_signature_d / 4.0f) * 4000.0f;
         if (duration > 50) {
             d = d * 1.5f;

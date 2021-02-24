@@ -59,6 +59,7 @@ public class FM_Score extends View {
     private boolean MultiRow = false;
     private boolean AllowZoomPan = false;
     private boolean AllowZoomControls = false;
+    private boolean tmpZoomControls = false;
     private final List<FM_BaseNote> StaveNotes = new ArrayList<>();
     private final List<FM_Tie> Ties = new ArrayList<>();
     private final List<FM_Tuplet> Tuplets = new ArrayList<>();
@@ -1058,6 +1059,7 @@ public class FM_Score extends View {
 
     public void setAllowZoomControls(boolean allowZoomControls) {
         AllowZoomControls = allowZoomControls;
+        tmpZoomControls = allowZoomControls;
         if (allowZoomControls) {
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
             float d = settings.getFloat("zoom_level", FM_Const.pxTOdp(context, _DistanceBetweenStaveLines));
@@ -1220,9 +1222,10 @@ public class FM_Score extends View {
         if (!tuple.equals("")) EndTuplet();
         return 0;
     }
-
     public void ShowScore(int measures) {
         finishedDraw = new CountDownLatch(1);
+        if (measures == 0) AllowZoomControls = tmpZoomControls;
+        else AllowZoomControls = false;
         new Thread(() -> {
             for (int i = 0; i < StaveNotes.size(); i++) {
                 StaveNotes.get(i).setVisible(true);
