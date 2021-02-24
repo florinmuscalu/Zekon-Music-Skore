@@ -9,7 +9,7 @@ public abstract class FM_BaseNote{
     protected int color;
 
     //On which staff do you want this Note? First (0) or Second (1). First staff uses FM_Score.FirstStaffKey, second one uses FM_Score.SecondStaffKey
-    int staff;
+    int stave;
 
     protected float paddingLeft;
     protected float getPaddingLeft() { return paddingLeft; }
@@ -48,7 +48,7 @@ public abstract class FM_BaseNote{
         paddingDot = 0f;
         paddingNote = 0f;
         setPaddingLeft(FM_Const.dpTOpx(score.getContext(), 4));
-        staff = 0;
+        stave = 0;
         this.score = score;
         this.visible = true;
         this.line = 1;
@@ -112,5 +112,5 @@ public abstract class FM_BaseNote{
     @FM_NoteType public int getType() {
         return type;
     }
-    public int getStaff() {return staff; }
+    public int getStave() {return stave; }
 }

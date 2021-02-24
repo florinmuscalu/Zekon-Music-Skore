@@ -26,7 +26,7 @@ class FM_Chord extends FM_BaseNote {
             for (int j = i + 1; j < Notes.size(); j++) {
                 //Step 1
                 //Fist step is to sort the notes in the chord by staff. If they belong to the same staff, sort them by Displacement (by note, basically)
-                if ((Notes.get(i).staff > Notes.get(j).staff) || (Notes.get(i).staff == Notes.get(j).staff && Notes.get(i).getDisplacement() <= Notes.get(j).getDisplacement())) {
+                if ((Notes.get(i).stave > Notes.get(j).stave) || (Notes.get(i).stave == Notes.get(j).stave && Notes.get(i).getDisplacement() <= Notes.get(j).getDisplacement())) {
                     tmp = Notes.get(i);
                     Notes.set(i, Notes.get(j));
                     Notes.set(j, tmp);
@@ -156,16 +156,16 @@ class FM_Chord extends FM_BaseNote {
         StartY1 = ys1;
         StartY2 = ys2;
         for (int i = 0; i< Notes.size(); i++) {
-            if (Notes.get(i).staff == 0) Notes.get(i).SetDrawParameters(StartX, ys1, ys2);
-            if (Notes.get(i).staff == 1) Notes.get(i).SetDrawParameters(StartX, ys2, ys2);
+            if (Notes.get(i).stave == 0) Notes.get(i).SetDrawParameters(StartX, ys1, ys2);
+            if (Notes.get(i).stave == 1) Notes.get(i).SetDrawParameters(StartX, ys2, ys2);
         }
     }
 
     void DrawNote(Canvas canvas) {
         if (!isVisible()) return;
         for (int i = 0; i< Notes.size(); i++) {
-            if (Notes.get(i).staff == 0) Notes.get(i).DrawNote(canvas);
-            if (Notes.get(i).staff == 1) Notes.get(i).DrawNote(canvas);
+            if (Notes.get(i).stave == 0) Notes.get(i).DrawNote(canvas);
+            if (Notes.get(i).stave == 1) Notes.get(i).DrawNote(canvas);
         }
         super.DrawNote(canvas);
     }

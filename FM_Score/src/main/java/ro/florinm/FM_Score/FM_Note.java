@@ -76,7 +76,7 @@ public class FM_Note extends FM_BaseNote {
         if (note.equals(FM_NoteValue.SI)) offset = -3.0f;
 
         @FM_ClefValue int clef = score.getFirstStaveClef();
-        if (staff == 1) clef = score.getSecondStaveClef();
+        if (stave == 1) clef = score.getSecondStaveClef();
 
         if (clef == FM_ClefValue.TREBLE) {
             offset = offset + 5.0f + 3.5f * (4 - octave);

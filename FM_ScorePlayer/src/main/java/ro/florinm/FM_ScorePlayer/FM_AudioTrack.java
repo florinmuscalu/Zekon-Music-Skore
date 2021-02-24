@@ -930,8 +930,9 @@ class FM_SoundPool {
     }
 
     Integer GetIndex(String Key) {
-        if (Key.toLowerCase().startsWith("r/")) return -1;
         Key = TranslateKey(Key.toLowerCase());
+        if (Key.startsWith("r"))
+            return -1;
         Key = Key.replace("n", "");
         Integer r = KeyMapping.get(Key);
         if (r != null)

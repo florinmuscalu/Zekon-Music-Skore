@@ -9,13 +9,13 @@ class FM_Clef extends FM_BaseNote {
     FM_Clef(FM_Score Score, @FM_ClefValue int clef, int staff) {
         super(FM_NoteType.CLEF, Score);
         this.clef = clef;
-        this.staff = staff;
+        this.stave = staff;
     }
 
     FM_Clef(FM_Score Score, @FM_ClefValue int clef, int staff, int Color) {
         super(FM_NoteType.CLEF, Score);
         this.clef = clef;
-        this.staff = staff;
+        this.stave = staff;
         this.color = Color;
     }
 

@@ -88,7 +88,7 @@ public class FM_Const {
     }
 
     static int distanceBetweenNotes(FM_BaseNote n1, FM_BaseNote n2) {
-        if (n1.staff != n2.staff) return 10;
+        if (n1.stave != n2.stave) return 10;
         return (n1.note - n2.note) + ((n1.octave - n2.octave) * 7);
     }
 
@@ -107,20 +107,16 @@ public class FM_Const {
         return y1 + slope * (x2 - x1);
     }
 
-    public static int keyToNote(String key) {
-        return keyToNote(key, 0);
-    }
-
     public static int keyCount(String key) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
         return s.length;
     }
 
-    public static int keyToNote(String key, int pos) {
+    public static int keyToNote(String key) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
-        key = s[pos];
+        key = s[0];
         if (key.startsWith("do")) return FM_NoteValue.DO;
         if (key.startsWith("re")) return FM_NoteValue.RE;
         if (key.startsWith("mi")) return FM_NoteValue.MI;
@@ -135,17 +131,14 @@ public class FM_Const {
         if (key.startsWith("g")) return FM_NoteValue.SOL;
         if (key.startsWith("a")) return FM_NoteValue.LA;
         if (key.startsWith("b")) return FM_NoteValue.SI;
+        if (key.startsWith("r")) return -1;
         return FM_NoteValue.DO;
     }
 
     public static int keyToOctave(String key) {
-        return keyToOctave(key, 0);
-    }
-
-    public static int keyToOctave(String key, int pos) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
-        key = s[pos];
+        key = s[0];
         return Integer.parseInt(key.substring(key.length() - 1));
     }
 
