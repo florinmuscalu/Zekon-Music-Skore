@@ -75,13 +75,13 @@ public class MainActivity extends AppCompatActivity {
 //        s.setTrimLastRow(true);
 
         //s.setVisibility(View.INVISIBLE);
-        //LoadJson();
+        LoadJson();
 
 //        //1100
 //        s.BeginBeam();
-        s.addStaveNote(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.DoubleSharp, FM_DurationValue.NOTE_HALF, true), FM_ClefValue.TREBLE);
-        player = FM_ScorePlayer.getInstance(getApplicationContext());
-        player.LoadFromScore(s, 70);
+//        s.addStaveNote(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.DoubleSharp, FM_DurationValue.NOTE_HALF, true), FM_ClefValue.TREBLE);
+//        player = FM_ScorePlayer.getInstance(getApplicationContext());
+//        player.LoadFromScore(s, 70);
 //        s.AddToBeam((FM_Note) s.getLastNote());
 //        s.addStaveNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_SIXTEENTH, true), FM_ClefValue.TREBLE);
 //        s.AddToBeam((FM_Note) s.getLastNote());
