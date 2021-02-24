@@ -114,9 +114,13 @@ public class FM_Const {
     }
 
     public static int keyToNote(String key) {
+        return keyToNote(key, 0);
+    }
+
+    public static int keyToNote(String key, int index) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
-        key = s[0];
+        key = s[index];
         if (key.startsWith("do")) return FM_NoteValue.DO;
         if (key.startsWith("re")) return FM_NoteValue.RE;
         if (key.startsWith("mi")) return FM_NoteValue.MI;
@@ -136,9 +140,13 @@ public class FM_Const {
     }
 
     public static int keyToOctave(String key) {
+        return keyToOctave(key, 0);
+    }
+
+    public static int keyToOctave(String key, int index) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
-        key = s[0];
+        key = s[index];
         return Integer.parseInt(key.substring(key.length() - 1));
     }
 
