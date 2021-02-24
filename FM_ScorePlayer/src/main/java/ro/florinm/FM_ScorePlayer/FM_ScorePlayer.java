@@ -99,13 +99,13 @@ public class FM_ScorePlayer {
 
     public void Play() {
         if (FM_SoundPool.playing) return;
+        FM_SoundPool.playing = true;
         new Thread(() -> {
             try {
-                FM_SoundPool.playing = true;
                 SongLoadedCDL.await();
             } catch (Exception ignored) {
             }
-            SystemClock.sleep(200);
+            //SystemClock.sleep(200);
             Play(song, 1, song.measures.size(), 0);
         }).start();
     }
@@ -116,13 +116,13 @@ public class FM_ScorePlayer {
 
     public void Play(int measure_start, int measure_end, int notes) {
         if (FM_SoundPool.playing) return;
+        FM_SoundPool.playing = true;
         new Thread(() -> {
             try {
-                FM_SoundPool.playing = true;
                 SongLoadedCDL.await();
             } catch (Exception ignored) {
             }
-            SystemClock.sleep(200);
+            //SystemClock.sleep(200);
             Play(song, measure_start, measure_end, notes);
         }).start();
     }
