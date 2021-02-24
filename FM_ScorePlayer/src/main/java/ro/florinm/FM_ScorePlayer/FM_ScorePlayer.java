@@ -159,6 +159,7 @@ public class FM_ScorePlayer {
                 FM_SoundPool.CustomDelay(n.pauseDuration, false);
             }
         }
+        soundPlayer.StopAllSound();
         if (score != null) score.ProgressReset();
         FM_SoundPool.playing = false;
     }
