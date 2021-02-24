@@ -113,4 +113,8 @@ public abstract class FM_BaseNote{
         return type;
     }
     public int getStave() {return stave; }
+    @FM_DurationValue
+    public int getDuration() {
+        return duration;
+    }
 }

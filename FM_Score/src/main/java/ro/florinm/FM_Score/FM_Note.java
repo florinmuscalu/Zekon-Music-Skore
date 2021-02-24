@@ -4,10 +4,12 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 
 public class FM_Note extends FM_BaseNote {
-    boolean beam, tuple;
+    boolean beam, tuplet;
+    public String tupletStr = "";
     float ys, startX;
     float StemTopY = 0f;
-
+    public boolean isTieStart = false;
+    public boolean isTieEnd = false;
     public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration) {
         super(FM_NoteType.NOTE, Score);
         this.note = Note;
@@ -17,7 +19,7 @@ public class FM_Note extends FM_BaseNote {
         this.stem = true;
         this.stem_up = true;
         this.beam = false;
-        this.tuple = false;
+        this.tuplet = false;
     }
 
     public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration, int Color) {
@@ -29,7 +31,7 @@ public class FM_Note extends FM_BaseNote {
         this.stem = true;
         this.stem_up = true;
         this.beam = false;
-        this.tuple = false;
+        this.tuplet = false;
         this.color = Color;
     }
 
@@ -42,7 +44,7 @@ public class FM_Note extends FM_BaseNote {
         this.stem = true;
         this.stem_up = StemUp;
         this.beam = false;
-        this.tuple = false;
+        this.tuplet = false;
     }
 
     public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration, boolean StemUp, int Color) {
@@ -54,7 +56,7 @@ public class FM_Note extends FM_BaseNote {
         this.stem = true;
         this.stem_up = StemUp;
         this.beam = false;
-        this.tuple = false;
+        this.tuplet = false;
         this.color = Color;
     }
 
@@ -255,5 +257,9 @@ public class FM_Note extends FM_BaseNote {
         } else {
             return by + Height(stem);
         }
+    }
+    @FM_NoteValue
+    public int getNote() {
+        return note;
     }
 }

@@ -958,11 +958,14 @@ public class FM_Score extends View {
         currentTie++;
         t.AddStart(TieNotes.get(0));
         t.AddEnd(TieNotes.get(1));
+        TieNotes.get(0).isTieStart = true;
+        TieNotes.get(1).isTieEnd = true;
         Ties.add(t);
     }
 
     private boolean inTuplet = false;
     private int TupletPosition = 0;
+    private String TupletStr = "";
     private int currentTuplet = 0;
     List<FM_BaseNote> TupletNotes;
 
@@ -971,6 +974,7 @@ public class FM_Score extends View {
         TupletNotes = new ArrayList<>();
         TupletPosition = 1;
         if (s.toLowerCase().contains("a")) TupletPosition = 0;
+        TupletStr = s.toLowerCase();
     }
 
     public void AddToTuplet(FM_Note n) {
@@ -989,7 +993,8 @@ public class FM_Score extends View {
         FM_Tuplet t = new FM_Tuplet(this, TupletNotes.size(), currentTuplet, TupletPosition);
         currentTuplet++;
         for (int i = 0; i < TupletNotes.size(); i++) {
-            ((FM_Note) TupletNotes.get(i)).tuple = true;
+            ((FM_Note) TupletNotes.get(i)).tuplet = true;
+            ((FM_Note) TupletNotes.get(i)).tupletStr = TupletStr;
             t.AddNote((FM_Note) TupletNotes.get(i));
         }
         Tuplets.add(t);

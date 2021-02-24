@@ -1,5 +1,6 @@
 package ro.florinm.FM_ScorePlayer;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
@@ -21,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import ro.florinm.FM_Score.FM_DurationValue;
 
 class FM_AudioSubTrack implements Comparable<FM_AudioSubTrack>{
     int track;
@@ -268,18 +271,18 @@ class FM_AudioTrack {
     }
 
     private static byte[] sampleToByteArray(InputStream sample) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream bOutStream = new ByteArrayOutputStream();
         BufferedInputStream bis = new BufferedInputStream(sample);
         byte[] header = new byte[44];
         if (bis.read(header) == -1) throw new IOException();
-        int BUFFERSIZE = 1024 * 8;
-        byte[] buffer = new byte[BUFFERSIZE];
+        int bufferSize = 1024 * 8;
+        byte[] buffer = new byte[bufferSize];
         while (bis.read(buffer) != -1) {
-            baos.write(buffer);
+            bOutStream.write(buffer);
         }
-        byte[] outputByteArray = baos.toByteArray();
+        byte[] outputByteArray = bOutStream.toByteArray();
         bis.close();
-        baos.close();
+        bOutStream.close();
 
         return outputByteArray;
     }
@@ -357,20 +360,12 @@ class FM_SoundPool {
         Tracks.clear();
     }
 
-    FM_AudioTrack CreateTrack(int[] tracks, int d) {
-        FM_AudioSubTrack[] track;
-        track = new FM_AudioSubTrack[7];
-        for (int i = 0; i < tracks.length; i++)
-            if (tracks[i] != -1) track[i] = new FM_AudioSubTrack(tracks[i], d);
-        return CheckAndCreate(track);
-    }
-
-    FM_AudioTrack CreateTrack(List<Integer> tracks, String[] d, int tempo) {
+    FM_AudioTrack CreateTrack(List<Integer> tracks, List<Integer> d) {
         FM_AudioSubTrack[] track;
         track = new FM_AudioSubTrack[7];
         for (int i = 0; i < tracks.size(); i++)
             if (tracks.get(i) != -1)
-                track[i] = new FM_AudioSubTrack(tracks.get(i), GetDurationFromStr(d[i], tempo, 0));
+                track[i] = new FM_AudioSubTrack(tracks.get(i), d.get(i));
         return CheckAndCreate(track);
     }
 
@@ -857,6 +852,13 @@ class FM_SoundPool {
         KeyMapping.put("a###/7", 88);
     }
 
+    @SuppressLint("StaticFieldLeak")
+    static FM_SoundPool mInstance;
+
+    static FM_SoundPool getInstance(){
+        return mInstance;
+    }
+
     FM_SoundPool(Context context) {
         this.context = context;
         AssetManager assetManager = context.getAssets();
@@ -877,6 +879,7 @@ class FM_SoundPool {
                 loaded_count.getAndIncrement();
                 float f = loaded_count.floatValue();
                 FM_ScorePlayer.getInstance(context).SoundsLoaded = (int) ((f / 88.0f) * 100);
+                if (FM_ScorePlayer.getInstance(context).SoundsLoaded == 100) FM_ScorePlayer.getInstance(context).SoundsLoadedCDL.countDown();
             }
         });
         AssetFileDescriptor fileDescriptor;
@@ -887,6 +890,7 @@ class FM_SoundPool {
             } catch (IOException ignored) {
             }
         }
+        mInstance = this;
     }
 
     void playKey(int key) {
@@ -918,7 +922,7 @@ class FM_SoundPool {
         return threadMap.get(key) == null;
     }
 
-    private String TranslateKey(String Key) {
+    static private String TranslateKey(String Key) {
         Key = Key.replace("do", "c");
         Key = Key.replace("re", "d");
         Key = Key.replace("mi", "e");
@@ -929,7 +933,7 @@ class FM_SoundPool {
         return Key;
     }
 
-    Integer GetIndex(String Key) {
+    static Integer GetIndex(String Key) {
         Key = TranslateKey(Key.toLowerCase());
         if (Key.startsWith("r"))
             return -1;
@@ -941,32 +945,27 @@ class FM_SoundPool {
             return 1;
     }
 
-    static int GetDurationFromStr(String duration) {
-        return GetDurationFromStr(duration, 0, 0);
-    }
-
-    static int GetDurationFromStr(String duration, int tempo, int time_signature_d) {
+    static int GetDurationInMs(@FM_DurationValue int duration, String tupletStr, int tempo, int time_signature_d) {
         if (tempo == 0) tempo = 60;
         if (time_signature_d == 0) time_signature_d = TIME_SIGNATURE_D;
         float d = (60.0f / tempo) * (time_signature_d / 4.0f) * 4000.0f;
-        duration = duration.toLowerCase();
-        //wrong below
-        //float d = 1000f * (60.0f * time_signature_n) / (TEMPO * time_signature_d);
-        if (duration.endsWith("r")) d = d * 1f;
-        if (duration.endsWith("d")) d = d * 1.5f;
-        if (duration.endsWith("t3")) d = d * 2f / 3.0f;
-        if (duration.endsWith("t5")) d = d * 4f / 5.0f;
-        if (duration.endsWith("t6")) d = d * 4f / 6.0f;
+        if (duration > 50) {
+            d = d * 1.5f;
+            duration = duration - 50;
+        }
+        if (tupletStr.endsWith("3")) d = d * 2f / 3.0f;
+        //if (tupletStr.endsWith("3")) d = 10;
+        if (tupletStr.endsWith("5")) d = d * 4f / 5.0f;
+        if (tupletStr.endsWith("6")) d = d * 4f / 6.0f;
+        if (tupletStr.endsWith("2")) d = d * 3f / 4.0f;
+        if (tupletStr.endsWith("4")) d = d * 3f / 4.0f;
 
-        if (duration.endsWith("t2")) d = d * 3f / 4.0f;
-        if (duration.endsWith("t4")) d = d * 3f / 4.0f;
-
-        if (duration.startsWith("w")) return (int) (d * 1);
-        if (duration.startsWith("h")) return (int) (d * 1 / 2f);
-        if (duration.startsWith("q")) return (int) (d * 1 / 4f);
-        if (duration.startsWith("8")) return (int) (d * 1 / 8f);
-        if (duration.startsWith("16")) return (int) (d * 1 / 16f);
-        if (duration.startsWith("32")) return (int) (d * 1 / 32f);
+        if (duration == FM_DurationValue.NOTE_WHOLE) return (int) (d * 1);
+        if (duration == FM_DurationValue.NOTE_HALF) return (int) (d * 1 / 2f);
+        if (duration == FM_DurationValue.NOTE_QUARTER) return (int) (d * 1 / 4f);
+        if (duration == FM_DurationValue.NOTE_EIGHTH) return (int) (d * 1 / 8f);
+        if (duration == FM_DurationValue.NOTE_SIXTEENTH) return (int) (d * 1 / 16f);
+        if (duration == FM_DurationValue.NOTE_THIRTY_SECOND) return (int) (d * 1 / 32f);
         return 0;
     }
 

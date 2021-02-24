@@ -5,8 +5,8 @@ import android.graphics.Canvas;
 import java.util.ArrayList;
 import java.util.List;
 
-class FM_Chord extends FM_BaseNote {
-    List<FM_BaseNote> Notes;
+public class FM_Chord extends FM_BaseNote {
+    public List<FM_BaseNote> Notes;
 
     FM_Chord(FM_Score Score) {
         super(FM_NoteType.CHORD, Score);
