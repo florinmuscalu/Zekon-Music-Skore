@@ -1192,7 +1192,7 @@ public class FM_Score extends View {
             FM_BaseNote n;
             int k = FM_Const.keyToNote(key_list.get(i));
             if (k == -1) {
-                n = new FM_Pause(this, FM_Const.keyToDuration(key_list.get(i), 1));
+                n = new FM_Pause(this, FM_Const.keyToDuration(key_list.get(i), 1), FM_Const.keyToOctave(key_list.get(i)));
             } else {
                 n = new FM_Note(this, k, FM_Const.keyToOctave(key_list.get(i)), FM_Const.keyToAccidental(key_list.get(i), 0), FM_Const.keyToDuration(key_list.get(i), 1), FM_Const.keyToStem(key_list.get(i), 2));
                 if (!beam.equals("")) AddToBeam((FM_Note) n);

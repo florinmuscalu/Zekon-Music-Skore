@@ -213,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void addRandom(){
         FM_Score s = findViewById(R.id.stave);
-        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_EIGHTH), FM_ClefValue.TREBLE);
+        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_EIGHTH, 0), FM_ClefValue.TREBLE);
 
 
         s.BeginTie();
@@ -309,13 +309,13 @@ public class MainActivity extends AppCompatActivity {
     public void addTestAll() {
         FM_Score s = findViewById(R.id.stave);
         //Pauses
-        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_WHOLE), FM_ClefValue.TREBLE);
-        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_HALF), FM_ClefValue.TREBLE);
-        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_QUARTER), FM_ClefValue.TREBLE);
-        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_EIGHTH), FM_ClefValue.TREBLE);
-        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_SIXTEENTH), FM_ClefValue.TREBLE);
-        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_THIRTY_SECOND), FM_ClefValue.TREBLE);
-        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_QUARTER), FM_ClefValue.BASS);
+        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_WHOLE, 0), FM_ClefValue.TREBLE);
+        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_HALF, 0), FM_ClefValue.TREBLE);
+        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_QUARTER, 0), FM_ClefValue.TREBLE);
+        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_EIGHTH, 0), FM_ClefValue.TREBLE);
+        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_SIXTEENTH, 0), FM_ClefValue.TREBLE);
+        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_THIRTY_SECOND, 0), FM_ClefValue.TREBLE);
+        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_QUARTER, 0), FM_ClefValue.BASS);
         s.addStaveNote(new FM_BarNote(s), FM_ClefValue.TREBLE);
         s.addStaveNote(new FM_Note(s, FM_NoteValue.SI, 3, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE,  true), FM_ClefValue.TREBLE);
         s.addStaveNote(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE_D,  true), FM_ClefValue.TREBLE);
@@ -341,12 +341,12 @@ public class MainActivity extends AppCompatActivity {
         s.addStaveNote(new FM_BarNote(s), FM_ClefValue.TREBLE);
 
         //Pauses
-        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_WHOLE), FM_ClefValue.BASS);
-        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_HALF), FM_ClefValue.BASS);
-        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_QUARTER), FM_ClefValue.BASS);
-        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_EIGHTH), FM_ClefValue.BASS);
-        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_SIXTEENTH), FM_ClefValue.BASS);
-        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_THIRTY_SECOND), FM_ClefValue.BASS);
+        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_WHOLE, 0), FM_ClefValue.BASS);
+        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_HALF, 0), FM_ClefValue.BASS);
+        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_QUARTER, 0), FM_ClefValue.BASS);
+        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_EIGHTH, 0), FM_ClefValue.BASS);
+        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_SIXTEENTH, 0), FM_ClefValue.BASS);
+        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_THIRTY_SECOND, 0), FM_ClefValue.BASS);
         s.addStaveNote(new FM_BarNote(s), FM_ClefValue.BASS);
         s.addStaveNote(new FM_Note(s, FM_NoteValue.SI, 2, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE,  true), FM_ClefValue.BASS);
         s.addStaveNote(new FM_Note(s, FM_NoteValue.DO, 3, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE_D,  true), FM_ClefValue.BASS);

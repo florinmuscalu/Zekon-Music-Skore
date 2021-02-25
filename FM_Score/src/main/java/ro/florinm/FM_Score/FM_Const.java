@@ -128,13 +128,6 @@ public class FM_Const {
         if (key.startsWith("sol")) return FM_NoteValue.SOL;
         if (key.startsWith("la")) return FM_NoteValue.LA;
         if (key.startsWith("si")) return FM_NoteValue.SI;
-        if (key.startsWith("c")) return FM_NoteValue.DO;
-        if (key.startsWith("d")) return FM_NoteValue.RE;
-        if (key.startsWith("e")) return FM_NoteValue.MI;
-        if (key.startsWith("f")) return FM_NoteValue.FA;
-        if (key.startsWith("g")) return FM_NoteValue.SOL;
-        if (key.startsWith("a")) return FM_NoteValue.LA;
-        if (key.startsWith("b")) return FM_NoteValue.SI;
         if (key.startsWith("r")) return -1;
         return FM_NoteValue.DO;
     }
@@ -147,6 +140,7 @@ public class FM_Const {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
         key = s[index];
+        if (key.equals("r")) return 0;
         return Integer.parseInt(key.substring(key.length() - 1));
     }
 
@@ -258,7 +252,7 @@ public class FM_Const {
         Score.Font.setTextSize(100f * height / bounds.height());
     }
 
-    String ConvertNote(String note, @FM_NotationSystem int NotationSystem){
+    public String ConvertNote(String note, @FM_NotationSystem int NotationSystem){
         note = note.toLowerCase().trim();
         int n = 0;
         if (note.equals("c") || note.equals("do") || note.equals("ha")) n = 1;
