@@ -1,13 +1,10 @@
-package ro.florinm.FM_ScorePlayer;
+package ro.florinm.FM_Score;
 
 import android.content.Context;
-import android.os.SystemClock;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-
-import ro.florinm.FM_Score.FM_Score;
 
 public class FM_ScorePlayer {
     private static FM_ScorePlayer mInstance = null;
@@ -147,17 +144,23 @@ public class FM_ScorePlayer {
         for (FM_Audio_Note n : ListNotes) {
             if (!FM_SoundPool.playing) continue;
             if (showProgress && score != null) score.ProgressAdvance();
-            if (n.audioInt != 0) {
-                if (!(n.legato_end && in_legato))
-                    soundPlayer.playKey(n.audioInt, n.NextPause);
-                if (n.legato_start) in_legato = true;
-                if (n.legato_end) in_legato = false;
-                FM_SoundPool.CustomDelay(n.playDuration, false);
-                if (!n.legato_start || !FM_SoundPool.playing) soundPlayer.stopKey(n.audioInt);
+
+            if (in_legato) {
+                if (n.audioIntInLegato != 0) soundPlayer.playKey(n.audioIntInLegato, n.NextPause);
+                else n.audioTrackInLegato.Play(n.playDuration, n.NextPause);
             } else {
-                n.audioT.Play(n.playDuration, n.NextPause);
-                FM_SoundPool.CustomDelay(n.pauseDuration, false);
+                if (n.audioIntOutsideLegato != 0)
+                    soundPlayer.playKey(n.audioIntOutsideLegato, n.NextPause);
+                else n.audioTrackOutsideLegato.Play(n.playDuration, n.NextPause);
             }
+            FM_SoundPool.CustomDelay(n.pauseDuration, false);
+
+            if (in_legato) {
+                if (n.audioIntInLegato != 0) soundPlayer.stopKey(n.audioIntInLegato);
+            } else {
+                if (n.audioIntOutsideLegato != 0) soundPlayer.stopKey(n.audioIntOutsideLegato);
+            }
+            in_legato = n.legato;
         }
         soundPlayer.StopAllSound();
         if (showProgress && score != null) score.ProgressReset();

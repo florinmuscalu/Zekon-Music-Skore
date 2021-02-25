@@ -1,4 +1,4 @@
-package ro.florinm.FM_ScorePlayer;
+package ro.florinm.FM_Score;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import ro.florinm.FM_Score.FM_DurationValue;
 
 class FM_AudioSubTrack implements Comparable<FM_AudioSubTrack>{
     int track;

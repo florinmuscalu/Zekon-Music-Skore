@@ -26,7 +26,7 @@ import ro.florinm.FM_Score.FM_NoteValue;
 import ro.florinm.FM_Score.FM_Pause;
 import ro.florinm.FM_Score.FM_Score;
 import ro.florinm.FM_Score.FM_TimeSignatureValue;
-import ro.florinm.FM_ScorePlayer.FM_ScorePlayer;
+import ro.florinm.FM_Score.FM_ScorePlayer;
 
 public class MainActivity extends AppCompatActivity {
     FM_ScorePlayer player;
@@ -59,23 +59,11 @@ public class MainActivity extends AppCompatActivity {
         s.setVisibility(View.VISIBLE);
         s.setNoteSpacing(10);
 
-//        s.setDistanceBetweenStaveLines(10);
-//        s.setPaddingS(2);
-//        s.setPaddingE(2);
-//        s.setPaddingVertical(5);
-//        s.setNoteSpacing(7);
-//        s.setTimeSignature(FM_TimeSignatureValue._2, FM_TimeSignatureValue._4);
-//        s.setKeySignature(FM_KeySignatureValue.DOsharp);
-//        s.setNotesAlign(FM_Align.ALIGN_LEFT_LAST_MEASURE);
-//        s.setPaddingVertical(5);
-//        s.setCenterVertical(false);
-//        s.setMultiLine(true);
-//        s.setShowBrace(true);
-//        s.setAllowZoomPan(true);
-//        s.setTrimLastRow(true);
-
-        //s.setVisibility(View.INVISIBLE);
-        LoadJson();
+        //LoadJson();
+        Testing();
+        player = FM_ScorePlayer.getInstance(getApplicationContext());
+        player.LoadFromScore(s, 70);
+        player.setShowProgress(true);
 
 //        //1100
 //        s.BeginBeam();
@@ -125,17 +113,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void Testing(){
         FM_Score s = findViewById(R.id.stave);
-        s.addStaveNote(new FM_Note(s, FM_NoteValue.SOL, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true), FM_ClefValue.TREBLE);
 
         List<FM_BaseNote> chord = new ArrayList<>();
         List<Integer> clefs = new ArrayList<>();
-        chord.add(new FM_Note(s, FM_NoteValue.DO, 5, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, true));
-        chord.add(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.TripleFlat, FM_DurationValue.NOTE_HALF, true, Color.argb(255, 255, 0, 0)));
-        chord.add(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.TripleFlat, FM_DurationValue.NOTE_WHOLE, false, Color.argb(255, 0, 0, 255)));
-        chord.add(new FM_Note(s, FM_NoteValue.FA, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, false));
 
-        clefs.add(FM_ClefValue.TREBLE);
-        clefs.add(FM_ClefValue.TREBLE);
+        s.BeginTie();
+
+        chord.add(new FM_Note(s, FM_NoteValue.DO, 5, FM_Accidental.None, FM_DurationValue.NOTE_QUARTER, true));
+        s.AddToTie((FM_Note)chord.get(0));
+        chord.add(new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.None, FM_DurationValue.NOTE_QUARTER, true, Color.argb(255, 255, 0, 0)));
+        chord.add(new FM_Note(s, FM_NoteValue.DO, 3, FM_Accidental.None, FM_DurationValue.NOTE_QUARTER, false, Color.argb(255, 0, 0, 255)));
+
         clefs.add(FM_ClefValue.TREBLE);
         clefs.add(FM_ClefValue.TREBLE);
         clefs.add(FM_ClefValue.TREBLE);
@@ -145,34 +133,16 @@ public class MainActivity extends AppCompatActivity {
 
         chord = new ArrayList<>();
         clefs = new ArrayList<>();
-        chord.add(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, false, Color.argb(255, 255, 0, 0)));
-        chord.add(new FM_Note(s, FM_NoteValue.DO, 5, FM_Accidental.TripleFlat, FM_DurationValue.NOTE_HALF, true));
-        chord.add(new FM_Note(s, FM_NoteValue.FA, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, false));
+        chord.add(new FM_Note(s, FM_NoteValue.DO, 5, FM_Accidental.None, FM_DurationValue.NOTE_QUARTER, true, Color.argb(255, 255, 0, 0)));
+        s.AddToTie((FM_Note)chord.get(0));
+        chord.add(new FM_Note(s, FM_NoteValue.MI, 4, FM_Accidental.None, FM_DurationValue.NOTE_HALF, true));
+        //chord.add(new FM_Note(s, FM_NoteValue.SI, 3, FM_Accidental.None, FM_DurationValue.NOTE_QUARTER, false));
 
-        clefs.add(FM_ClefValue.TREBLE);
-        clefs.add(FM_ClefValue.TREBLE);
         clefs.add(FM_ClefValue.TREBLE);
         clefs.add(FM_ClefValue.TREBLE);
         clefs.add(FM_ClefValue.TREBLE);
         s.addChord(chord, clefs);
-
-        s.addStaveNote(new FM_BarNote(s));
-
-
-        chord = new ArrayList<>();
-        clefs = new ArrayList<>();
-        chord.add(new FM_Note(s, FM_NoteValue.DO, 5, FM_Accidental.Sharp, FM_DurationValue.NOTE_WHOLE, false, Color.argb(255, 255, 0, 0)));
-        chord.add(new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.TripleSharp, FM_DurationValue.NOTE_WHOLE, true));
-        chord.add(new FM_Note(s, FM_NoteValue.FA, 4, FM_Accidental.None, FM_DurationValue.NOTE_WHOLE, false));
-
-        clefs.add(FM_ClefValue.TREBLE);
-        clefs.add(FM_ClefValue.TREBLE);
-        clefs.add(FM_ClefValue.TREBLE);
-        clefs.add(FM_ClefValue.TREBLE);
-        clefs.add(FM_ClefValue.TREBLE);
-        s.addChord(chord, clefs);
-
-        s.addStaveNote(new FM_BarNote(s));
+        s.EndTie();
     }
 
     String[] files = {"test.json", "furelise.json"};
@@ -207,8 +177,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception ignored) {}
 
         s.LoadFromJson(obj);
-        player = FM_ScorePlayer.getInstance(getApplicationContext());
-        player.LoadFromScore(s, 70);
     }
 
     public void addRandom(){
@@ -540,6 +508,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void OnClick(View v){
         player.Play();
+        //player.Play(2,2);
     }
 
     public void Change(View v){

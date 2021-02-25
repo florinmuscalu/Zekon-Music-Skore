@@ -1,4 +1,4 @@
-package ro.florinm.FM_ScorePlayer;
+package ro.florinm.FM_Score;
 
 import java.util.ArrayList;
 import java.util.List;

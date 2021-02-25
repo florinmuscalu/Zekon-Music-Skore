@@ -12,7 +12,6 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/FM_Score" />
-            <option value="$PROJECT_DIR$/FM_ScorePlayer" />
             <option value="$PROJECT_DIR$/app" />
           </set>
         </option>

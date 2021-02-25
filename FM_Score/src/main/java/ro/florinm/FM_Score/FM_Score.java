@@ -61,7 +61,7 @@ public class FM_Score extends View {
     private boolean AllowZoomControls = false;
     private boolean tmpZoomControls = false;
     private final List<FM_BaseNote> StaveNotes = new ArrayList<>();
-    private final List<FM_Tie> Ties = new ArrayList<>();
+    public final List<FM_Tie> Ties = new ArrayList<>();
     private final List<FM_Tuplet> Tuplets = new ArrayList<>();
     private final List<FM_Beam> Beams = new ArrayList<>();
 

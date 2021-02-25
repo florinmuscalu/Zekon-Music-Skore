@@ -1,4 +1,3 @@
 include ':FM_Score'
-include ':FM_ScorePlayer'
 include ':app'
 rootProject.name = "StaveTest"
