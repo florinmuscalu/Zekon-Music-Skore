@@ -4,8 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 
 public class FM_Note extends FM_BaseNote {
-    boolean beam, tuplet;
-    public int tupletSize = 0;
+    boolean beam;
     float ys, startX;
     float StemTopY = 0f;
     public boolean isTieStart = false;
@@ -19,7 +18,6 @@ public class FM_Note extends FM_BaseNote {
         this.stem = true;
         this.stem_up = true;
         this.beam = false;
-        this.tuplet = false;
     }
 
     public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration, int Color) {

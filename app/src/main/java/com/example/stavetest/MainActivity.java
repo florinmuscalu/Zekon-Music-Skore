@@ -59,7 +59,24 @@ public class MainActivity extends AppCompatActivity {
         s.setVisibility(View.VISIBLE);
         s.setNoteSpacing(10);
 
-        LoadJson();
+        s.BeginBeam();
+        s.BeginTuplet("1a3");
+
+        s.addStaveNote(new FM_Pause(s, FM_DurationValue.NOTE_EIGHTH, 0), FM_ClefValue.TREBLE);
+        s.AddToTuplet(s.getLastNote());
+
+        s.addStaveNote(new FM_Note(s, FM_NoteValue.SI, 4, FM_Accidental.None, FM_DurationValue.NOTE_EIGHTH, true), FM_ClefValue.TREBLE);
+        s.AddToBeam((FM_Note) s.getLastNote());
+        s.AddToTuplet(s.getLastNote());
+
+        s.addStaveNote(new FM_Note(s, FM_NoteValue.MI, 5, FM_Accidental.None, FM_DurationValue.NOTE_EIGHTH, true), FM_ClefValue.TREBLE);
+        s.AddToBeam((FM_Note) s.getLastNote());
+        s.AddToTuplet(s.getLastNote());
+
+        //s.EndBeam();
+        s.EndTuplet();
+
+        //LoadJson();
         //Testing();
 
 //        //1100

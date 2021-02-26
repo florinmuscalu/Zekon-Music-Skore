@@ -8,7 +8,7 @@ import java.util.List;
 
 class FM_Tuplet {
     int index;
-    List<FM_Note> n;
+    List<FM_BaseNote> n;
     int size;
     int position;       //0 - above, 1 - below
     FM_Score score;
@@ -21,7 +21,7 @@ class FM_Tuplet {
         this.score = score;
     }
 
-    void AddNote(FM_Note n) {
+    void AddNote(FM_BaseNote n) {
         this.n.add(n);
     }
 
@@ -33,6 +33,12 @@ class FM_Tuplet {
         x = n.get(0).Left() + n.get(0).WidthAccidental() - 0.5f * score.getDistanceBetweenStaveLines();
         xe = n.get(EndIndex).Right() + 0.5f * score.getDistanceBetweenStaveLines();
 
+        boolean beam = false;
+        if (n.get(0) instanceof FM_Note && ((FM_Note)n.get(0)).beam) beam = true;
+        if (n.get(EndIndex) instanceof FM_Note && ((FM_Note)n.get(EndIndex)).beam) beam = true;
+        if (n.get(0) instanceof FM_Pause) beam = false;
+        if (n.get(EndIndex) instanceof FM_Pause) beam = false;
+
         if (position == 0) {
             if (n.get(0).stem_up) x = x + score.getDistanceBetweenStaveLines();
             y =  n.get(0).Top();
@@ -42,7 +48,7 @@ class FM_Tuplet {
             y = y + 0.5f * score.getDistanceBetweenStaveLines();
             ye = ye + 0.5f * score.getDistanceBetweenStaveLines();
 
-            if (!n.get(0).beam) {
+            if (!beam) {
                 if (ye > y) {
                     float slope = FM_Const.slope(0, x, y, xe, ye);
                     ye = FM_Const.getY2(slope, x, y, xe);
@@ -67,8 +73,12 @@ class FM_Tuplet {
                 ye = ye - 0.5f * score.getDistanceBetweenStaveLines();
             }
             else{
-                y = n.get(0).StemTopY;
-                ye = n.get(EndIndex).StemTopY;
+                int i = 0;
+                while (n.get(i) instanceof FM_Pause) i +=1;
+                y = ((FM_Note) n.get(i)).StemTopY;
+                i = n.size()-1;
+                while (n.get(i) instanceof FM_Pause) i -=1;
+                ye = ((FM_Note) n.get(i)).StemTopY;
             }
         } else {
             if (!n.get(EndIndex).stem_up) xe = xe - score.getDistanceBetweenStaveLines();
@@ -80,7 +90,7 @@ class FM_Tuplet {
             y = y - 0.5f * score.getDistanceBetweenStaveLines();
             ye = ye - 0.5f * score.getDistanceBetweenStaveLines();
 
-            if (!n.get(0).beam) {
+            if (!beam) {
                 if (ye < y) {
                     float slope = FM_Const.slope(0, x, y, xe, ye);
                     ye = FM_Const.getY2(slope, x, y, xe);
@@ -105,8 +115,12 @@ class FM_Tuplet {
                 y = y + 0.5f * score.getDistanceBetweenStaveLines();
                 ye = ye + 0.5f * score.getDistanceBetweenStaveLines();
             } else {
-                if (n.get(0).StemTopY != 0) y = n.get(0).StemTopY;
-                if (n.get(EndIndex).StemTopY != 0) ye = n.get(EndIndex).StemTopY;
+                int i = 0;
+                while (n.get(i) instanceof FM_Pause) i +=1;
+                if (((FM_Note)n.get(i)).StemTopY != 0) y = ((FM_Note)n.get(i)).StemTopY;
+                i = n.size()-1;
+                while (n.get(i) instanceof FM_Pause) i -=1;
+                if (((FM_Note)n.get(i)).StemTopY != 0) ye = ((FM_Note)n.get(i)).StemTopY;
                 y = y - 0.6f * score.getDistanceBetweenStaveLines();
                 ye = ye - 0.6f * score.getDistanceBetweenStaveLines();
             }
@@ -119,7 +133,7 @@ class FM_Tuplet {
         if (size == 2) text = FM_Const._2;
 
         Path topPath;
-        if (!n.get(0).beam) {
+        if (!beam) {
             if (position == 0) {
                 canvas.drawRect(x - StaveLineHalfWidth, y, x + StaveLineHalfWidth, y - score.getDistanceBetweenStaveLines(), score.Font);
                 canvas.drawRect(xe - StaveLineHalfWidth, ye, xe + StaveLineHalfWidth, ye - score.getDistanceBetweenStaveLines(), score.Font);
@@ -134,7 +148,7 @@ class FM_Tuplet {
         float middle2 = (x + xe) / 2 + w / 2 + score.getDistanceBetweenStaveLines() / 2;
         float slope = FM_Const.slope(0, x, y - score.getDistanceBetweenStaveLines(), xe, ye - score.getDistanceBetweenStaveLines());
 
-        if (!n.get(0).beam) {
+        if (!beam) {
             if (position == 0) {
                 topPath = new Path();
                 topPath.reset();

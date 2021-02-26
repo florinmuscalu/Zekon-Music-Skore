@@ -975,25 +975,24 @@ public class FM_Score extends View {
         //TupletStr = s.toLowerCase();
     }
 
-    public void AddToTuplet(FM_Note n) {
+    public void AddToTuplet(FM_BaseNote n) {
         if (inTuplet) TupletNotes.add(n);
     }
 
     public void EndTuplet() {
         inTuplet = false;
         for (int i = 0; i < TupletNotes.size(); i++)
-            if (!(TupletNotes.get(i) instanceof FM_Note)) return;
+            if (!(TupletNotes.get(i) instanceof FM_Note || TupletNotes.get(i) instanceof FM_Pause)) return;
         int stave = TupletNotes.get(0).stave;
-        int duration = ((FM_Note) TupletNotes.get(0)).duration;
+        int duration =  TupletNotes.get(0).duration;
         for (int i = 0; i < TupletNotes.size(); i++)
-            if ((TupletNotes.get(i).stave != stave) || (((FM_Note) TupletNotes.get(i)).duration != duration))
-                return;
+            if ((TupletNotes.get(i).stave != stave) || (TupletNotes.get(i)).duration != duration) return;
         FM_Tuplet t = new FM_Tuplet(this, TupletNotes.size(), currentTuplet, TupletPosition);
         currentTuplet++;
         for (int i = 0; i < TupletNotes.size(); i++) {
-            ((FM_Note) TupletNotes.get(i)).tuplet = true;
-            ((FM_Note) TupletNotes.get(i)).tupletSize = TupletNotes.size();
-            t.AddNote((FM_Note) TupletNotes.get(i));
+            TupletNotes.get(i).tuplet = true;
+            TupletNotes.get(i).tupletSize = TupletNotes.size();
+            t.AddNote(TupletNotes.get(i));
         }
         Tuplets.add(t);
     }
