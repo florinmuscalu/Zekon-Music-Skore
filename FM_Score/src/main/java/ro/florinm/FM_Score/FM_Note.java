@@ -5,7 +5,7 @@ import android.graphics.Rect;
 
 public class FM_Note extends FM_BaseNote {
     boolean beam, tuplet;
-    public String tupletStr = "";
+    public int tupletSize = 0;
     float ys, startX;
     float StemTopY = 0f;
     public boolean isTieStart = false;

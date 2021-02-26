@@ -941,7 +941,7 @@ class FM_SoundPool {
             return 1;
     }
 
-    static int GetDurationInMs(@FM_DurationValue int duration, String tupletStr, int tempo, int time_signature_d) {
+    static int GetDurationInMs(@FM_DurationValue int duration, int tupletSize, int tempo, int time_signature_d) {
         if (tempo == 0) tempo = 60;
         if (time_signature_d == 0) time_signature_d = TIME_SIGNATURE_D;
         if (time_signature_d == 0) time_signature_d = 4;
@@ -950,12 +950,11 @@ class FM_SoundPool {
             d = d * 1.5f;
             duration = duration - 50;
         }
-        if (tupletStr.endsWith("3")) d = d * 2f / 3.0f;
-        //if (tupletStr.endsWith("3")) d = 10;
-        if (tupletStr.endsWith("5")) d = d * 4f / 5.0f;
-        if (tupletStr.endsWith("6")) d = d * 4f / 6.0f;
-        if (tupletStr.endsWith("2")) d = d * 3f / 4.0f;
-        if (tupletStr.endsWith("4")) d = d * 3f / 4.0f;
+        if (tupletSize == 3) d = d * 2f / 3.0f;
+        if (tupletSize == 5) d = d * 4f / 5.0f;
+        if (tupletSize == 6) d = d * 4f / 6.0f;
+        if (tupletSize == 2) d = d * 3f / 4.0f;
+        if (tupletSize == 4) d = d * 3f / 4.0f;
 
         if (duration == FM_DurationValue.NOTE_WHOLE) return (int) (d * 1);
         if (duration == FM_DurationValue.NOTE_HALF) return (int) (d * 1 / 2f);

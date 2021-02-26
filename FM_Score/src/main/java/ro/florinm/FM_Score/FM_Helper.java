@@ -159,7 +159,7 @@ class FM_Helper {
             for (int nIndex = 0; nIndex < input.chords.get(i).notes.size(); nIndex++) {
                 FM_BaseNote note = input.chords.get(i).notes.get(nIndex);
                 if (note.getType() == FM_NoteType.PAUSE) {
-                    int d = FM_SoundPool.GetDurationInMs(note.getDuration(), "", tempo, input.timeSignature_d);
+                    int d = FM_SoundPool.GetDurationInMs(note.getDuration(), 0, tempo, input.timeSignature_d);
                     durations_pause.add(d);
                     durations_play.add(d);
                     tracks_l.add(-1);
@@ -167,7 +167,7 @@ class FM_Helper {
                     if (oldNote != null) oldNote.NextPause = true;
                 } else {
                     if (!((FM_Note) note).isTieStart && !((FM_Note) note).isTieEnd) {
-                        int d = FM_SoundPool.GetDurationInMs(note.getDuration(), ((FM_Note) note).tupletStr, tempo, input.timeSignature_d);
+                        int d = FM_SoundPool.GetDurationInMs(note.getDuration(), ((FM_Note) note).tupletSize, tempo, input.timeSignature_d);
                         durations_pause.add(d);
                         durations_play.add(d);
                         int track = FM_SoundPool.GetIndex(NoteToString((FM_Note) note, input.keySignature));
@@ -175,7 +175,7 @@ class FM_Helper {
                         tracks_nl.add(track);
                         is_pause = false;
                     } else if (!((FM_Note) note).isTieStart) {
-                        int d = FM_SoundPool.GetDurationInMs(note.getDuration(), ((FM_Note) note).tupletStr, tempo, input.timeSignature_d);
+                        int d = FM_SoundPool.GetDurationInMs(note.getDuration(), ((FM_Note) note).tupletSize, tempo, input.timeSignature_d);
                         durations_pause.add(d);
                         durations_play.add(d);
                         int track = FM_SoundPool.GetIndex(NoteToString((FM_Note) note, input.keySignature));
@@ -187,11 +187,11 @@ class FM_Helper {
                         int track = FM_SoundPool.GetIndex(NoteToString((FM_Note) note, input.keySignature));
                         tracks_nl.add(track);
                         tracks_l.add(track);
-                        long d = FM_SoundPool.GetDurationInMs(note.getDuration(), ((FM_Note) note).tupletStr, tempo, input.timeSignature_d);   //durata de pauza e durata notei
+                        long d = FM_SoundPool.GetDurationInMs(note.getDuration(), ((FM_Note) note).tupletSize, tempo, input.timeSignature_d);   //durata de pauza e durata notei
                         durations_pause.add((int) d);
                         for (int t = 0; t < score.Ties.size(); t++)
                             if (score.Ties.get(t).s == note)
-                                d = d + FM_SoundPool.GetDurationInMs(score.Ties.get(t).e.getDuration(), score.Ties.get(t).e.tupletStr, tempo, input.timeSignature_d);
+                                d = d + FM_SoundPool.GetDurationInMs(score.Ties.get(t).e.getDuration(), score.Ties.get(t).e.tupletSize, tempo, input.timeSignature_d);
                         durations_play.add((int) d);
                         is_pause = false;
                         is_chord = true;
