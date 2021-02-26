@@ -50,6 +50,14 @@ class FM_Helper {
             if (key.equals("f") || key.equals("c") || key.equals("g") || key.equals("d") || key.equals("a"))
                 return key + "#";
         }
+        if (keySignature == FM_KeySignatureValue.FAsharp || keySignature == FM_KeySignatureValue.REsharpm) {
+            if (key.equals("f") || key.equals("c") || key.equals("g") || key.equals("d") || key.equals("a") || key.equals("e"))
+                return key + "#";
+        }
+        if (keySignature == FM_KeySignatureValue.DOsharp || keySignature == FM_KeySignatureValue.LAsharpm) {
+            if (key.equals("f") || key.equals("c") || key.equals("g") || key.equals("d") || key.equals("a") || key.equals("e") || key.equals("b"))
+                return key + "#";
+        }
         if (keySignature == FM_KeySignatureValue.FA || keySignature == FM_KeySignatureValue.REm) {
             if (key.equals("b")) return key + "b";
         }
@@ -65,6 +73,14 @@ class FM_Helper {
         }
         if (keySignature == FM_KeySignatureValue.REb || keySignature == FM_KeySignatureValue.SIbm) {
             if (key.equals("b") || key.equals("e") || key.equals("a") || key.equals("d") || key.equals("g"))
+                return key + "b";
+        }
+        if (keySignature == FM_KeySignatureValue.SOLb || keySignature == FM_KeySignatureValue.MIbm) {
+            if (key.equals("b") || key.equals("e") || key.equals("a") || key.equals("d") || key.equals("g") || key.equals("c"))
+                return key + "b";
+        }
+        if (keySignature == FM_KeySignatureValue.DOb || keySignature == FM_KeySignatureValue.LAbm) {
+            if (key.equals("b") || key.equals("e") || key.equals("a") || key.equals("d") || key.equals("g") || key.equals("c") || key.equals("f"))
                 return key + "b";
         }
         return key;
