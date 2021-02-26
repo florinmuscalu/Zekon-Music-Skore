@@ -934,34 +934,31 @@ public class FM_Score extends View {
         ComputeLines();
     }
 
+    HashMap<String, List<FM_Note>> TieNotes = new HashMap<>();
 
-    private boolean inTie = false;
-    private int currentTie = 0;
-    List<FM_Note> TieNotes;
-
-    public void BeginTie() {
-        inTie = true;
-        TieNotes = new ArrayList<>();
+    public void AddToTie(String tie, FM_Note n) {
+        if (TieNotes.containsKey(tie)) {
+            TieNotes.get(tie).add(n);
+            EndTie(tie);
+        } else {
+            List <FM_Note> note_list = new ArrayList<>();
+            note_list.add(n);
+            TieNotes.put(tie, note_list);
+        }
     }
 
-    public void AddToTie(FM_Note n) {
-        if (inTie) TieNotes.add(n);
-    }
-
-    public void EndTie() {
-        inTie = false;
-        if (TieNotes.size() != 2) return;
-        //String n1 = TieNotes.get(0).note;
-        //String n2 = TieNotes.get(0).note;
-        if (TieNotes.get(0).stave != TieNotes.get(1).stave || TieNotes.get(0).octave != TieNotes.get(1).octave || !TieNotes.get(0).note.equals(TieNotes.get(1).note))
+    private void EndTie(String tie) {
+        List <FM_Note> note_list = TieNotes.get(tie);
+        if (note_list.size() != 2) return;
+        if (note_list.get(0).stave != note_list.get(1).stave || note_list.get(0).octave != note_list.get(1).octave || !note_list.get(0).note.equals(note_list.get(1).note))
             return;
-        FM_Tie t = new FM_Tie(this, currentTie);
-        currentTie++;
-        t.AddStart(TieNotes.get(0));
-        t.AddEnd(TieNotes.get(1));
-        TieNotes.get(0).isTieStart = true;
-        TieNotes.get(1).isTieEnd = true;
+        FM_Tie t = new FM_Tie(this);
+        t.AddStart(note_list.get(0));
+        t.AddEnd(note_list.get(1));
+        note_list.get(0).isTieStart = true;
+        note_list.get(1).isTieEnd = true;
         Ties.add(t);
+        TieNotes.remove(tie);
     }
 
     private boolean inTuplet = false;
@@ -1166,7 +1163,7 @@ public class FM_Score extends View {
                 measure_pos += 1;
                 if (measure_cnt != 0 && measure_cnt == measure_pos) {
                     if (!beam.equals("")) EndBeam();
-                    if (!tie.equals("")) EndTie();
+                    //if (!tie.equals("")) EndTie();
                     if (!tuple.equals("")) EndTuplet();
                     return 0;
                 }
@@ -1178,11 +1175,11 @@ public class FM_Score extends View {
             String tuple1 = FM_Const.keyToElement(key_list.get(i), 5);
 
             if (!beam.equals("") && (beam1.equals("") || !beam1.equals(beam))) EndBeam();
-            if (!tie.equals("") && (tie1.equals("") || !tie1.equals(tie))) EndTie();
+            //if (!tie.equals("") && (tie1.equals("") || !tie1.equals(tie))) EndTie();
             if (!tuple.equals("") && (tuple1.equals("") || !tuple1.equals(tuple))) EndTuplet();
 
             if (!beam1.equals(beam) && !beam1.equals("")) BeginBeam();
-            if (!tie1.equals(tie) && !tie1.equals("")) BeginTie();
+            //if (!tie1.equals(tie) && !tie1.equals("")) BeginTie();
             if (!tuple1.equals(tuple) && !tuple1.equals("")) BeginTuplet(tuple1);
 
             beam = beam1;
@@ -1196,7 +1193,7 @@ public class FM_Score extends View {
             } else {
                 n = new FM_Note(this, k, FM_Const.keyToOctave(key_list.get(i)), FM_Const.keyToAccidental(key_list.get(i), 0), FM_Const.keyToDuration(key_list.get(i), 1), FM_Const.keyToStem(key_list.get(i), 2));
                 if (!beam.equals("")) AddToBeam((FM_Note) n);
-                if (!tie.equals("")) AddToTie((FM_Note) n);
+                if (!tie.equals("")) AddToTie(tie, (FM_Note) n);
                 if (!tuple.equals("")) AddToTuplet((FM_Note) n);
             }
             String stave_str = FM_Const.keyToElement(key_list.get(i), 6);
@@ -1218,10 +1215,11 @@ public class FM_Score extends View {
         Notes.clear();
         Staves.clear();
         if (!beam.equals("")) EndBeam();
-        if (!tie.equals("")) EndTie();
+        //if (!tie.equals("")) EndTie();
         if (!tuple.equals("")) EndTuplet();
         return 0;
     }
+
     public void ShowScore(int measures) {
         finishedDraw = new CountDownLatch(1);
         if (measures == 0) AllowZoomControls = tmpZoomControls;

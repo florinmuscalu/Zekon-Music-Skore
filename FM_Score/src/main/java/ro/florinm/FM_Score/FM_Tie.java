@@ -5,13 +5,11 @@ import android.graphics.Path;
 
 class FM_Tie {
     FM_Note s, e;
-    int index;
     FM_Score score;
-    FM_Tie(FM_Score score, int index) {
+    FM_Tie(FM_Score score) {
         s = null;
         e = null;
         this.score = score;
-        this.index = index;
     }
 
     void AddStart(FM_Note s){
