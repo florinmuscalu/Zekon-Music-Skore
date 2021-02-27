@@ -5,17 +5,19 @@ import android.graphics.Rect;
 
 public class FM_Pause extends FM_BaseNote {
     int adjustment = 1;
-    public FM_Pause(FM_Score Score, @FM_DurationValue int duration, int adjustment) {
+    public FM_Pause(FM_Score Score, @FM_DurationValue int duration, int adjustment, int voice) {
         super(FM_NoteType.PAUSE, Score);
         this.duration = duration;
         this.adjustment = adjustment;
+        this.voice = voice;
     }
 
-    public FM_Pause(FM_Score Score, @FM_DurationValue int duration, int adjustment, int Color) {
+    public FM_Pause(FM_Score Score, @FM_DurationValue int duration, int adjustment, int voice, int Color) {
         super(FM_NoteType.PAUSE, Score);
         this.duration = duration;
         this.color = Color;
         this.adjustment = adjustment;
+        this.voice = voice;
     }
 
     float getDisplacement() {

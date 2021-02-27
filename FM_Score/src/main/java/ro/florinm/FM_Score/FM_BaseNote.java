@@ -8,8 +8,9 @@ public abstract class FM_BaseNote{
     private final int type;
     protected int color;
     boolean tuplet = false;
-    public int tupletSize = 0;
-
+    int tupletSize = 0;
+    int voice = 0;
+    
     //On which staff do you want this Note? First (0) or Second (1). First staff uses FM_Score.FirstStaffKey, second one uses FM_Score.SecondStaffKey
     int stave;
 

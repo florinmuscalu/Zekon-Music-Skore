@@ -9,7 +9,7 @@ public class FM_Note extends FM_BaseNote {
     float StemTopY = 0f;
     public boolean isTieStart = false;
     public boolean isTieEnd = false;
-    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration) {
+    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration, int voice) {
         super(FM_NoteType.NOTE, Score);
         this.note = Note;
         this.accidental = Accidental;
@@ -18,9 +18,10 @@ public class FM_Note extends FM_BaseNote {
         this.stem = true;
         this.stem_up = true;
         this.beam = false;
+        this.voice = voice;
     }
 
-    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration, int Color) {
+    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration, int voice, int Color) {
         super(FM_NoteType.NOTE, Score);
         this.note = Note;
         this.accidental = Accidental;
@@ -31,9 +32,10 @@ public class FM_Note extends FM_BaseNote {
         this.beam = false;
         this.tuplet = false;
         this.color = Color;
+        this.voice = voice;
     }
 
-    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration, boolean StemUp) {
+    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration, int voice, boolean StemUp) {
         super(FM_NoteType.NOTE, Score);
         this.note = Note;
         this.accidental = Accidental;
@@ -43,9 +45,10 @@ public class FM_Note extends FM_BaseNote {
         this.stem_up = StemUp;
         this.beam = false;
         this.tuplet = false;
+        this.voice = voice;
     }
 
-    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration, boolean StemUp, int Color) {
+    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration, int voice, boolean StemUp, int Color) {
         super(FM_NoteType.NOTE, Score);
         this.note = Note;
         this.accidental = Accidental;
@@ -56,6 +59,7 @@ public class FM_Note extends FM_BaseNote {
         this.beam = false;
         this.tuplet = false;
         this.color = Color;
+        this.voice = voice;
     }
 
     public int getOctave() {

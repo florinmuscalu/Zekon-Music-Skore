@@ -2,6 +2,7 @@ package ro.florinm.FM_Score;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 class FM_Helper {
@@ -151,6 +152,7 @@ class FM_Helper {
         FM_Audio_Measure m = new FM_Audio_Measure();
         result.measures.add(m);
         int measure = 0;
+        HashMap<Integer, Integer> voice_duration = new HashMap<>();
         StartMeasure();
         FM_Audio_Note oldNote = null;
         for (int i = 0; i < input.chords.size(); i++) {
@@ -159,7 +161,18 @@ class FM_Helper {
                 result.measures.add(m);
                 measure += 1;
                 StartMeasure();
+                voice_duration.clear();
             }
+            int min;
+            try {
+                min = Collections.min(voice_duration.values());
+            } catch(Exception ignored) {
+                min = 0;
+            }
+            for (int vd : voice_duration.keySet()) {
+                voice_duration.put(vd, voice_duration.getOrDefault(vd, 0) - min);
+            }
+
             FM_Audio_Note n = new FM_Audio_Note();
             List<Integer> tracks_l = new ArrayList<>();
             List<Integer> tracks_nl = new ArrayList<>();
@@ -176,6 +189,7 @@ class FM_Helper {
                 FM_BaseNote note = input.chords.get(i).notes.get(nIndex);
                 if (note.getType() == FM_NoteType.PAUSE) {
                     int d = FM_SoundPool.GetDurationInMs(note.getDuration(), note.tupletSize, tempo, input.timeSignature_d);
+                    voice_duration.put(note.voice, voice_duration.getOrDefault(note.voice, 0) + d);
                     durations_pause.add(d);
                     durations_play.add(d);
                     tracks_l.add(-1);
@@ -184,6 +198,7 @@ class FM_Helper {
                 } else {
                     if (!((FM_Note) note).isTieStart && !((FM_Note) note).isTieEnd) {
                         int d = FM_SoundPool.GetDurationInMs(note.getDuration(), note.tupletSize, tempo, input.timeSignature_d);
+                        voice_duration.put(note.voice, voice_duration.getOrDefault(note.voice, 0) + d);
                         durations_pause.add(d);
                         durations_play.add(d);
                         int track = FM_SoundPool.GetIndex(NoteToString((FM_Note) note, input.keySignature));
@@ -192,6 +207,7 @@ class FM_Helper {
                         is_pause = false;
                     } else if (!((FM_Note) note).isTieStart) {
                         int d = FM_SoundPool.GetDurationInMs(note.getDuration(), note.tupletSize, tempo, input.timeSignature_d);
+                        voice_duration.put(note.voice, voice_duration.getOrDefault(note.voice, 0) + d);
                         durations_pause.add(d);
                         durations_play.add(d);
                         int track = FM_SoundPool.GetIndex(NoteToString((FM_Note) note, input.keySignature));
@@ -203,8 +219,9 @@ class FM_Helper {
                         int track = FM_SoundPool.GetIndex(NoteToString((FM_Note) note, input.keySignature));
                         tracks_nl.add(track);
                         tracks_l.add(track);
-                        long d = FM_SoundPool.GetDurationInMs(note.getDuration(), note.tupletSize, tempo, input.timeSignature_d);   //durata de pauza e durata notei
+                        int d = FM_SoundPool.GetDurationInMs(note.getDuration(), note.tupletSize, tempo, input.timeSignature_d);   //durata de pauza e durata notei
                         durations_pause.add((int) d);
+                        voice_duration.put(note.voice, voice_duration.getOrDefault(note.voice, 0) + d);
                         for (int t = 0; t < score.Ties.size(); t++)
                             if (score.Ties.get(t).s == note)
                                 d = d + FM_SoundPool.GetDurationInMs(score.Ties.get(t).e.getDuration(), score.Ties.get(t).e.tupletSize, tempo, input.timeSignature_d);
@@ -214,11 +231,11 @@ class FM_Helper {
                     }
                 }
             }
-            n.pauseDuration = Collections.min(durations_pause);
+            n.pauseDuration = Collections.min(voice_duration.values());
             n.playDuration = Collections.max(durations_play);
             if (is_pause) {
-                n.pauseDuration = Collections.min(durations_pause);
-                n.playDuration = Collections.max(durations_pause);
+                n.pauseDuration = Collections.min(voice_duration.values());
+                n.playDuration = Collections.max(voice_duration.values());
             } else {        //daca nu e pauza
                 int track_count = 0;
                 int track = -1;

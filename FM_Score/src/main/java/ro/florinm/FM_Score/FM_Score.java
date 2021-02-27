@@ -3,6 +3,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -321,6 +322,12 @@ public class FM_Score extends View {
             float x = StaveNotes.get(progressBar).StartX + StaveNotes.get(progressBar).Width() + FM_Const.dpTOpx(context, 3);
             Paint f = new Paint();
             f.setAntiAlias(true);
+//            int s = (int) (System.nanoTime() / 1000000000f);
+//            if (s != lasts) {
+//            }
+//            lasts = s;
+//            if (s % 2 ==0 )f.setColor(android.graphics.Color.RED);
+//            else f.setColor(android.graphics.Color.GREEN);
             f.setColor(android.graphics.Color.RED);
             float ys = getPaddingVertical();
             float ye = getPaddingVertical() + 4 * getDistanceBetweenStaveLines();
@@ -963,7 +970,6 @@ public class FM_Score extends View {
 
     private boolean inTuplet = false;
     private int TupletPosition = 0;
-    //private String TupletStr = "";
     private int currentTuplet = 0;
     List<FM_BaseNote> TupletNotes;
 
@@ -972,7 +978,6 @@ public class FM_Score extends View {
         TupletNotes = new ArrayList<>();
         TupletPosition = 1;
         if (s.toLowerCase().contains("a")) TupletPosition = 0;
-        //TupletStr = s.toLowerCase();
     }
 
     public void AddToTuplet(FM_BaseNote n) {
@@ -1187,13 +1192,17 @@ public class FM_Score extends View {
 
             FM_BaseNote n;
             int k = FM_Const.keyToNote(key_list.get(i));
+            int octave = FM_Const.keyToOctave(key_list.get(i));
+            int voice = Integer.parseInt(FM_Const.keyToElement(key_list.get(i), 7));
+            int duration = FM_Const.keyToDuration(key_list.get(i), 1);
             if (k == -1) {
-                n = new FM_Pause(this, FM_Const.keyToDuration(key_list.get(i), 1), FM_Const.keyToOctave(key_list.get(i)));
+                n = new FM_Pause(this, duration, octave, voice);
+                if (!tuple.equals("")) AddToTuplet(n);
             } else {
-                n = new FM_Note(this, k, FM_Const.keyToOctave(key_list.get(i)), FM_Const.keyToAccidental(key_list.get(i), 0), FM_Const.keyToDuration(key_list.get(i), 1), FM_Const.keyToStem(key_list.get(i), 2));
+                n = new FM_Note(this, k, octave, FM_Const.keyToAccidental(key_list.get(i), 0), duration, voice, FM_Const.keyToStem(key_list.get(i), 2));
                 if (!beam.equals("")) AddToBeam((FM_Note) n);
                 if (!tie.equals("")) AddToTie(tie, (FM_Note) n);
-                if (!tuple.equals("")) AddToTuplet((FM_Note) n);
+                if (!tuple.equals("")) AddToTuplet(n);
             }
             String stave_str = FM_Const.keyToElement(key_list.get(i), 6);
             int stave;
