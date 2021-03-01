@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 class FM_Audio_Note {
-    long playDuration;              //a chord can be composed of notes of different durations. This is the longest duration of all
+    long playDurationInTie;              //a chord can be composed of notes of different durations. This is the longest duration of all
+    long playDurationOutsideTie;         //a chord can be composed of notes of different durations. This is the longest duration of all
     long pauseDuration;             //this is the shortest duration of all.
     Boolean legato = false;
     FM_AudioTrack audioTrackInLegato = null;        //for chords, an audio track is composed automatically

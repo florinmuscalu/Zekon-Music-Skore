@@ -155,7 +155,10 @@ class FM_Helper {
         HashMap<Integer, Integer> voice_duration = new HashMap<>();
         StartMeasure();
         FM_Audio_Note oldNote = null;
+
+        //go through the chords
         for (int i = 0; i < input.chords.size(); i++) {
+            //if starting a new measure, increase the measure index and clear the durations
             if (measure != input.chords.get(i).measure) {
                 m = new FM_Audio_Measure();
                 result.measures.add(m);
@@ -163,6 +166,8 @@ class FM_Helper {
                 StartMeasure();
                 voice_duration.clear();
             }
+
+            //from the durations subrtract the smallest
             int min;
             try {
                 min = Collections.min(voice_duration.values());
@@ -174,10 +179,11 @@ class FM_Helper {
             }
 
             FM_Audio_Note n = new FM_Audio_Note();
-            List<Integer> tracks_l = new ArrayList<>();
-            List<Integer> tracks_nl = new ArrayList<>();
-            List<Integer> durations_pause = new ArrayList<>();
-            List<Integer> durations_play = new ArrayList<>();
+            List<Integer> tracksInTie = new ArrayList<>();              //tracks if we are in a legato
+            List<Integer> durationsInTie = new ArrayList<>();           //duration of each track if we are in a legato
+            List<Integer> tracksOutsideTie = new ArrayList<>();         //tracks if we are outside a legato
+            List<Integer> durationsOutsideTie = new ArrayList<>();      //duration of each track if we are outside a legato
+            //clear everything
             n.legato = false;
             n.audioIntInLegato = -1;
             n.audioIntOutsideLegato = -1;
@@ -185,61 +191,62 @@ class FM_Helper {
             n.audioTrackOutsideLegato = null;
             boolean is_pause = true;
             boolean is_chord = false;
+            //begin processing, going through all the notes in the current chord
             for (int nIndex = 0; nIndex < input.chords.get(i).notes.size(); nIndex++) {
                 FM_BaseNote note = input.chords.get(i).notes.get(nIndex);
+                int d = FM_SoundPool.GetDurationInMs(note.getDuration(), note.tupletSize, tempo, input.timeSignature_d);    //the duration
+                voice_duration.put(note.voice, voice_duration.getOrDefault(note.voice, 0) + d);                   //add the duration to the duration list
+                //if the current note is a PAUSE
                 if (note.getType() == FM_NoteType.PAUSE) {
-                    int d = FM_SoundPool.GetDurationInMs(note.getDuration(), note.tupletSize, tempo, input.timeSignature_d);
-                    voice_duration.put(note.voice, voice_duration.getOrDefault(note.voice, 0) + d);
-                    durations_pause.add(d);
-                    durations_play.add(d);
-                    tracks_l.add(-1);
-                    tracks_nl.add(-1);
+                    durationsOutsideTie.add(d);
+                    durationsInTie.add(d);
+                    tracksInTie.add(-1);
+                    tracksOutsideTie.add(-1);
                     if (oldNote != null) oldNote.NextPause = true;
-                } else {
+                }
+                //if the current note is a NOTE
+                if (note.getType() == FM_NoteType.NOTE) {
+                    int track = FM_SoundPool.GetIndex(NoteToString((FM_Note) note, input.keySignature));
+                    // if the note is not the beginning nor the end of a tie
                     if (!((FM_Note) note).isTieStart && !((FM_Note) note).isTieEnd) {
-                        int d = FM_SoundPool.GetDurationInMs(note.getDuration(), note.tupletSize, tempo, input.timeSignature_d);
-                        voice_duration.put(note.voice, voice_duration.getOrDefault(note.voice, 0) + d);
-                        durations_pause.add(d);
-                        durations_play.add(d);
-                        int track = FM_SoundPool.GetIndex(NoteToString((FM_Note) note, input.keySignature));
-                        tracks_l.add(track);
-                        tracks_nl.add(track);
+                        tracksOutsideTie.add(track);
+                        durationsOutsideTie.add(d);
+                        tracksInTie.add(track);
+                        durationsInTie.add(d);
                         is_pause = false;
-                    } else if (!((FM_Note) note).isTieStart) {
-                        int d = FM_SoundPool.GetDurationInMs(note.getDuration(), note.tupletSize, tempo, input.timeSignature_d);
-                        voice_duration.put(note.voice, voice_duration.getOrDefault(note.voice, 0) + d);
-                        durations_pause.add(d);
-                        durations_play.add(d);
-                        int track = FM_SoundPool.GetIndex(NoteToString((FM_Note) note, input.keySignature));
-                        tracks_l.add(-1);
-                        tracks_nl.add(track);
+                    }
+                    //if the note is the end of a tie
+                    else if (!((FM_Note) note).isTieStart) {
+                        tracksOutsideTie.add(track);
+                        durationsOutsideTie.add(d);
+                        tracksInTie.add(-1);
+                        durationsInTie.add(0);
                         is_pause = false;
-                    } else {
+                    }
+                    //if the note is the beginning of a tie
+                    else {
                         n.legato = true;
-                        int track = FM_SoundPool.GetIndex(NoteToString((FM_Note) note, input.keySignature));
-                        tracks_nl.add(track);
-                        tracks_l.add(track);
-                        int d = FM_SoundPool.GetDurationInMs(note.getDuration(), note.tupletSize, tempo, input.timeSignature_d);   //durata de pauza e durata notei
-                        durations_pause.add((int) d);
-                        voice_duration.put(note.voice, voice_duration.getOrDefault(note.voice, 0) + d);
+                        tracksOutsideTie.add(track);
+                        durationsOutsideTie.add(d);
+                        tracksInTie.add(track);
+                        //find the duration of the note that is the end of this particular tie
+                        int lDuration = 0;
                         for (int t = 0; t < score.Ties.size(); t++)
                             if (score.Ties.get(t).s == note)
-                                d = d + FM_SoundPool.GetDurationInMs(score.Ties.get(t).e.getDuration(), score.Ties.get(t).e.tupletSize, tempo, input.timeSignature_d);
-                        durations_play.add((int) d);
+                                lDuration = FM_SoundPool.GetDurationInMs(score.Ties.get(t).e.getDuration(), score.Ties.get(t).e.tupletSize, tempo, input.timeSignature_d);
+                        durationsInTie.add((int) d + lDuration);
                         is_pause = false;
                         is_chord = true;
                     }
                 }
             }
             n.pauseDuration = Collections.min(voice_duration.values());
-            n.playDuration = Collections.max(durations_play);
-            if (is_pause) {
-                n.pauseDuration = Collections.min(voice_duration.values());
-                n.playDuration = Collections.max(voice_duration.values());
-            } else {        //daca nu e pauza
+            n.playDurationInTie = Collections.max(durationsInTie);
+            n.playDurationOutsideTie = Collections.max(durationsOutsideTie);
+            if (!is_pause) {
                 int track_count = 0;
                 int track = -1;
-                for (int t : tracks_l)         //cate track-uri non-pauza sunt?
+                for (int t : tracksInTie)         //cate track-uri non-pauza sunt?
                     if (t != -1) {
                         track_count += 1;
                         track = t;
@@ -249,12 +256,12 @@ class FM_Helper {
                     n.audioTrackInLegato = null;
                 } else {
                     n.audioIntInLegato = 0;
-                    n.audioTrackInLegato = FM_SoundPool.getInstance().CreateTrack(tracks_l, durations_play);
+                    n.audioTrackInLegato = FM_SoundPool.getInstance().CreateTrack(tracksInTie, durationsInTie);
                 }
 
                 track_count = 0;
                 track = -1;
-                for (int t : tracks_nl)         //cate track-uri non-pauza sunt?
+                for (int t : tracksOutsideTie)         //cate track-uri non-pauza sunt?
                     if (t != -1) {
                         track_count += 1;
                         track = t;
@@ -264,7 +271,7 @@ class FM_Helper {
                     n.audioTrackOutsideLegato = null;
                 } else {
                     n.audioIntOutsideLegato = 0;
-                    n.audioTrackOutsideLegato = FM_SoundPool.getInstance().CreateTrack(tracks_nl, durations_play);
+                    n.audioTrackOutsideLegato = FM_SoundPool.getInstance().CreateTrack(tracksOutsideTie, durationsOutsideTie);
                 }
             }
             m.notes.add(n);
