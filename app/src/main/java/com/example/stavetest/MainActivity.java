@@ -59,29 +59,29 @@ public class MainActivity extends AppCompatActivity {
         s.setVisibility(View.VISIBLE);
         s.setNoteSpacing(10);
 
-//        List<FM_BaseNote> chord = new ArrayList<>();
-//        List<Integer> clefs = new ArrayList<>();
-//
-//        FM_Note n = new FM_Note(s, FM_NoteValue.DO, 5, FM_Accidental.None, FM_DurationValue.NOTE_HALF, 0, true);
-//        chord.add(n);
-//        n= new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.None, FM_DurationValue.NOTE_EIGHTH, 1, false);
-//        chord.add(n);
-//
-//        s.AddToTie("1", n);
-//
-//        clefs.add(FM_ClefValue.TREBLE);
-//        clefs.add(FM_ClefValue.TREBLE);
-//        s.addChord(chord, clefs);
-//
-//        s.addStaveNote(new FM_BarNote(s));
-//
-//        n= new FM_Note(s, FM_NoteValue.DO, 4, FM_Accidental.None, FM_DurationValue.NOTE_QUARTER_D, 1, false);
-//        s.AddToTie("1", n);
-//        s.addStaveNote(n);
-        LoadJson();
-//        player = FM_ScorePlayer.getInstance(getApplicationContext());
-//        player.LoadFromScore(s, 70);
-//        player.setShowProgress(true);
+        List<FM_BaseNote> chord = new ArrayList<>();
+        List<Integer> clefs = new ArrayList<>();
+
+        FM_Note n = new FM_Note(s, FM_NoteValue.DO, 5, FM_Accidental.None, FM_DurationValue.NOTE_HALF, 0, true);
+        chord.add(n);
+        n= new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.None, FM_DurationValue.NOTE_EIGHTH, 1, false);
+        chord.add(n);
+
+        s.AddToTie("1", n);
+
+        clefs.add(FM_ClefValue.TREBLE);
+        clefs.add(FM_ClefValue.TREBLE);
+        s.addChord(chord, clefs);
+
+        s.addStaveNote(new FM_BarNote(s));
+
+        n= new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.None, FM_DurationValue.NOTE_QUARTER_D, 1, false);
+        s.AddToTie("1", n);
+        s.addStaveNote(n);
+//        LoadJson();
+        player = FM_ScorePlayer.getInstance(getApplicationContext());
+        player.LoadFromScore(s, 70);
+        player.setShowProgress(true);
 
     }
 
@@ -484,7 +484,7 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
     public void OnClick(View v){
-        player.Play();
+        player.Play(1,1,1);
         //player.Play(2,2);
     }
 

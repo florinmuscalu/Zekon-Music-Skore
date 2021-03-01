@@ -139,7 +139,7 @@ public class FM_Const {
     public static int keyToOctave(String key, int index) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
-        key = s[index];
+        key = s[index].trim();
         if (key.equals("r")) return 0;
         return Integer.parseInt(key.substring(key.length() - 1));
     }
@@ -147,7 +147,7 @@ public class FM_Const {
     static int keyToDuration(String key, int pos) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
-        key = s[pos];
+        key = s[pos].trim();
         if (key.equals("w")) return FM_DurationValue.NOTE_WHOLE;
         if (key.equals("wr")) return FM_DurationValue.NOTE_WHOLE;
         if (key.equals("wd")) return FM_DurationValue.NOTE_WHOLE_D;
@@ -178,7 +178,7 @@ public class FM_Const {
     public static int keyToAccidental(String key, int pos) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
-        key = s[pos].substring(1);
+        key = s[pos].trim().substring(1);
         int courtesy = 0;
         if (key.contains("(")) courtesy = FM_Accidental.Courtesy;
         if (key.contains("###")) return courtesy + FM_Accidental.TripleSharp;
@@ -194,14 +194,14 @@ public class FM_Const {
     static boolean keyToStem(String key, int pos) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
-        key = s[pos];
+        key = s[pos].trim();
         return key.equals("up");
     }
 
     static String keyToElement(String key, int pos) {
         key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         String[] s = key.split(",");
-        key = s[pos];
+        key = s[pos].trim();
         return key;
     }
 
