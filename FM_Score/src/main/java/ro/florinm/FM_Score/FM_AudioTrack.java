@@ -381,7 +381,7 @@ class FM_SoundPool {
 
     //hold the playing threads
     private final SparseArray<PlayThread> threadMap;
-    static boolean playing;
+    volatile static boolean playing;
     //hold the audio files
     protected static final SparseArray<String> assetFiles = new SparseArray<>();
     protected static final Map<String, Integer> KeyMapping = new HashMap<>();

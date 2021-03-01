@@ -142,28 +142,30 @@ public class FM_ScorePlayer {
         boolean in_legato = false;
         if (showProgress && score != null) score.ProgressReset();
         long lastDuration = 0;
-        for (int i = 0; i < ListNotes.size(); i ++){
+        for (int i = 0; i < ListNotes.size(); i++) {
             FM_Audio_Note n = ListNotes.get(i);
             boolean isEnd = false;
-            if (i == ListNotes.size()-1) isEnd = true;
-            if (!FM_SoundPool.playing) continue;
+            if (i == ListNotes.size() - 1) isEnd = true;
+            if (!FM_SoundPool.playing) break;
             if (showProgress && score != null) score.ProgressAdvance();
 
-            if (in_legato || (!isEnd &&n.legato)) {
-                if (n.audioIntInLegato != 0) soundPlayer.playKey(n.audioIntInLegato, n.NextPause);
-                else n.audioTrackInLegato.Play(n.playDurationInTie, n.NextPause);
+            if (in_legato || (!isEnd && n.legato)) {
+                if (n.audioIntInLegato > 0) soundPlayer.playKey(n.audioIntInLegato, n.NextPause);
+                if (n.audioIntInLegato == 0)
+                    n.audioTrackInLegato.Play(n.playDurationInTie, n.NextPause);
                 lastDuration = n.playDurationInTie - n.pauseDuration;
             } else {
-                if (n.audioIntOutsideLegato != 0)
+                if (n.audioIntOutsideLegato > 0)
                     soundPlayer.playKey(n.audioIntOutsideLegato, n.NextPause);
-                else n.audioTrackOutsideLegato.Play(n.playDurationOutsideTie, n.NextPause);
+                if (n.audioIntOutsideLegato == 0)
+                    n.audioTrackOutsideLegato.Play(n.playDurationOutsideTie, n.NextPause);
                 lastDuration = n.playDurationOutsideTie - n.pauseDuration;
             }
             FM_SoundPool.CustomDelay(n.pauseDuration, false);
             if (in_legato || (!isEnd && n.legato)) {
-                if (n.audioIntInLegato != 0) soundPlayer.stopKey(n.audioIntInLegato);
+                if (n.audioIntInLegato > 0) soundPlayer.stopKey(n.audioIntInLegato);
             } else {
-                if (n.audioIntOutsideLegato != 0) soundPlayer.stopKey(n.audioIntOutsideLegato);
+                if (n.audioIntOutsideLegato > 0) soundPlayer.stopKey(n.audioIntOutsideLegato);
             }
             in_legato = n.legato;
         }
