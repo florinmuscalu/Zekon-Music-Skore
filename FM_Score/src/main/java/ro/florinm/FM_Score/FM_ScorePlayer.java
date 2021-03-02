@@ -232,4 +232,8 @@ public class FM_ScorePlayer {
     public void CustomDelay(int durationMs) {
         FM_SoundPool.CustomDelay(durationMs, false);
     }
+
+    public void StartPlaying() {
+        FM_SoundPool.playing = true;
+    }
 }
