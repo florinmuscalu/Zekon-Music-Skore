@@ -127,7 +127,7 @@ public class FM_Score extends View {
     }
 
     public void ProgressSetStart(int measure) {
-        if (measure == 0) {
+        if (measure == 1) {
             progressBar = -1;
         } else {
             for (int i = 0; i < StaveNotes.size(); i++) {
