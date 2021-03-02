@@ -71,9 +71,11 @@ public class FM_ScorePlayer {
      */
 
     public long getTempoDuration(int tempo){
-        float multiply = (60.0f / tempo) * (FM_SoundPool.TIME_SIGNATURE_D / 4.0f);
-        //float multiply = (60.0f * FM_SoundPool.time_signature_n) / (FM_SoundPool.TEMPO * FM_SoundPool.time_signature_d);
-        return (long) (multiply * 1000f);
+        if (tempo == 0) tempo = 60;
+        int time_signature_d = FM_SoundPool.TIME_SIGNATURE_D;
+        if (time_signature_d == 0) time_signature_d = 4;
+        float d = (60.0f / tempo) * (4.0f / time_signature_d) * 1000.0f;
+        return (long) d;
     }
 
     public void LoadFromScore(FM_Score obj, int tempo) {
