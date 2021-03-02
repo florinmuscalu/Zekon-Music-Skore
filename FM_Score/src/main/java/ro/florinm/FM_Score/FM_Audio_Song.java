@@ -10,7 +10,7 @@ public class FM_Audio_Song {
 }
 
 class FM_Temp_Audio_Song {
-    public List<FM_Temp_Audio_Note> chords = new ArrayList<>();
+    List<FM_Temp_Audio_Note> chords = new ArrayList<>();
     @FM_KeySignatureValue
     int keySignature;
     int timeSignature_d;

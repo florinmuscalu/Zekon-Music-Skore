@@ -228,4 +228,8 @@ public class FM_ScorePlayer {
     public void setShowProgress(boolean showProgress) {
         this.showProgress = showProgress;
     }
+
+    public void CustomDelay(int durationMs) {
+        FM_SoundPool.CustomDelay(durationMs, false);
+    }
 }
