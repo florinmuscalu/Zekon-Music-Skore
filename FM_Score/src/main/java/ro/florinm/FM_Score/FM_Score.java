@@ -126,6 +126,21 @@ public class FM_Score extends View {
         invalidate();
     }
 
+    public void ProgressSetStart(int measure) {
+        if (measure == 0) {
+            progressBar = -1;
+        } else {
+            for (int i = 0; i < StaveNotes.size(); i++) {
+                if (StaveNotes.get(i).getType() == FM_NoteType.BAR) measure--;
+                if (measure == 1) {
+                    progressBar = i;
+                    break;
+                }
+            }
+        }
+        invalidate();
+    }
+
     public void ProgressAdvance() {
         progressBar += 1;
         if (StaveNotes.get(progressBar) instanceof FM_BarNote) progressBar += 1;

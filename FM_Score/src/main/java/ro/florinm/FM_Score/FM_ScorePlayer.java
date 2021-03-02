@@ -140,7 +140,7 @@ public class FM_ScorePlayer {
         }
 
         boolean in_legato = false;
-        if (showProgress && score != null) score.ProgressReset();
+        if (showProgress && score != null) score.ProgressSetStart(measure_start);
         long lastDuration = 0;
         for (int i = 0; i < ListNotes.size(); i++) {
             FM_Audio_Note n = ListNotes.get(i);
