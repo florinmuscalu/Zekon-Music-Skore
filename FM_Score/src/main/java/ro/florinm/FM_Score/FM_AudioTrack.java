@@ -946,7 +946,7 @@ class FM_SoundPool {
         if (time_signature_d == 0) time_signature_d = TIME_SIGNATURE_D;
         if (time_signature_d == 0) time_signature_d = 4;
         float d = (60.0f / tempo) * (4.0f / time_signature_d) * 4000.0f;
-        if (time_signature_d == 8) d = d * (2f/3f);
+        if (time_signature_d == 8) d = d * (4f/3f);
 
         if (duration > 50) {
             d = d * 1.5f;
