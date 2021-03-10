@@ -1155,15 +1155,29 @@ public class FM_Score extends View {
         clearStaveNotes();
         setTimeSignature(FM_Const.getTimeSignature_n(timesignature), FM_Const.getTimeSignature_d(timesignature));
         setKeySignature(FM_Const.StringToKeySignature(keysignature));
+
+        int firstStaveClef = FM_ClefValue.TREBLE;
+        int secondStaveClef = FM_ClefValue.BASS;
+
         if (clef_list.size() >= 1) {
-            if (clef_list.get(0).equals("treble"))
+            if (clef_list.get(0).equals("treble")) {
                 setFirstStaveClef(FM_ClefValue.TREBLE);
-            else setFirstStaveClef(FM_ClefValue.BASS);
+                firstStaveClef = FM_ClefValue.TREBLE;
+            }
+            else {
+                setFirstStaveClef(FM_ClefValue.BASS);
+                firstStaveClef = FM_ClefValue.BASS;
+            }
         }
         if (clef_list.size() > 1) {
-            if (clef_list.get(1).equals("treble"))
+            if (clef_list.get(1).equals("treble")) {
                 setSecondStaveClef(FM_ClefValue.TREBLE);
-            else setSecondStaveClef(FM_ClefValue.BASS);
+                secondStaveClef = FM_ClefValue.TREBLE;
+            }
+            else {
+                setSecondStaveClef(FM_ClefValue.BASS);
+                secondStaveClef = FM_ClefValue.BASS;
+            }
         }
         int measure_pos = 0;
         int measure_cnt = 0;
@@ -1180,12 +1194,18 @@ public class FM_Score extends View {
                 Staves.clear();
                 addStaveNote(new FM_BarNote(this));
                 measure_pos += 1;
-                if (measure_cnt != 0 && measure_cnt == measure_pos) {
-                    if (!beam.equals("")) EndBeam();
-                    //if (!tie.equals("")) EndTie();
-                    if (!tuple.equals("")) EndTuplet();
-                    return 0;
-                }
+                i++;
+                continue;
+            }
+            if (key_list.get(i).contains("BASS")) {
+                addStaveNote(new FM_Clef(this, FM_ClefValue.BASS, 0));
+                firstStaveClef = FM_ClefValue.BASS;
+                i++;
+                continue;
+            }
+            if (key_list.get(i).contains("TREBLE")) {
+                addStaveNote(new FM_Clef(this, FM_ClefValue.TREBLE, 0));
+                firstStaveClef = FM_ClefValue.TREBLE;
                 i++;
                 continue;
             }
@@ -1210,19 +1230,21 @@ public class FM_Score extends View {
             int octave = FM_Const.keyToOctave(key_list.get(i));
             int voice = Integer.parseInt(FM_Const.keyToElement(key_list.get(i), 7));
             int duration = FM_Const.keyToDuration(key_list.get(i), 1);
-            if (k == -1) {
-                n = new FM_Pause(this, duration, octave, voice);
-                if (!tuple.equals("")) AddToTuplet(n);
-            } else {
-                n = new FM_Note(this, k, octave, FM_Const.keyToAccidental(key_list.get(i), 0), duration, voice, FM_Const.keyToStem(key_list.get(i), 2));
-                if (!beam.equals("")) AddToBeam((FM_Note) n);
-                if (!tie.equals("")) AddToTie(tie, (FM_Note) n);
-                if (!tuple.equals("")) AddToTuplet(n);
-            }
             String stave_str = FM_Const.keyToElement(key_list.get(i), 6);
             int stave;
             if (stave_str.equals("0")) stave = 0;
             else stave = 1;
+            if (k == -1) {
+                n = new FM_Pause(this, duration, octave, voice);
+                if (!tuple.equals("")) AddToTuplet(n);
+            } else {
+                int clef = firstStaveClef;
+                if (stave == 1) clef = secondStaveClef;
+                n = new FM_Note(this, k, octave, clef, FM_Const.keyToAccidental(key_list.get(i), 0), duration, voice, FM_Const.keyToStem(key_list.get(i), 2));
+                if (!beam.equals("")) AddToBeam((FM_Note) n);
+                if (!tie.equals("")) AddToTie(tie, (FM_Note) n);
+                if (!tuple.equals("")) AddToTuplet(n);
+            }
             Integer chord = Integer.parseInt(FM_Const.keyToElement(key_list.get(i), 8));
             List<FM_BaseNote> Note_List = Notes.get(chord);
             List<Integer> stave_List = Staves.get(chord);

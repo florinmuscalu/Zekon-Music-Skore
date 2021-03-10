@@ -484,7 +484,7 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
     public void OnClick(View v){
-        player.Play(3,5,0);
+        player.Play();
         //player.Play(2,2);
     }
 

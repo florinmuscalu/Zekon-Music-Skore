@@ -9,7 +9,9 @@ public class FM_Note extends FM_BaseNote {
     float StemTopY = 0f;
     public boolean isTieStart = false;
     public boolean isTieEnd = false;
-    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration, int voice) {
+    @FM_ClefValue int clef;
+
+    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_ClefValue int clef, @FM_Accidental int Accidental, @FM_DurationValue int Duration, int voice) {
         super(FM_NoteType.NOTE, Score);
         this.note = Note;
         this.accidental = Accidental;
@@ -19,9 +21,10 @@ public class FM_Note extends FM_BaseNote {
         this.stem_up = true;
         this.beam = false;
         this.voice = voice;
+        this.clef = clef;
     }
 
-    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration, int voice, int Color) {
+    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_ClefValue int clef, @FM_Accidental int Accidental, @FM_DurationValue int Duration, int voice, int Color) {
         super(FM_NoteType.NOTE, Score);
         this.note = Note;
         this.accidental = Accidental;
@@ -33,9 +36,10 @@ public class FM_Note extends FM_BaseNote {
         this.tuplet = false;
         this.color = Color;
         this.voice = voice;
+        this.clef = clef;
     }
 
-    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration, int voice, boolean StemUp) {
+    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_ClefValue int clef, @FM_Accidental int Accidental, @FM_DurationValue int Duration, int voice, boolean StemUp) {
         super(FM_NoteType.NOTE, Score);
         this.note = Note;
         this.accidental = Accidental;
@@ -46,9 +50,10 @@ public class FM_Note extends FM_BaseNote {
         this.beam = false;
         this.tuplet = false;
         this.voice = voice;
+        this.clef = clef;
     }
 
-    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_Accidental int Accidental, @FM_DurationValue int Duration, int voice, boolean StemUp, int Color) {
+    public FM_Note(FM_Score Score, @FM_NoteValue int Note, int Octave, @FM_ClefValue int clef, @FM_Accidental int Accidental, @FM_DurationValue int Duration, int voice, boolean StemUp, int Color) {
         super(FM_NoteType.NOTE, Score);
         this.note = Note;
         this.accidental = Accidental;
@@ -60,6 +65,7 @@ public class FM_Note extends FM_BaseNote {
         this.tuplet = false;
         this.color = Color;
         this.voice = voice;
+        this.clef = clef;
     }
 
     public int getOctave() {
@@ -78,9 +84,6 @@ public class FM_Note extends FM_BaseNote {
         if (note.equals(FM_NoteValue.SOL)) offset = -2.0f;
         if (note.equals(FM_NoteValue.LA)) offset = -2.5f;
         if (note.equals(FM_NoteValue.SI)) offset = -3.0f;
-
-        @FM_ClefValue int clef = score.getFirstStaveClef();
-        if (stave == 1) clef = score.getSecondStaveClef();
 
         if (clef == FM_ClefValue.TREBLE) {
             offset = offset + 5.0f + 3.5f * (4 - octave);
