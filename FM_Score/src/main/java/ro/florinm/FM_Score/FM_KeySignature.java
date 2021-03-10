@@ -8,7 +8,7 @@ class FM_KeySignature extends FM_BaseNote {
     @FM_KeySignatureValue
     private final int value;
     @FM_ClefValue
-    private final int clef;
+    private int clef;
 
     List<Float> displacement = new ArrayList<>();
     List<Integer> accidental = new ArrayList<>();
@@ -116,8 +116,10 @@ class FM_KeySignature extends FM_BaseNote {
         return 0;
     }
 
-    void DrawNote(Canvas canvas) {
+    void DrawNote(Canvas canvas, @FM_ClefValue int clef) {
         if (!isVisible()) return;
+        this.clef = clef;
+        Build();
         super.DrawNote(canvas);
 
         float dx = StartX + getPaddingLeft();
