@@ -706,6 +706,8 @@ public class FM_Score extends View {
             canvas.drawText(FM_Const._7, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
         if (TimeSignature_n == FM_TimeSignatureValue._8)
             canvas.drawText(FM_Const._8, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
+        if (TimeSignature_n == FM_TimeSignatureValue._9)
+            canvas.drawText(FM_Const._9, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
 
         if (TimeSignature_d == FM_TimeSignatureValue._2)
             canvas.drawText(FM_Const._2, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
@@ -721,6 +723,8 @@ public class FM_Score extends View {
             canvas.drawText(FM_Const._7, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
         if (TimeSignature_d == FM_TimeSignatureValue._8)
             canvas.drawText(FM_Const._8, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
+        if (TimeSignature_d == FM_TimeSignatureValue._9)
+            canvas.drawText(FM_Const._9, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
     }
 
     public void clearStaveNotes() {
