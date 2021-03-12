@@ -43,6 +43,7 @@ public class FM_Const {
     static final String _6 = "\ue086";
     static final String _7 = "\ue087";
     static final String _8 = "\ue088";
+    static final String _9 = "\ue089";
 
     static final String _2_b = "\ue927";
     static final String _3_b = "\ue928";
@@ -311,6 +312,7 @@ public class FM_Const {
         if (s.startsWith("6")) ret = FM_TimeSignatureValue._6;
         if (s.startsWith("7")) ret = FM_TimeSignatureValue._7;
         if (s.startsWith("8")) ret = FM_TimeSignatureValue._8;
+        if (s.startsWith("9")) ret = FM_TimeSignatureValue._9;
         return ret;
     }
 
@@ -324,6 +326,7 @@ public class FM_Const {
         if (s.endsWith("6")) ret = FM_TimeSignatureValue._6;
         if (s.endsWith("7")) ret = FM_TimeSignatureValue._7;
         if (s.endsWith("8")) ret = FM_TimeSignatureValue._8;
+        if (s.endsWith("9")) ret = FM_TimeSignatureValue._9;
         return ret;
     }
 

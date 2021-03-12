@@ -1,9 +1,9 @@
 package ro.florinm.FM_Score;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 
 import static android.view.MotionEvent.INVALID_POINTER_ID;
@@ -45,7 +46,7 @@ public class FM_Score extends View {
     private float _DistanceBetweenStaveLines;
     private float DistanceBetweenStave_cnt;                //Distance between Staves as number of distances between lines
     private float DistanceBetweenRows_cnt;                 //Distance between Rows of staves as number of distances between lines
-    private float PaddingV_cnt, PaddingS_p, PaddingE_p;     //padding Start and padding End are set as percentange of the total width
+    private float PaddingV_cnt, PaddingS_p, PaddingE_p;     //padding Start and padding End are set as percentage of the total width
     private float PaddingS, PaddingE;                       //padding Vertical is set as number of Distances between Lines.
     private boolean StartBar;
     private boolean EndBar;
@@ -994,7 +995,7 @@ public class FM_Score extends View {
 
     public void AddToTie(String tie, FM_Note n) {
         if (TieNotes.containsKey(tie)) {
-            TieNotes.get(tie).add(n);
+            Objects.requireNonNull(TieNotes.get(tie)).add(n);
             EndTie(tie);
         } else {
             List <FM_Note> note_list = new ArrayList<>();
@@ -1005,6 +1006,7 @@ public class FM_Score extends View {
 
     private void EndTie(String tie) {
         List <FM_Note> note_list = TieNotes.get(tie);
+        assert note_list != null;
         if (note_list.size() != 2) return;
         if (note_list.get(0).stave != note_list.get(1).stave || note_list.get(0).octave != note_list.get(1).octave || !note_list.get(0).note.equals(note_list.get(1).note))
             return;
@@ -1172,23 +1174,23 @@ public class FM_Score extends View {
     public int LoadFromJson(JSONObject obj) {
         List<String> key_list = new ArrayList<>();
         List<String> clef_list = new ArrayList<>();
-        String keysignature;
-        String timesignature;
+        String keySignature;
+        String timeSignature;
         try {
             JSONArray keys = obj.getJSONArray("keys");
             for (int k = 0; k < keys.length(); k++) key_list.add(keys.getJSONArray(k).toString());
             JSONArray clef = obj.getJSONArray("clef");
             for (int k = 0; k < clef.length(); k++) clef_list.add(clef.getString(k));
-            timesignature = obj.optString("timesignature", "4/4");
-            keysignature = obj.optString("keysignature", "DO");
+            timeSignature = obj.optString("timesignature", "4/4");
+            keySignature = obj.optString("keysignature", "DO");
         } catch (JSONException e) {
             return -1;
         }
 
         setNotesAlign(FM_Align.ALIGN_LEFT_LAST_MEASURE);
         clearStaveNotes();
-        setTimeSignature(FM_Const.getTimeSignature_n(timesignature), FM_Const.getTimeSignature_d(timesignature));
-        setKeySignature(FM_Const.StringToKeySignature(keysignature));
+        setTimeSignature(FM_Const.getTimeSignature_n(timeSignature), FM_Const.getTimeSignature_d(timeSignature));
+        setKeySignature(FM_Const.StringToKeySignature(keySignature));
 
         int firstStaveClef = FM_ClefValue.TREBLE;
         int secondStaveClef = FM_ClefValue.BASS;
@@ -1213,21 +1215,18 @@ public class FM_Score extends View {
                 secondStaveClef = FM_ClefValue.BASS;
             }
         }
-        int measure_pos = 0;
-        int measure_cnt = 0;
         int i = 0;
         String beam = "";
-        String tie = "";
+        String tie;
         String tuple = "";
         HashMap<Integer, List<FM_BaseNote>> Notes = new HashMap();
         HashMap<Integer, List<Integer>> Staves = new HashMap();
         while (i < key_list.size()) {
             if (key_list.get(i).contains("BAR")) {
-                for (Integer k : Notes.keySet()) addChord(Notes.get(k), Staves.get(k));
+                for (Integer k : Notes.keySet()) addChord(Objects.requireNonNull(Notes.get(k)), Staves.get(k));
                 Notes.clear();
                 Staves.clear();
                 addStaveNote(new FM_BarNote(this));
-                measure_pos += 1;
                 i++;
                 continue;
             }
@@ -1270,15 +1269,14 @@ public class FM_Score extends View {
             else stave = 1;
             if (k == -1) {
                 n = new FM_Pause(this, duration, octave, voice);
-                if (!tuple.equals("")) AddToTuplet(n);
             } else {
                 int clef = firstStaveClef;
                 if (stave == 1) clef = secondStaveClef;
                 n = new FM_Note(this, k, octave, clef, FM_Const.keyToAccidental(key_list.get(i), 0), duration, voice, FM_Const.keyToStem(key_list.get(i), 2));
                 if (!beam.equals("")) AddToBeam((FM_Note) n);
                 if (!tie.equals("")) AddToTie(tie, (FM_Note) n);
-                if (!tuple.equals("")) AddToTuplet(n);
             }
+            if (!tuple.equals("")) AddToTuplet(n);
             Integer chord = Integer.parseInt(FM_Const.keyToElement(key_list.get(i), 8));
             List<FM_BaseNote> Note_List = Notes.get(chord);
             List<Integer> stave_List = Staves.get(chord);
@@ -1290,7 +1288,7 @@ public class FM_Score extends View {
             Staves.put(chord, stave_List);
             i++;
         }
-        for (Integer k : Notes.keySet()) addChord(Notes.get(k), Staves.get(k));
+        for (Integer k : Notes.keySet()) addChord(Objects.requireNonNull(Notes.get(k)), Staves.get(k));
         Notes.clear();
         Staves.clear();
         if (!beam.equals("")) EndBeam();
