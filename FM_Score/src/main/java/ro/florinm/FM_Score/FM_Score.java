@@ -759,6 +759,10 @@ public class FM_Score extends View {
     }
 
     public void addChord(List<FM_BaseNote> n, List<Integer> stave) {
+        if (n.get(0) instanceof FM_Clef) {
+            n.get(0).stave = stave.get(0);
+            StaveNotes.add(n.get(0));
+        } else {
         FM_Chord C = new FM_Chord(this);
         for (int i = 0; i < n.size(); i++) {
             if (stave.get(i) == 1) StaveCount = FM_StaveCount._2;
@@ -767,6 +771,7 @@ public class FM_Score extends View {
         }
         C.Compute();
         StaveNotes.add(C);
+        }
         ComputeLines();
     }
 
@@ -1234,15 +1239,19 @@ public class FM_Score extends View {
                 i++;
                 continue;
             }
-            if (key_list.get(i).contains("BASS")) {
-                addStaveNote(new FM_Clef(this, FM_ClefValue.BASS, 0));
-                firstStaveClef = FM_ClefValue.BASS;
-                i++;
-                continue;
-            }
-            if (key_list.get(i).contains("TREBLE")) {
-                addStaveNote(new FM_Clef(this, FM_ClefValue.TREBLE, 0));
-                firstStaveClef = FM_ClefValue.TREBLE;
+            if (key_list.get(i).contains("BASS")) firstStaveClef = FM_ClefValue.BASS;
+            if (key_list.get(i).contains("TREBLE")) firstStaveClef = FM_ClefValue.TREBLE;
+            if (key_list.get(i).contains("BASS") ||  key_list.get(i).contains("TREBLE")) {
+                FM_BaseNote c;
+                if (firstStaveClef == FM_ClefValue.BASS) c = new FM_Clef(this, FM_ClefValue.BASS, 0);
+                else c = new FM_Clef(this, FM_ClefValue.TREBLE, 0);
+                List<FM_BaseNote> Note_List = new ArrayList<>();
+                List<Integer> stave_List = new ArrayList<>();
+                Note_List.add(c);
+                stave_List.add(0);
+                Integer chord = Integer.parseInt(FM_Const.keyToElement(key_list.get(i), 1));
+                Notes.put(chord, Note_List);
+                Staves.put(chord, stave_List);
                 i++;
                 continue;
             }
