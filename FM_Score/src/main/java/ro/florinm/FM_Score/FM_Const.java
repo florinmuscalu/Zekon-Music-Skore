@@ -129,6 +129,15 @@ public class FM_Const {
         if (key.startsWith("sol")) return FM_NoteValue.SOL;
         if (key.startsWith("la")) return FM_NoteValue.LA;
         if (key.startsWith("si")) return FM_NoteValue.SI;
+
+        if (key.startsWith("c")) return FM_NoteValue.DO;
+        if (key.startsWith("d")) return FM_NoteValue.RE;
+        if (key.startsWith("e")) return FM_NoteValue.MI;
+        if (key.startsWith("f")) return FM_NoteValue.FA;
+        if (key.startsWith("g")) return FM_NoteValue.SOL;
+        if (key.startsWith("a")) return FM_NoteValue.LA;
+        if (key.startsWith("b")) return FM_NoteValue.SI;
+
         if (key.startsWith("r")) return -1;
         return FM_NoteValue.DO;
     }
