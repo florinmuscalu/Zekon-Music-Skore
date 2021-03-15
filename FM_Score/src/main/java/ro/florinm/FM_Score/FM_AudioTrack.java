@@ -951,7 +951,7 @@ class FM_SoundPool {
         int multiply = 1;       //simple meter (2, 3 and 4)
         if (time_signature_n == 6 || time_signature_n == 9 || time_signature_n == 12) multiply = 3; //compound meter
 
-        float d = (60.0f / (tempo * multiply)) * (4.0f / time_signature_d) * 4000.0f;
+        float d = (60.0f / (tempo * multiply)) * (time_signature_d / 4.0f) * 4000.0f;
         //if (time_signature_d == 8) d = d * (4f/3f);
 
         if (duration > 50) {
