@@ -335,7 +335,7 @@ class FM_AudioTrack {
 }
 
 class FM_SoundPool {
-    static int time_signature_n;
+    static int TIME_SIGNATURE_N;
     static int TIME_SIGNATURE_D;
     static int FALLBACK_DURATION = 250; //fallback duration for sounds
     static int MAX_TRACKS = 500;
@@ -945,8 +945,14 @@ class FM_SoundPool {
         if (tempo == 0) tempo = 60;
         if (time_signature_d == 0) time_signature_d = TIME_SIGNATURE_D;
         if (time_signature_d == 0) time_signature_d = 4;
-        float d = (60.0f / tempo) * (4.0f / time_signature_d) * 4000.0f;
-        if (time_signature_d == 8) d = d * (4f/3f);
+
+        int time_signature_n = TIME_SIGNATURE_N;
+        if (time_signature_n == 0) time_signature_d = 4;
+        int multiply = 1;       //simple meter (2, 3 and 4)
+        if (time_signature_n == 6 || time_signature_n == 9 || time_signature_n == 12) multiply = 3; //compound meter
+
+        float d = (60.0f / (tempo * multiply)) * (4.0f / time_signature_d) * 4000.0f;
+        //if (time_signature_d == 8) d = d * (4f/3f);
 
         if (duration > 50) {
             d = d * 1.5f;
