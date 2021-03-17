@@ -207,27 +207,27 @@ public class FM_Const {
             accidental = accidental + FM_Accidental.TripleSharp;
             found = true;
         }
-        if (!found && key.contains("##")) {
+        if (!found && temp.contains("##")) {
             accidental = accidental + FM_Accidental.DoubleSharp;
             found = true;
         }
-        if (!found && key.contains("#")) {
+        if (!found && temp.contains("#")) {
             accidental = accidental + FM_Accidental.Sharp;
             found = true;
         }
-        if (!found && key.contains("bbb")) {
+        if (!found && temp.contains("bbb")) {
             accidental = accidental + FM_Accidental.TripleFlat;
             found = true;
         }
-        if (!found && key.contains("bb")) {
+        if (!found && temp.contains("bb")) {
             accidental = accidental + FM_Accidental.DoubleFlat;
             found = true;
         }
-        if (!found && key.contains("b")) {
+        if (!found && temp.contains("b")) {
             accidental = accidental + FM_Accidental.Flat;
             found = true;
         }
-        if (!found && key.contains("n")) {
+        if (!found && temp.contains("n")) {
             accidental = accidental + FM_Accidental.Natural;
         }
         k.accidental = accidental;

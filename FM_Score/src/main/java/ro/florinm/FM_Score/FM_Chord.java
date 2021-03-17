@@ -73,15 +73,24 @@ public class FM_Chord extends FM_BaseNote {
                     int nj = 0;
                     if (Notes.get(i).duration == FM_DurationValue.NOTE_WHOLE || Notes.get(i).duration == FM_DurationValue.NOTE_WHOLE_D) ni = 1;
                     if (Notes.get(i).duration == FM_DurationValue.NOTE_HALF || Notes.get(i).duration == FM_DurationValue.NOTE_HALF_D) ni = 2;
+                    if (Notes.get(i).duration == FM_DurationValue.NOTE_QUARTER || Notes.get(i).duration == FM_DurationValue.NOTE_EIGHTH || Notes.get(i).duration == FM_DurationValue.NOTE_SIXTEENTH || Notes.get(i).duration == FM_DurationValue.NOTE_THIRTY_SECOND) ni = 3;
+                    if (Notes.get(i).duration == FM_DurationValue.NOTE_QUARTER_D || Notes.get(i).duration == FM_DurationValue.NOTE_EIGHTH_D || Notes.get(i).duration == FM_DurationValue.NOTE_SIXTEENTH_D || Notes.get(i).duration == FM_DurationValue.NOTE_THIRTY_SECOND_D) ni = 4;
 
                     if (Notes.get(j).duration == FM_DurationValue.NOTE_WHOLE || Notes.get(j).duration == FM_DurationValue.NOTE_WHOLE_D) nj = 1;
                     if (Notes.get(j).duration == FM_DurationValue.NOTE_HALF || Notes.get(j).duration == FM_DurationValue.NOTE_HALF_D) nj = 2;
+                    if (Notes.get(j).duration == FM_DurationValue.NOTE_QUARTER || Notes.get(j).duration == FM_DurationValue.NOTE_EIGHTH || Notes.get(j).duration == FM_DurationValue.NOTE_SIXTEENTH || Notes.get(j).duration == FM_DurationValue.NOTE_THIRTY_SECOND) ni = 3;
+                    if (Notes.get(j).duration == FM_DurationValue.NOTE_QUARTER_D || Notes.get(j).duration == FM_DurationValue.NOTE_EIGHTH_D || Notes.get(j).duration == FM_DurationValue.NOTE_SIXTEENTH_D || Notes.get(j).duration == FM_DurationValue.NOTE_THIRTY_SECOND_D) ni = 4;
 
                     if (ni == 1 || ni != nj) {
                         //float all_width = (Notes.get(i).Width() - Notes.get(i).WidthAccidental() + Notes.get(j).Width()) / 2f;
                         float all_width = (Notes.get(i).WidthNote() + Notes.get(j).WidthNote()) / 2f;
-                        Notes.get(i).setPaddingLeft(Notes.get(i).getPaddingLeft() - all_width * 0.5f);      //pad the dot on first note
-                        Notes.get(j).setPaddingLeft(Notes.get(j).getPaddingLeft() + all_width * 0.5f);    //pad the note on the second note
+                        if (Notes.get(i).duration < Notes.get(j).duration) {        //the note with the higher duration (or with a dot) should be to the right
+                            all_width = all_width * 0.5f;
+                        } else {
+                            all_width = -all_width * 0.5f;
+                        }
+                        Notes.get(i).setPaddingLeft(Notes.get(i).getPaddingLeft() - all_width);      //pad the dot on first note
+                        Notes.get(j).setPaddingLeft(Notes.get(j).getPaddingLeft() + all_width);    //pad the note on the second note
                         if (Notes.get(i).stem_up == Notes.get(j).stem_up) Notes.get(j).stem_up = !Notes.get(j).stem_up;
                     }
                 }
