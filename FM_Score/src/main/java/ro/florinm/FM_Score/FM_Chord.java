@@ -78,8 +78,8 @@ public class FM_Chord extends FM_BaseNote {
 
                     if (Notes.get(j).duration == FM_DurationValue.NOTE_WHOLE || Notes.get(j).duration == FM_DurationValue.NOTE_WHOLE_D) nj = 1;
                     if (Notes.get(j).duration == FM_DurationValue.NOTE_HALF || Notes.get(j).duration == FM_DurationValue.NOTE_HALF_D) nj = 2;
-                    if (Notes.get(j).duration == FM_DurationValue.NOTE_QUARTER || Notes.get(j).duration == FM_DurationValue.NOTE_EIGHTH || Notes.get(j).duration == FM_DurationValue.NOTE_SIXTEENTH || Notes.get(j).duration == FM_DurationValue.NOTE_THIRTY_SECOND) ni = 3;
-                    if (Notes.get(j).duration == FM_DurationValue.NOTE_QUARTER_D || Notes.get(j).duration == FM_DurationValue.NOTE_EIGHTH_D || Notes.get(j).duration == FM_DurationValue.NOTE_SIXTEENTH_D || Notes.get(j).duration == FM_DurationValue.NOTE_THIRTY_SECOND_D) ni = 4;
+                    if (Notes.get(j).duration == FM_DurationValue.NOTE_QUARTER || Notes.get(j).duration == FM_DurationValue.NOTE_EIGHTH || Notes.get(j).duration == FM_DurationValue.NOTE_SIXTEENTH || Notes.get(j).duration == FM_DurationValue.NOTE_THIRTY_SECOND) nj = 3;
+                    if (Notes.get(j).duration == FM_DurationValue.NOTE_QUARTER_D || Notes.get(j).duration == FM_DurationValue.NOTE_EIGHTH_D || Notes.get(j).duration == FM_DurationValue.NOTE_SIXTEENTH_D || Notes.get(j).duration == FM_DurationValue.NOTE_THIRTY_SECOND_D) nj = 4;
 
                     if (ni == 1 || ni != nj) {
                         //float all_width = (Notes.get(i).Width() - Notes.get(i).WidthAccidental() + Notes.get(j).Width()) / 2f;
