@@ -1231,17 +1231,18 @@ public class FM_Score extends View {
         HashMap<Integer, List<FM_BaseNote>> Notes = new HashMap();
         HashMap<Integer, List<Integer>> Staves = new HashMap();
         while (i < key_list.size()) {
-            if (key_list.get(i).contains("BAR")) {
-                for (Integer k : Notes.keySet()) addChord(Objects.requireNonNull(Notes.get(k)), Staves.get(k));
+            FM_BaseKey key = FM_Const.getKey(key_list.get(i));
+            if (key.type == FM_KeyType.Bar) {
+                for (Integer k : Notes.keySet())
+                    addChord(Objects.requireNonNull(Notes.get(k)), Staves.get(k));
                 Notes.clear();
                 Staves.clear();
                 addStaveNote(new FM_BarNote(this));
                 i++;
                 continue;
             }
-            if (key_list.get(i).contains("BASS")) firstStaveClef = FM_ClefValue.BASS;
-            if (key_list.get(i).contains("TREBLE")) firstStaveClef = FM_ClefValue.TREBLE;
-            if (key_list.get(i).contains("BASS") ||  key_list.get(i).contains("TREBLE")) {
+            if (key.type == FM_KeyType.Clef) {
+                firstStaveClef = ((FM_KeyClef) key).clef;
                 FM_BaseNote c;
                 if (firstStaveClef == FM_ClefValue.BASS) c = new FM_Clef(this, FM_ClefValue.BASS, 0);
                 else c = new FM_Clef(this, FM_ClefValue.TREBLE, 0);
@@ -1249,63 +1250,48 @@ public class FM_Score extends View {
                 List<Integer> stave_List = new ArrayList<>();
                 Note_List.add(c);
                 stave_List.add(0);
-                Integer chord = Integer.parseInt(FM_Const.keyToElement(key_list.get(i), 1));
-                Notes.put(chord, Note_List);
-                Staves.put(chord, stave_List);
+                Notes.put(((FM_KeyClef) key).chord, Note_List);
+                Staves.put(((FM_KeyClef) key).chord, stave_List);
                 i++;
                 continue;
             }
-            String beam1 = FM_Const.keyToElement(key_list.get(i), 4);
-            String tie1 = FM_Const.keyToElement(key_list.get(i), 3);
-            String tuple1 = FM_Const.keyToElement(key_list.get(i), 5);
+            FM_KeyKey keyKey = (FM_KeyKey) key;
 
-            if (!beam.equals("") && (beam1.equals("") || !beam1.equals(beam))) EndBeam();
-            //if (!tie.equals("") && (tie1.equals("") || !tie1.equals(tie))) EndTie();
-            if (!tuple.equals("") && (tuple1.equals("") || !tuple1.equals(tuple))) EndTuplet();
+            if (!beam.equals("") && (keyKey.beam.equals("") || !keyKey.beam.equals(beam))) EndBeam();
+            if (!tuple.equals("") && (keyKey.tuple.equals("") || !keyKey.tuple.equals(tuple))) EndTuplet();
 
-            if (!beam1.equals(beam) && !beam1.equals("")) BeginBeam();
-            //if (!tie1.equals(tie) && !tie1.equals("")) BeginTie();
-            if (!tuple1.equals(tuple) && !tuple1.equals("")) BeginTuplet(tuple1);
+            if (!keyKey.beam.equals(beam) && !keyKey.beam.equals("")) BeginBeam();
+            if (!keyKey.tuple.equals(tuple) && !keyKey.tuple.equals("")) BeginTuplet(keyKey.tuple);
 
-            beam = beam1;
-            tie = tie1;
-            tuple = tuple1;
+            beam = keyKey.beam;
+            tie = keyKey.tie;
+            tuple = keyKey.tuple;
 
             FM_BaseNote n;
-            int k = FM_Const.keyToNote(key_list.get(i));
-            int octave = FM_Const.keyToOctave(key_list.get(i));
-            int voice = Integer.parseInt(FM_Const.keyToElement(key_list.get(i), 7));
-            int duration = FM_Const.keyToDuration(key_list.get(i), 1);
-            String stave_str = FM_Const.keyToElement(key_list.get(i), 6);
-            int stave;
-            if (stave_str.equals("0")) stave = 0;
-            else stave = 1;
-            if (k == -1) {
-                n = new FM_Pause(this, duration, octave, voice);
+            if (keyKey.note == FM_NoteValue.REST) {
+                n = new FM_Pause(this, keyKey.duration, keyKey.octave, keyKey.voice);
             } else {
                 int clef = firstStaveClef;
-                if (stave == 1) clef = secondStaveClef;
-                n = new FM_Note(this, k, octave, clef, FM_Const.keyToAccidental(key_list.get(i), 0), duration, voice, FM_Const.keyToStem(key_list.get(i), 2));
+                if (keyKey.stave == 1) clef = secondStaveClef;
+                n = new FM_Note(this, keyKey.note, keyKey.octave, clef, keyKey.accidental, keyKey.duration, keyKey.voice, keyKey.stemUp);
                 if (!beam.equals("")) AddToBeam((FM_Note) n);
                 if (!tie.equals("")) AddToTie(tie, (FM_Note) n);
             }
             if (!tuple.equals("")) AddToTuplet(n);
-            Integer chord = Integer.parseInt(FM_Const.keyToElement(key_list.get(i), 8));
-            List<FM_BaseNote> Note_List = Notes.get(chord);
-            List<Integer> stave_List = Staves.get(chord);
+            List<FM_BaseNote> Note_List = Notes.get(keyKey.chord);
+            List<Integer> stave_List = Staves.get(keyKey.chord);
             if (Note_List == null) Note_List = new ArrayList();
             if (stave_List == null) stave_List = new ArrayList();
             Note_List.add(n);
-            stave_List.add(stave);
-            Notes.put(chord, Note_List);
-            Staves.put(chord, stave_List);
+            stave_List.add(keyKey.stave);
+            Notes.put(keyKey.chord, Note_List);
+            Staves.put(keyKey.chord, stave_List);
             i++;
         }
         for (Integer k : Notes.keySet()) addChord(Objects.requireNonNull(Notes.get(k)), Staves.get(k));
         Notes.clear();
         Staves.clear();
         if (!beam.equals("")) EndBeam();
-        //if (!tie.equals("")) EndTie();
         if (!tuple.equals("")) EndTuplet();
         return 0;
     }

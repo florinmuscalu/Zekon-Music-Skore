@@ -104,6 +104,173 @@ public class FM_Const {
         return ret;
     }
 
+
+
+    public static FM_BaseKey getKey(String key) {
+        key = key.replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
+        if (key.contains("bar")) {
+            return new FM_KeyBar();
+        }
+        String[] s = key.split(",");
+        if (key.contains("bass")) {
+            return new FM_KeyClef(FM_ClefValue.BASS, Integer.parseInt(s[1]));
+        }
+        if (key.contains("treble")) {
+            return new FM_KeyClef(FM_ClefValue.TREBLE, Integer.parseInt(s[1]));
+        }
+        FM_KeyKey k = new FM_KeyKey();
+        k.type = FM_KeyType.Key;
+
+        //Find the note
+        String temp = s[0];
+        boolean found = false;
+        if (temp.startsWith("do"))  {
+            k.note = FM_NoteValue.DO;
+            temp = temp.substring(2);
+            found = true;
+        }
+        if (!found && temp.startsWith("re"))  {
+            k.note = FM_NoteValue.RE;
+            temp = temp.substring(2);
+            found = true;
+        }
+        if (!found && temp.startsWith("mi"))  {
+            k.note = FM_NoteValue.MI;
+            temp = temp.substring(2);
+            found = true;
+        }
+        if (!found && temp.startsWith("fa"))  {
+            k.note = FM_NoteValue.FA;
+            temp = temp.substring(2);
+            found = true;
+        }
+        if (!found && temp.startsWith("sol"))  {
+            k.note = FM_NoteValue.SOL;
+            temp = temp.substring(3);
+            found = true;
+        }
+        if (!found && temp.startsWith("la"))  {
+            k.note = FM_NoteValue.LA;
+            temp = temp.substring(2);
+            found = true;
+        }
+        if (!found && temp.startsWith("si"))  {
+            k.note = FM_NoteValue.SI;
+            temp = temp.substring(2);
+            found = true;
+        }
+        if (!found && temp.startsWith("c"))  {
+            k.note = FM_NoteValue.DO;
+            temp = temp.substring(1);
+            found = true;
+        }
+        if (!found && temp.startsWith("d"))  {
+            k.note = FM_NoteValue.RE;
+            temp = temp.substring(1);
+            found = true;
+        }
+        if (!found && temp.startsWith("e"))  {
+            k.note = FM_NoteValue.MI;
+            temp = temp.substring(1);
+            found = true;
+        }
+        if (!found && temp.startsWith("f"))  {
+            k.note = FM_NoteValue.FA;
+            temp = temp.substring(1);
+            found = true;
+        }
+        if (!found && temp.startsWith("g"))  {
+            k.note = FM_NoteValue.SOL;
+            temp = temp.substring(1);
+            found = true;
+        }
+        if (!found && temp.startsWith("a"))  {
+            k.note = FM_NoteValue.LA;
+            temp = temp.substring(1);
+            found = true;
+        }
+        if (!found && temp.startsWith("b"))  {
+            k.note = FM_NoteValue.SI;
+            temp = temp.substring(1);
+            found = true;
+        }
+        if (!found && temp.startsWith("r"))  {
+            k.note = FM_NoteValue.REST;
+            temp = temp.substring(1);
+        }
+
+        //accidental
+        int accidental = 0;
+        found = false;
+        if (temp.contains("(")) accidental = FM_Accidental.Courtesy;
+        if (temp.contains("###")) {
+            accidental = accidental + FM_Accidental.TripleSharp;
+            found = true;
+        }
+        if (!found && key.contains("##")) {
+            accidental = accidental + FM_Accidental.DoubleSharp;
+            found = true;
+        }
+        if (!found && key.contains("#")) {
+            accidental = accidental + FM_Accidental.Sharp;
+            found = true;
+        }
+        if (!found && key.contains("bbb")) {
+            accidental = accidental + FM_Accidental.TripleFlat;
+            found = true;
+        }
+        if (!found && key.contains("bb")) {
+            accidental = accidental + FM_Accidental.DoubleFlat;
+            found = true;
+        }
+        if (!found && key.contains("b")) {
+            accidental = accidental + FM_Accidental.Flat;
+            found = true;
+        }
+        if (!found && key.contains("n")) {
+            accidental = accidental + FM_Accidental.Natural;
+        }
+        k.accidental = accidental;
+
+        //octave
+        if (temp.equals("")) k.octave = 0;
+        else k.octave = Integer.parseInt(temp.substring(temp.length() - 1));
+
+        //duration
+        k.duration = FM_DurationValue.NOTE_WHOLE;
+        if (s[1].equals("wd")) k.duration = FM_DurationValue.NOTE_WHOLE_D;
+        if (s[1].equals("wdr")) k.duration = FM_DurationValue.NOTE_WHOLE_D;
+        if (s[1].equals("h")) k.duration = FM_DurationValue.NOTE_HALF;
+        if (s[1].equals("hr")) k.duration = FM_DurationValue.NOTE_HALF;
+        if (s[1].equals("hd")) k.duration = FM_DurationValue.NOTE_HALF_D;
+        if (s[1].equals("hdr")) k.duration = FM_DurationValue.NOTE_HALF_D;
+        if (s[1].equals("q")) k.duration = FM_DurationValue.NOTE_QUARTER;
+        if (s[1].equals("qr")) k.duration = FM_DurationValue.NOTE_QUARTER;
+        if (s[1].equals("qd")) k.duration = FM_DurationValue.NOTE_QUARTER_D;
+        if (s[1].equals("qdr")) k.duration = FM_DurationValue.NOTE_QUARTER_D;
+        if (s[1].equals("8")) k.duration = FM_DurationValue.NOTE_EIGHTH;
+        if (s[1].equals("8r")) k.duration = FM_DurationValue.NOTE_EIGHTH;
+        if (s[1].equals("8d")) k.duration = FM_DurationValue.NOTE_EIGHTH_D;
+        if (s[1].equals("8dr")) k.duration = FM_DurationValue.NOTE_EIGHTH_D;
+        if (s[1].equals("16")) k.duration = FM_DurationValue.NOTE_SIXTEENTH;
+        if (s[1].equals("16r")) k.duration = FM_DurationValue.NOTE_SIXTEENTH;
+        if (s[1].equals("16d")) k.duration = FM_DurationValue.NOTE_SIXTEENTH_D;
+        if (s[1].equals("16dr")) k.duration = FM_DurationValue.NOTE_SIXTEENTH_D;
+        if (s[1].equals("32")) k.duration = FM_DurationValue.NOTE_THIRTY_SECOND;
+        if (s[1].equals("32r")) k.duration = FM_DurationValue.NOTE_THIRTY_SECOND;
+        if (s[1].equals("32d")) k.duration = FM_DurationValue.NOTE_THIRTY_SECOND_D;
+        if (s[1].equals("32dr")) k.duration = FM_DurationValue.NOTE_THIRTY_SECOND_D;
+
+        k.stemUp = s[2].equals("up");
+        k.tie = s[3];
+        k.beam = s[4];
+        k.tuple = s[5];
+        k.stave = Integer.parseInt(s[6]);
+        k.voice = Integer.parseInt(s[7]);
+        k.chord = Integer.parseInt(s[8]);
+        return k;
+    }
+
     static float getY2(float slope, float x1, float y1, float x2) {
         return y1 + slope * (x2 - x1);
     }
@@ -138,7 +305,7 @@ public class FM_Const {
         if (key.startsWith("a")) return FM_NoteValue.LA;
         if (key.startsWith("b")) return FM_NoteValue.SI;
 
-        if (key.startsWith("r")) return -1;
+        if (key.startsWith("r")) return FM_NoteValue.REST;
         return FM_NoteValue.DO;
     }
 
