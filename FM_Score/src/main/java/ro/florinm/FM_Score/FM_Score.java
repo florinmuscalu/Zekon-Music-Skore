@@ -283,7 +283,7 @@ public class FM_Score extends View {
             //draw clef
             int clef = FirstStaveClef;
             for (int n = 0; n < StaveNotes.size(); n++)
-                if (StaveNotes.get(n).line-1 == l && StaveNotes.get(n).stave == 0) {
+                if (StaveNotes.get(n).line - 1 == l && StaveNotes.get(n).stave == 0) {
                     if (StaveNotes.get(n) instanceof FM_Clef) {
                         clef = ((FM_Clef) StaveNotes.get(n)).clef;
                         //StaveNotes.get(n).setVisible(false);
@@ -865,35 +865,35 @@ public class FM_Score extends View {
             int last_bar = 0;
             int bar_cnt = 0;
             int noteIndex = 0;
-            boolean already_a_clef = false;
+            int last_clef = getFirstStaveClef();
             for (int i = 0; i < StaveNotes.size(); i++) {
-                float w = StaveNotes.get(i).Width() + NoteSpacing;
-                if (noteIndex == 0 && StaveNotes.get(i) instanceof FM_Clef) {
-                    w = 0;
-                    StaveNotes.get(i).setVisible(false);
-                    already_a_clef = true;
-                }
-                if (already_a_clef && noteIndex != 0 && StaveNotes.get(i) instanceof FM_Clef) {
-                    w = 0;
-                    StaveNotes.get(i).setVisible(false);
-                    already_a_clef = true;
-                }
                 noteIndex++;
+                float widthIncrement = StaveNotes.get(i).Width() + NoteSpacing;
+                if (StaveNotes.get(i) instanceof FM_Clef) {
+                    if (noteIndex == 1) {
+                        widthIncrement = 0;
+                        StaveNotes.get(i).setVisible(false);
+                    } else if (last_clef == ((FM_Clef) StaveNotes.get(i)).clef) {
+                        widthIncrement = 0;
+                        StaveNotes.get(i).setVisible(false);
+                    }
+                    last_clef = ((FM_Clef) StaveNotes.get(i)).clef;
+                }
                 if (StaveNotes.get(i) instanceof FM_BarNote) {
                     last_bar = i;
                     bar_cnt++;
                 }
-                if (bar_cnt > 0 && X + w > endX * scale) {
+                if (bar_cnt > 0 && X + widthIncrement > endX * scale) {
+                    StaveNotes.get(last_bar).line = l;
+                    StaveNotes.get(last_bar).setVisible(false);
+                    ((FM_BarNote) StaveNotes.get(last_bar)).lineEnd = true;
                     l++;
                     noteIndex = 0;
-                    already_a_clef = false;
                     X = getStartX(l);
                     ys1 = ys2 + (getDistanceBetweenRows() + 4 * getDistanceBetweenStaveLines());
                     ys2 = ys1;
                     bar_cnt = 0;
                     i = last_bar;
-                    StaveNotes.get(last_bar).setVisible(false);
-                    ((FM_BarNote) StaveNotes.get(last_bar)).lineEnd = true;
                     continue;
                 }
                 if (StaveCount == FM_StaveCount._2)
@@ -901,7 +901,7 @@ public class FM_Score extends View {
                 if (StaveNotes.get(i).stave == 0) StaveNotes.get(i).SetDrawParameters(X, ys1, ys2);
                 if (StaveNotes.get(i).stave == 1) StaveNotes.get(i).SetDrawParameters(X, ys2, ys2);
                 StaveNotes.get(i).line = l;
-                X = X + w;
+                X = X + widthIncrement;
             }
             //If last note is a bar, hide it
             if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote) {
@@ -1240,6 +1240,9 @@ public class FM_Score extends View {
                 secondStaveClef = FM_ClefValue.BASS;
             }
         }
+        int originalFirstStaveClef = firstStaveClef;
+        int originalSecondStaveClef = secondStaveClef;
+
         int i = 0;
         String beam = "";
         String tie;
@@ -1308,6 +1311,8 @@ public class FM_Score extends View {
         Staves.clear();
         if (!beam.equals("")) EndBeam();
         if (!tuple.equals("")) EndTuplet();
+        setFirstStaveClef(originalFirstStaveClef);
+        setSecondStaveClef(originalSecondStaveClef);
         return 0;
     }
 
