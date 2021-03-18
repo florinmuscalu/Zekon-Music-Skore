@@ -817,11 +817,18 @@ public class FM_Score extends View {
             float X = getStartX(l);
             int noteIndex = 0;
             FM_BaseNote last_note = null;
+            boolean already_a_clef = false;
             for (int i = 0; i < StaveNotes.size(); i++) {
                 float w = StaveNotes.get(i).Width() + NoteSpacing;
                 if (noteIndex == 0 && StaveNotes.get(i) instanceof FM_Clef) {
                     w = 0;
                     StaveNotes.get(i).setVisible(false);
+                    already_a_clef = true;
+                }
+                if (already_a_clef && noteIndex != 0 && StaveNotes.get(i) instanceof FM_Clef) {
+                    w = 0;
+                    StaveNotes.get(i).setVisible(false);
+                    already_a_clef = true;
                 }
                 noteIndex++;
                 if (X + w > endX) {
@@ -834,6 +841,7 @@ public class FM_Score extends View {
                     X = getStartX(l);
                     ys1 = ys2 + (getDistanceBetweenRows() + 4 * getDistanceBetweenStaveLines());
                     ys2 = ys1;
+                    already_a_clef = false;
                 }
                 if (StaveCount == FM_StaveCount._2) ys2 = ys1 + (getDistanceBetweenStaves() + 4 * getDistanceBetweenStaveLines());
                 if (StaveNotes.get(i).stave == 0) StaveNotes.get(i).SetDrawParameters(X, ys1, ys2);
@@ -857,11 +865,18 @@ public class FM_Score extends View {
             int last_bar = 0;
             int bar_cnt = 0;
             int noteIndex = 0;
+            boolean already_a_clef = false;
             for (int i = 0; i < StaveNotes.size(); i++) {
                 float w = StaveNotes.get(i).Width() + NoteSpacing;
                 if (noteIndex == 0 && StaveNotes.get(i) instanceof FM_Clef) {
                     w = 0;
                     StaveNotes.get(i).setVisible(false);
+                    already_a_clef = true;
+                }
+                if (already_a_clef && noteIndex != 0 && StaveNotes.get(i) instanceof FM_Clef) {
+                    w = 0;
+                    StaveNotes.get(i).setVisible(false);
+                    already_a_clef = true;
                 }
                 noteIndex++;
                 if (StaveNotes.get(i) instanceof FM_BarNote) {
@@ -871,6 +886,7 @@ public class FM_Score extends View {
                 if (bar_cnt > 0 && X + w > endX * scale) {
                     l++;
                     noteIndex = 0;
+                    already_a_clef = false;
                     X = getStartX(l);
                     ys1 = ys2 + (getDistanceBetweenRows() + 4 * getDistanceBetweenStaveLines());
                     ys2 = ys1;
