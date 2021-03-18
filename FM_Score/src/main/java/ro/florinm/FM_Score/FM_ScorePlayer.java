@@ -67,20 +67,11 @@ public class FM_ScorePlayer {
     }
 
     /**
-     * @return get the tempo used for playing the song.
+     * @return get the quarter duration given the tempo
      */
 
-    public long getTempoDuration(int tempo){
-        if (tempo == 0) tempo = 60;
-        int time_signature_d = FM_SoundPool.TIME_SIGNATURE_D;
-        if (time_signature_d == 0) time_signature_d = 4;
-        int time_signature_n = FM_SoundPool.TIME_SIGNATURE_N;
-        if (time_signature_n == 0) time_signature_d = 4;
-        int multiply = 1;       //simple meter (2, 3 and 4)
-        if (time_signature_n == 6 || time_signature_n == 9 || time_signature_n == 12) multiply = 3; //compound meter
-
-        float d = (60.0f / (tempo * multiply)) * (time_signature_d / 4.0f) * 1000.0f;
-        return (long) d;
+    public long getQuarterDuration(int tempo){
+        return FM_SoundPool.GetDurationInMs(FM_DurationValue.NOTE_QUARTER,0 ,tempo, 0);
     }
 
     public void LoadFromScore(FM_Score obj, int tempo) {
