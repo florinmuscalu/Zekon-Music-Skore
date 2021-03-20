@@ -1065,10 +1065,19 @@ public class FM_Score extends View {
         for (int i = 0; i < TupletNotes.size(); i++)
             if (!(TupletNotes.get(i) instanceof FM_Note || TupletNotes.get(i) instanceof FM_Pause)) return;
         int stave = TupletNotes.get(0).stave;
-        int duration =  TupletNotes.get(0).duration;
+        int minDuration =  6000;
+        int allDuration = 0;
+        int cnt = TupletNotes.size();
+        for (int i = 0; i < cnt; i++) {
+            int d = (int) (FM_Const.getDurationMs(TupletNotes.get(i).duration) * 1000);
+            allDuration += d;
+            if (d < minDuration) minDuration = d;
+        }
+        while (allDuration != cnt * minDuration) cnt++;
+
         for (int i = 0; i < TupletNotes.size(); i++)
-            if ((TupletNotes.get(i).stave != stave) || (TupletNotes.get(i)).duration != duration) return;
-        FM_Tuplet t = new FM_Tuplet(this, TupletNotes.size(), currentTuplet, TupletPosition);
+            if ((TupletNotes.get(i).stave != stave) /*|| (TupletNotes.get(i)).duration != duration*/) return;
+        FM_Tuplet t = new FM_Tuplet(this, cnt, currentTuplet, TupletPosition);
         currentTuplet++;
         for (int i = 0; i < TupletNotes.size(); i++) {
             TupletNotes.get(i).tuplet = true;
