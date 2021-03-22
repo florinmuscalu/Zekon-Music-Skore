@@ -1035,7 +1035,10 @@ public class FM_Score extends View {
         if (note_list.size() != 2) return;
         if (note_list.get(0).stave != note_list.get(1).stave || note_list.get(0).octave != note_list.get(1).octave || !note_list.get(0).note.equals(note_list.get(1).note))
             return;
-        FM_Tie t = new FM_Tie(this);
+        FM_Tie t;
+        if (tie.toLowerCase().contains("a")) t = new FM_Tie(this, true);
+        else if (tie.toLowerCase().contains("b")) t = new FM_Tie(this, false);
+        else t = new FM_Tie(this);
         t.AddStart(note_list.get(0));
         t.AddEnd(note_list.get(1));
         note_list.get(0).isTieStart = true;

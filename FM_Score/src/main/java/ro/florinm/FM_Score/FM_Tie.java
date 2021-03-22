@@ -6,10 +6,19 @@ import android.graphics.Path;
 class FM_Tie {
     FM_Note s, e;
     FM_Score score;
+    int up = 0;     //if 0, then follow the stems. If 1, then down. If 2, then up.
     FM_Tie(FM_Score score) {
         s = null;
         e = null;
         this.score = score;
+        this.up = 0;
+    }
+    FM_Tie(FM_Score score, boolean up) {
+        s = null;
+        e = null;
+        this.score = score;
+        if (up) this.up = 2;
+        else this.up = 1;
     }
 
     void AddStart(FM_Note s){
@@ -26,10 +35,14 @@ class FM_Tie {
         float y = s.ys + (s.getDisplacement() + 0.5f) * score.getDistanceBetweenStaveLines();
         float ye = e.ys + (e.getDisplacement() + 0.5f) * score.getDistanceBetweenStaveLines();
 
+        boolean draw_up = s.stem_up;
+        if (up == 1) draw_up = true;
+        if (up == 2) draw_up = false;
+
         Path p;
         if (x > xe && ye > y) {     //if the notes are on different lines
             float e = this.s.WidthNote() * 2;
-            if (s.stem_up) {
+            if (draw_up) {
                 p = new Path();
                 p.reset();
                 p.moveTo(x, y);
@@ -46,7 +59,7 @@ class FM_Tie {
             canvas.drawPath(p, score.Font);
 
             float e1 =  this.e.WidthNote() * 2;
-            if (s.stem_up) {
+            if (draw_up) {
                 p = new Path();
                 p.reset();
                 p.moveTo(xe, ye);
@@ -62,7 +75,7 @@ class FM_Tie {
                 p.cubicTo(xe - e1, ye - score.getDistanceBetweenStaveLines() / 2, (2 * xe - e1) / 2, ye - score.getDistanceBetweenStaveLines(), xe, ye);
             }
         } else {        //if the notes are on the same line
-            if (s.stem_up) {
+            if (draw_up) {
                 p = new Path();
                 p.reset();
                 p.moveTo(x, y);
