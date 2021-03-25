@@ -98,9 +98,9 @@ public class FM_Const {
     }
 
     static float slope(float maxSlope, float x1, float y1, float x2, float y2) {
-        float ret =  (y2 - y1) / (x2 - x1);
-        if (ret > maxSlope) ret =  maxSlope;
-        if (ret <-maxSlope) ret = -maxSlope;
+        float ret = (y2 - y1) / (x2 - x1);
+        if (ret > maxSlope) ret = maxSlope;
+        if (ret < -maxSlope) ret = -maxSlope;
         return ret;
     }
 
@@ -262,17 +262,18 @@ public class FM_Const {
         Score.Font.setTextSize(100f * height / bounds.height());
     }
 
-    public String ConvertNote(String note, @FM_NotationSystem int NotationSystem){
+    public String ConvertNote(String note, @FM_NotationSystem int NotationSystem) {
         note = note.toLowerCase().trim();
         int n = 0;
         if (note.equals("c") || note.equals("do") || note.equals("ha")) n = 1;
-        if ((n==0) && (note.equals("d") || note.equals("re") || note.equals("ni"))) n = 2;
-        if ((n==0) && (note.equals("e") || note.equals("mi") || note.equals("ho"))) n = 3;
-        if ((n==0) && (note.equals("f") || note.equals("fa") || note.equals("he"))) n = 4;
-        if ((n==0) && (note.equals("g") || note.equals("sol") || note.equals("to"))) n = 5;
-        if ((n==0) && (note.equals("a") || note.equals("la") || note.equals("i"))) n = 6;
-        if ((n==0) && (note.equals("b") || note.equals("h") || note.equals("si") || note.equals("ro"))) n = 7;
-        if (NotationSystem == FM_NotationSystem.ENGLISH){
+        if ((n == 0) && (note.equals("d") || note.equals("re") || note.equals("ni"))) n = 2;
+        if ((n == 0) && (note.equals("e") || note.equals("mi") || note.equals("ho"))) n = 3;
+        if ((n == 0) && (note.equals("f") || note.equals("fa") || note.equals("he"))) n = 4;
+        if ((n == 0) && (note.equals("g") || note.equals("sol") || note.equals("to"))) n = 5;
+        if ((n == 0) && (note.equals("a") || note.equals("la") || note.equals("i"))) n = 6;
+        if ((n == 0) && (note.equals("b") || note.equals("h") || note.equals("si") || note.equals("ro")))
+            n = 7;
+        if (NotationSystem == FM_NotationSystem.ENGLISH) {
             if (n == 1) return "c";
             if (n == 2) return "d";
             if (n == 3) return "e";
@@ -281,7 +282,7 @@ public class FM_Const {
             if (n == 6) return "a";
             if (n == 7) return "b";
         }
-        if (NotationSystem == FM_NotationSystem.GERMAN){
+        if (NotationSystem == FM_NotationSystem.GERMAN) {
             if (n == 1) return "c";
             if (n == 2) return "d";
             if (n == 3) return "e";
@@ -290,7 +291,7 @@ public class FM_Const {
             if (n == 6) return "a";
             if (n == 7) return "h";
         }
-        if (NotationSystem == FM_NotationSystem.ITALIAN){
+        if (NotationSystem == FM_NotationSystem.ITALIAN) {
             if (n == 1) return "do";
             if (n == 2) return "re";
             if (n == 3) return "mi";
@@ -299,7 +300,7 @@ public class FM_Const {
             if (n == 6) return "la";
             if (n == 7) return "si";
         }
-        if (NotationSystem == FM_NotationSystem.JAPANESE){
+        if (NotationSystem == FM_NotationSystem.JAPANESE) {
             if (n == 1) return "ha";
             if (n == 2) return "ni";
             if (n == 3) return "ho";
@@ -312,7 +313,7 @@ public class FM_Const {
     }
 
     @FM_TimeSignatureValue
-    static int getTimeSignature_n(String s){
+    static int getTimeSignature_n(String s) {
         int ret = FM_TimeSignatureValue.None;
         if (s.startsWith("2")) ret = FM_TimeSignatureValue._2;
         if (s.startsWith("3")) ret = FM_TimeSignatureValue._3;
@@ -326,7 +327,7 @@ public class FM_Const {
     }
 
     @FM_TimeSignatureValue
-    static int getTimeSignature_d(String s){
+    static int getTimeSignature_d(String s) {
         int ret = FM_TimeSignatureValue.None;
         if (s.endsWith("2")) ret = FM_TimeSignatureValue._2;
         if (s.endsWith("3")) ret = FM_TimeSignatureValue._3;
@@ -339,7 +340,7 @@ public class FM_Const {
         return ret;
     }
 
-    static float getDurationMs(@FM_DurationValue int duration){
+    static float getDurationMs(@FM_DurationValue int duration) {
         if (duration == FM_DurationValue.NOTE_WHOLE) return 4;
         if (duration == FM_DurationValue.NOTE_WHOLE_D) return 6;
         if (duration == FM_DurationValue.NOTE_HALF) return 2;
@@ -349,9 +350,43 @@ public class FM_Const {
         if (duration == FM_DurationValue.NOTE_EIGHTH) return 0.5f;
         if (duration == FM_DurationValue.NOTE_EIGHTH_D) return 0.5f + 0.25f;
         if (duration == FM_DurationValue.NOTE_SIXTEENTH) return 0.25f;
-        if (duration == FM_DurationValue.NOTE_SIXTEENTH_D) return 0.25f + 1/8f;
-        if (duration == FM_DurationValue.NOTE_THIRTY_SECOND) return 1/8f;
-        if (duration == FM_DurationValue.NOTE_THIRTY_SECOND_D) return 1/8f + 1/16f;
+        if (duration == FM_DurationValue.NOTE_SIXTEENTH_D) return 0.25f + 1 / 8f;
+        if (duration == FM_DurationValue.NOTE_THIRTY_SECOND) return 1 / 8f;
+        if (duration == FM_DurationValue.NOTE_THIRTY_SECOND_D) return 1 / 8f + 1 / 16f;
         return 0;
+    }
+
+    public String TranslateKey(String Key, @FM_NotationSystem int system) {
+        String[] english = {"C", "D", "E", "F", "G", "A", "B"};
+        String[] german = {"C", "D", "E", "F", "G", "A", "H"};
+        String[] italian = {"DO", "RE", "MI", "FA", "SOL", "LA", "SI"};
+        String[] japanese = {"ハ", "ニ", "ホ", "ヘ", "ト", "イ", "ロ"};
+        String[] korean = {"다", "라", "바", "아", "사", "가", "나"};
+        String[] indian = {"सा", "रे", "ग", "म", "प", "ध", "नि"};
+
+        boolean isItalian = false;
+        for (String s : italian)
+            if (Key.contains(s)) {
+                isItalian = true;
+                break;
+            }
+        for (int i = 0; i < english.length; i++) {
+            String replacement = "";
+            if (system == FM_NotationSystem.ENGLISH) replacement = english[i];
+            if (system == FM_NotationSystem.GERMAN) replacement = german[i];
+            if (system == FM_NotationSystem.ITALIAN) replacement = italian[i];
+            if (system == FM_NotationSystem.JAPANESE) replacement = japanese[i];
+            if (system == FM_NotationSystem.KOREAN) replacement = korean[i];
+            if (system == FM_NotationSystem.INDIAN) replacement = indian[i];
+
+            if (isItalian) Key = Key.replace(italian[i], replacement);
+            else {
+                Key = Key.replace(english[i], replacement);
+                Key = Key.replace(german[i], replacement);
+                Key = Key.replace(japanese[i], replacement);
+                Key = Key.replace(korean[i], replacement);
+            }
+        }
+        return Key;
     }
 }
