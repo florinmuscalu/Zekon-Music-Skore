@@ -356,7 +356,7 @@ public class FM_Const {
         return 0;
     }
 
-    public String TranslateKey(String Key, @FM_NotationSystem int system) {
+    public static String TranslateKey(String Key, @FM_NotationSystem int system) {
         String[] english = {"C", "D", "E", "F", "G", "A", "B"};
         String[] german = {"C", "D", "E", "F", "G", "A", "H"};
         String[] italian = {"DO", "RE", "MI", "FA", "SOL", "LA", "SI"};
