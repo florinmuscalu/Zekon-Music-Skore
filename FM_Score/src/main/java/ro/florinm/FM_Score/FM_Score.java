@@ -1069,14 +1069,18 @@ public class FM_Score extends View {
             if (!(TupletNotes.get(i) instanceof FM_Note || TupletNotes.get(i) instanceof FM_Pause)) return;
         int stave = TupletNotes.get(0).stave;
         int minDuration =  6000;
+        int maxDuration =  0;
         int allDuration = 0;
         int cnt = TupletNotes.size();
         for (int i = 0; i < cnt; i++) {
             int d = (int) (FM_Const.getDurationMs(TupletNotes.get(i).duration) * 1000);
             allDuration += d;
             if (d < minDuration) minDuration = d;
+            if (d > maxDuration) maxDuration = d;
         }
-        while (allDuration != cnt * minDuration) cnt++;
+        if (allDuration % minDuration == 0) cnt = allDuration / minDuration;
+        if (allDuration % maxDuration == 0) cnt = allDuration / maxDuration;
+        //while (allDuration != cnt * minDuration) cnt++;
 
         for (int i = 0; i < TupletNotes.size(); i++)
             if ((TupletNotes.get(i).stave != stave) /*|| (TupletNotes.get(i)).duration != duration*/) return;

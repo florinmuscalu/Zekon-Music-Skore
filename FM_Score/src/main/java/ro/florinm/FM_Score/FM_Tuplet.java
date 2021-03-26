@@ -34,8 +34,7 @@ class FM_Tuplet {
         xe = n.get(EndIndex).Right() + 0.5f * score.getDistanceBetweenStaveLines();
 
         boolean beam = false;
-        if (n.get(0) instanceof FM_Note && ((FM_Note)n.get(0)).beam) beam = true;
-        if (n.get(EndIndex) instanceof FM_Note && ((FM_Note)n.get(EndIndex)).beam) beam = true;
+        if ((n.get(0) instanceof FM_Note && ((FM_Note)n.get(0)).beam) && (n.get(EndIndex) instanceof FM_Note && ((FM_Note)n.get(EndIndex)).beam)) beam = true;
         if (n.get(0) instanceof FM_Pause) beam = false;
         if (n.get(EndIndex) instanceof FM_Pause) beam = false;
 
