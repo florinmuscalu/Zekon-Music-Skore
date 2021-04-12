@@ -1049,6 +1049,7 @@ public class FM_Score extends View {
 
     private boolean inTuplet = false;
     private int TupletPosition = 0;
+    private int TupletSize = 0;
     private int currentTuplet = 0;
     List<FM_BaseNote> TupletNotes;
 
@@ -1056,7 +1057,21 @@ public class FM_Score extends View {
         inTuplet = true;
         TupletNotes = new ArrayList<>();
         TupletPosition = 1;
-        if (s.toLowerCase().contains("a")) TupletPosition = 0;
+        TupletSize = 0;
+        if (s.toLowerCase().contains("a")) {
+            TupletPosition = 0;
+            try {
+                String size = s.toLowerCase().substring(s.toLowerCase().indexOf("a") + 1);
+                TupletSize = Integer.parseInt(size);
+            } catch (Exception ignored) {}
+        }
+        if (s.toLowerCase().contains("b")) {
+            TupletPosition = 1;
+            try {
+                String size = s.toLowerCase().substring(s.toLowerCase().indexOf("b") + 1);
+                TupletSize = Integer.parseInt(size);
+            } catch (Exception ignored) {}
+        }
     }
 
     public void AddToTuplet(FM_BaseNote n) {
@@ -1068,23 +1083,24 @@ public class FM_Score extends View {
         for (int i = 0; i < TupletNotes.size(); i++)
             if (!(TupletNotes.get(i) instanceof FM_Note || TupletNotes.get(i) instanceof FM_Pause)) return;
         int stave = TupletNotes.get(0).stave;
-        int minDuration =  6000;
-        int maxDuration =  0;
-        int allDuration = 0;
-        int cnt = TupletNotes.size();
-        for (int i = 0; i < cnt; i++) {
-            int d = (int) (FM_Const.getDurationMs(TupletNotes.get(i).duration) * 1000);
-            allDuration += d;
-            if (d < minDuration) minDuration = d;
-            if (d > maxDuration) maxDuration = d;
+        if (TupletSize == 0) {
+            int minDuration = 6000;
+            int maxDuration = 0;
+            int allDuration = 0;
+            TupletSize = TupletNotes.size();
+            for (int i = 0; i < TupletSize; i++) {
+                int d = (int) (FM_Const.getDurationMs(TupletNotes.get(i).duration) * 1000);
+                allDuration += d;
+                if (d < minDuration) minDuration = d;
+                if (d > maxDuration) maxDuration = d;
+            }
+            if (allDuration % minDuration == 0) TupletSize = allDuration / minDuration;
+            if (allDuration % maxDuration == 0) TupletSize = allDuration / maxDuration;
+            //while (allDuration != cnt * minDuration) cnt++;
         }
-        if (allDuration % minDuration == 0) cnt = allDuration / minDuration;
-        if (allDuration % maxDuration == 0) cnt = allDuration / maxDuration;
-        //while (allDuration != cnt * minDuration) cnt++;
-
         for (int i = 0; i < TupletNotes.size(); i++)
             if ((TupletNotes.get(i).stave != stave) /*|| (TupletNotes.get(i)).duration != duration*/) return;
-        FM_Tuplet t = new FM_Tuplet(this, cnt, currentTuplet, TupletPosition);
+        FM_Tuplet t = new FM_Tuplet(this, TupletSize, currentTuplet, TupletPosition);
         currentTuplet++;
         for (int i = 0; i < TupletNotes.size(); i++) {
             TupletNotes.get(i).tuplet = true;
