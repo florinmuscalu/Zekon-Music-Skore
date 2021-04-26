@@ -137,6 +137,12 @@ public class FM_ScorePlayer {
                 ListNotes.add(song.measures.get(measure_end).notes.get(j));
         }
 
+        //play silent key
+        soundPlayer.playSilentKey(48);
+        FM_SoundPool.CustomDelay(50, false);
+        soundPlayer.stopKey(48);
+
+        //start playing
         boolean in_legato = false;
         if (showProgress && score != null) score.ProgressSetStart(measure_start);
         long lastDuration = 0;

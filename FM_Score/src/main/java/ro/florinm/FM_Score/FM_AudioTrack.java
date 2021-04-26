@@ -890,13 +890,21 @@ class FM_SoundPool {
     }
 
     void playKey(int key) {
-        playKey(key, false);
+        playKey(key, false, false);
     }
 
     void playKey(int key, boolean NextPause) {
+        playKey(key, NextPause, false);
+    }
+
+    void playSilentKey(int key) {
+        playKey(key, false, true);
+    }
+
+    void playKey(int key, boolean NextPause, boolean silent) {
         if (key == -1) return;
         if (isKeyNotPlaying(key)) {
-            PlayThread thread = new PlayThread(key, NextPause);
+            PlayThread thread = new PlayThread(key, NextPause, silent);
             thread.start();
             threadMap.put(key, thread);
         }
@@ -998,8 +1006,11 @@ class FM_SoundPool {
         private final int key;
         private final CountDownLatch stop;
         private final boolean NextPause;
+        private final float volume;
 
-        PlayThread(int key, boolean NextPause) {
+        PlayThread(int key, boolean NextPause, boolean silent) {
+            if (silent) volume = 0f;
+            else volume = 1f;
             this.NextPause = NextPause;
             this.key = key;
             this.stop = new CountDownLatch(1);
@@ -1011,21 +1022,24 @@ class FM_SoundPool {
 
         @Override
         public void run() {
-            int stream = sndPool.play(soundMap.get(key), 1, 1, 100, 0, 1);
+            int stream = sndPool.play(soundMap.get(key), volume, volume, 100, 0, 1);
             try {
                 stop.await();
-            } catch (InterruptedException ignored) {}
-            //start fallback sequence
-            float d = 0f;
-            float fall = FALLBACK_DURATION;
-            if (NextPause)
-                fall = fall / 5f;
-            while (d < fall) {
-                d += CustomDelay(2, true);
-                float p = 1f - d / fall;
-                sndPool.setVolume(stream, p, p);
+            } catch (InterruptedException ignored) {
             }
-            sndPool.setVolume(stream, 0, 0);
+            if (volume > 0) {
+                //start fallback sequence
+                float d = 0f;
+                float fall = FALLBACK_DURATION;
+                if (NextPause)
+                    fall = fall / 5f;
+                while (d < fall) {
+                    d += CustomDelay(2, true);
+                    float p = 1f - d / fall;
+                    sndPool.setVolume(stream, p, p);
+                }
+                sndPool.setVolume(stream, 0, 0);
+            }
             sndPool.stop(stream);
         }
     }
