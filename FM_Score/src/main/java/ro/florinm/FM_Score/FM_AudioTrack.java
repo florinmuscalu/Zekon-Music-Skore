@@ -384,7 +384,6 @@ class FM_SoundPool {
 
     //hold the playing threads
     private final SparseArray<PlayThread> threadMap;
-    private final Queue<PlayThread> threadQueue;
     volatile static boolean playing;
     //hold the audio files
     protected static final SparseArray<String> assetFiles = new SparseArray<>();
@@ -863,7 +862,6 @@ class FM_SoundPool {
         this.context = context;
         AssetManager assetManager = context.getAssets();
         threadMap = new SparseArray<>();
-        threadQueue = new LinkedList<>();
         AudioAttributes attributes = new AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_GAME)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -908,17 +906,10 @@ class FM_SoundPool {
 
     void playKey(int key, boolean NextPause, boolean silent) {
         if (key == -1) return;
-        if (isKeyNotPlaying(key)) {
+        if (threadMap.size() < 1 && isKeyNotPlaying(key)) {
             PlayThread thread = new PlayThread(key, NextPause, silent);
             thread.start();
             threadMap.put(key, thread);
-            threadQueue.add(thread);
-            if (threadQueue.size() > 1)
-                try {
-                    thread = Objects.requireNonNull(threadQueue.poll());
-                    threadMap.remove(thread.key);
-                    thread.Stop();
-                } catch (Exception ignored) {}
         }
     }
 
@@ -929,7 +920,6 @@ class FM_SoundPool {
             if (thread != null) {
                 thread.Stop();
                 threadMap.remove(key);
-                threadQueue.remove(thread);
             }
         } catch (Exception ignored) {
         }
@@ -1006,7 +996,6 @@ class FM_SoundPool {
 
     void StopAllSound() {
         playing = false;
-        threadQueue.clear();
         for (int i = 0; i < threadMap.size(); i++) {
             PlayThread thread = threadMap.get(i);
             if (thread != null) {
