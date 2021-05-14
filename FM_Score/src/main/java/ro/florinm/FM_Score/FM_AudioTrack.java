@@ -906,7 +906,7 @@ class FM_SoundPool {
 
     void playKey(int key, boolean NextPause, boolean silent) {
         if (key == -1) return;
-        if (threadMap.size() < 1 && isKeyNotPlaying(key)) {
+        if (threadMap.size() < 16 && isKeyNotPlaying(key)) {
             PlayThread thread = new PlayThread(key, NextPause, silent);
             thread.start();
             threadMap.put(key, thread);
