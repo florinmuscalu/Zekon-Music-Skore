@@ -31,7 +31,7 @@ public abstract class FM_BaseNote{
     float WidthNoDotNoStem(){ return paddingLeft + WidthAccidental() + paddingNote + WidthNoteNoStem(); }
 
     boolean visible;
-    FM_Score score;
+    FM_ScoreBase score;
     float StartX;
     float StartY1, StartY2;
     int line;
@@ -46,16 +46,16 @@ public abstract class FM_BaseNote{
     boolean stem_up;
 
 
-    protected FM_BaseNote(@FM_NoteType int type, FM_Score score) {
+    protected FM_BaseNote(@FM_NoteType int type, FM_ScoreBase score) {
         this.type = type;
         paddingDot = 0f;
         paddingNote = 0f;
-        setPaddingLeft(FM_Const.dpTOpx(score.getContext(), 4));
+        if (score.score != null) setPaddingLeft(FM_Const.dpTOpx(score.score.getContext(), 4));
         stave = 0;
         this.score = score;
         this.visible = true;
         this.line = 1;
-        color = score.getColor();
+        if (score.score != null) color = score.score.getColor();
         note = 0;
         octave = 0;
         accidental = FM_Accidental.None;
@@ -72,11 +72,12 @@ public abstract class FM_BaseNote{
         this.StartY2 = StartY2;
     }
     void DrawNote(Canvas canvas){
-        score.Font.setColor(color);
-        if (score.getShowBoundingBoxes() == FM_BoundingBoxType.None) return;
+        if (score.score == null) return;
+        score.score.Font.setColor(color);
+        if (score.score.getShowBoundingBoxes() == FM_BoundingBoxType.None) return;
 
-        if ((score.getShowBoundingBoxes() == FM_BoundingBoxType.Chord && this instanceof  FM_Chord) ||
-                (score.getShowBoundingBoxes() == FM_BoundingBoxType.Note && !(this instanceof  FM_Chord))) {
+        if ((score.score.getShowBoundingBoxes() == FM_BoundingBoxType.Chord && this instanceof  FM_Chord) ||
+                (score.score.getShowBoundingBoxes() == FM_BoundingBoxType.Note && !(this instanceof  FM_Chord))) {
             Paint p = new Paint();
             p.setColor(android.graphics.Color.argb(255, 255, 0, 0));
             if (this instanceof FM_Chord) p.setColor(android.graphics.Color.argb(255, 255, 0, 255));

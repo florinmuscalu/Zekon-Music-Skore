@@ -6,7 +6,7 @@ class FM_TimeSignature extends FM_BaseNote {
     @FM_TimeSignatureValue int timeSigN;
     @FM_TimeSignatureValue int timeSigD;
 
-    FM_TimeSignature(@FM_TimeSignatureValue int timeSig_n, @FM_TimeSignatureValue int timeSig_d, FM_Score Score) {
+    FM_TimeSignature(@FM_TimeSignatureValue int timeSig_n, @FM_TimeSignatureValue int timeSig_d, FM_ScoreBase Score) {
         super(FM_NoteType.KEY_SIGNATURE, Score);
         this.timeSigN = timeSig_n;
         this.timeSigD = timeSig_d;
@@ -24,10 +24,11 @@ class FM_TimeSignature extends FM_BaseNote {
         return 0;
     }
     protected float WidthNoteNoStem() {
+        if (score.score == null) return 0;
         String s = asString();
         if (s.equals("")) return 0;
-        FM_Const.AdjustFont(score, asString(), 2);
-        return score.Font.measureText(asString());
+        FM_Const.AdjustFont(score.score, asString(), 2);
+        return score.score.Font.measureText(asString());
     }
     protected float WidthNote() {
         return WidthNoDotNoStem();
@@ -37,38 +38,39 @@ class FM_TimeSignature extends FM_BaseNote {
     }
 
     void DrawNote(Canvas canvas) {
+        if (score.score == null) return;
         if (!isVisible()) return;
         super.DrawNote(canvas);
 
-        score.Font.setColor(color);
+        score.score.Font.setColor(color);
         float dx = StartX + getPaddingLeft();
         float y = StartY1;
-        FM_Const.AdjustFont(this.score, FM_Const._4, 2);
+        FM_Const.AdjustFont(score.score, FM_Const._4, 2);
 
-        if (timeSigN == FM_TimeSignatureValue._2) canvas.drawText(FM_Const._2, dx, y + 1 * score.getDistanceBetweenStaveLines(), score.Font);
-        if (timeSigN == FM_TimeSignatureValue._3) canvas.drawText(FM_Const._3, dx, y + 1 * score.getDistanceBetweenStaveLines(), score.Font);
-        if (timeSigN == FM_TimeSignatureValue._4) canvas.drawText(FM_Const._4, dx, y + 1 * score.getDistanceBetweenStaveLines(), score.Font);
-        if (timeSigN == FM_TimeSignatureValue._5) canvas.drawText(FM_Const._5, dx, y + 1 * score.getDistanceBetweenStaveLines(), score.Font);
-        if (timeSigN == FM_TimeSignatureValue._6) canvas.drawText(FM_Const._6, dx, y + 1 * score.getDistanceBetweenStaveLines(), score.Font);
-        if (timeSigN == FM_TimeSignatureValue._7) canvas.drawText(FM_Const._7, dx, y + 1 * score.getDistanceBetweenStaveLines(), score.Font);
-        if (timeSigN == FM_TimeSignatureValue._8) canvas.drawText(FM_Const._8, dx, y + 1 * score.getDistanceBetweenStaveLines(), score.Font);
-        if (timeSigN == FM_TimeSignatureValue._9) canvas.drawText(FM_Const._9, dx, y + 1 * score.getDistanceBetweenStaveLines(), score.Font);
+        if (timeSigN == FM_TimeSignatureValue._2) canvas.drawText(FM_Const._2, dx, y + 1 * score.score.getDistanceBetweenStaveLines(), score.score.Font);
+        if (timeSigN == FM_TimeSignatureValue._3) canvas.drawText(FM_Const._3, dx, y + 1 * score.score.getDistanceBetweenStaveLines(), score.score.Font);
+        if (timeSigN == FM_TimeSignatureValue._4) canvas.drawText(FM_Const._4, dx, y + 1 * score.score.getDistanceBetweenStaveLines(), score.score.Font);
+        if (timeSigN == FM_TimeSignatureValue._5) canvas.drawText(FM_Const._5, dx, y + 1 * score.score.getDistanceBetweenStaveLines(), score.score.Font);
+        if (timeSigN == FM_TimeSignatureValue._6) canvas.drawText(FM_Const._6, dx, y + 1 * score.score.getDistanceBetweenStaveLines(), score.score.Font);
+        if (timeSigN == FM_TimeSignatureValue._7) canvas.drawText(FM_Const._7, dx, y + 1 * score.score.getDistanceBetweenStaveLines(), score.score.Font);
+        if (timeSigN == FM_TimeSignatureValue._8) canvas.drawText(FM_Const._8, dx, y + 1 * score.score.getDistanceBetweenStaveLines(), score.score.Font);
+        if (timeSigN == FM_TimeSignatureValue._9) canvas.drawText(FM_Const._9, dx, y + 1 * score.score.getDistanceBetweenStaveLines(), score.score.Font);
 
-        if (timeSigD == FM_TimeSignatureValue._2) canvas.drawText(FM_Const._2, dx, y + 3 * score.getDistanceBetweenStaveLines(), score.Font);
-        if (timeSigD == FM_TimeSignatureValue._3) canvas.drawText(FM_Const._3, dx, y + 3 * score.getDistanceBetweenStaveLines(), score.Font);
-        if (timeSigD == FM_TimeSignatureValue._4) canvas.drawText(FM_Const._4, dx, y + 3 * score.getDistanceBetweenStaveLines(), score.Font);
-        if (timeSigD == FM_TimeSignatureValue._5) canvas.drawText(FM_Const._5, dx, y + 3 * score.getDistanceBetweenStaveLines(), score.Font);
-        if (timeSigD == FM_TimeSignatureValue._6) canvas.drawText(FM_Const._6, dx, y + 3 * score.getDistanceBetweenStaveLines(), score.Font);
-        if (timeSigD == FM_TimeSignatureValue._7) canvas.drawText(FM_Const._7, dx, y + 3 * score.getDistanceBetweenStaveLines(), score.Font);
-        if (timeSigD == FM_TimeSignatureValue._8) canvas.drawText(FM_Const._8, dx, y + 3 * score.getDistanceBetweenStaveLines(), score.Font);
-        if (timeSigD == FM_TimeSignatureValue._9) canvas.drawText(FM_Const._9, dx, y + 3 * score.getDistanceBetweenStaveLines(), score.Font);
+        if (timeSigD == FM_TimeSignatureValue._2) canvas.drawText(FM_Const._2, dx, y + 3 * score.score.getDistanceBetweenStaveLines(), score.score.Font);
+        if (timeSigD == FM_TimeSignatureValue._3) canvas.drawText(FM_Const._3, dx, y + 3 * score.score.getDistanceBetweenStaveLines(), score.score.Font);
+        if (timeSigD == FM_TimeSignatureValue._4) canvas.drawText(FM_Const._4, dx, y + 3 * score.score.getDistanceBetweenStaveLines(), score.score.Font);
+        if (timeSigD == FM_TimeSignatureValue._5) canvas.drawText(FM_Const._5, dx, y + 3 * score.score.getDistanceBetweenStaveLines(), score.score.Font);
+        if (timeSigD == FM_TimeSignatureValue._6) canvas.drawText(FM_Const._6, dx, y + 3 * score.score.getDistanceBetweenStaveLines(), score.score.Font);
+        if (timeSigD == FM_TimeSignatureValue._7) canvas.drawText(FM_Const._7, dx, y + 3 * score.score.getDistanceBetweenStaveLines(), score.score.Font);
+        if (timeSigD == FM_TimeSignatureValue._8) canvas.drawText(FM_Const._8, dx, y + 3 * score.score.getDistanceBetweenStaveLines(), score.score.Font);
+        if (timeSigD == FM_TimeSignatureValue._9) canvas.drawText(FM_Const._9, dx, y + 3 * score.score.getDistanceBetweenStaveLines(), score.score.Font);
     }
 
     float Left(){
         return StartX + paddingLeft;
     }
     float Bottom() {
-        return StartY1 + 4 * score.getDistanceBetweenStaveLines();
+        return StartY1 + 4 * score.score.getDistanceBetweenStaveLines();
     }
     float Right() {
         return StartX + Width();
@@ -78,6 +80,6 @@ class FM_TimeSignature extends FM_BaseNote {
     }
 
     private float Height() {
-        return 4 * score.getDistanceBetweenStaveLines();
+        return 4 * score.score.getDistanceBetweenStaveLines();
     }
 }

@@ -27,22 +27,14 @@ import java.util.concurrent.CountDownLatch;
 import static android.view.MotionEvent.INVALID_POINTER_ID;
 
 public class FM_Score extends View {
-    @FM_TimeSignatureValue
-    private int TimeSignature_n;    //numerator
-    @FM_TimeSignatureValue
-    private int TimeSignature_d;    //denominator
-    @FM_KeySignatureValue
-    private int KeySignature;
-    @FM_StaveCount
-    private int StaveCount;
-    private int VoiceCount;
+    protected final FM_ScoreBase ScoreBase;
+
     private int Color;
     private int StaveLineColor;
     private boolean ShowBrace;
     private float NoteSpacing;
     int width, height;
     protected Paint Font;
-    FM_KeySignature FirstStaveKey, SecondStaveKey;
     private float _DistanceBetweenStaveLines;
     private float DistanceBetweenStave_cnt;                //Distance between Staves as number of distances between lines
     private float DistanceBetweenRows_cnt;                 //Distance between Rows of staves as number of distances between lines
@@ -50,8 +42,6 @@ public class FM_Score extends View {
     private float PaddingS, PaddingE;                       //padding Vertical is set as number of Distances between Lines.
     private boolean StartBar;
     private boolean EndBar;
-    @FM_ClefValue
-    private int FirstStaveClef, SecondStaveClef;
     private int Lines;
     final Context context;
     @FM_Align
@@ -62,10 +52,6 @@ public class FM_Score extends View {
     private boolean AllowZoomPan = false;
     private boolean AllowZoomControls = false;
     private boolean tmpZoomControls = false;
-    private final List<FM_BaseNote> StaveNotes = new ArrayList<>();
-    public final List<FM_Tie> Ties = new ArrayList<>();
-    private final List<FM_Tuplet> Tuplets = new ArrayList<>();
-    private final List<FM_Beam> Beams = new ArrayList<>();
 
     private final ScaleGestureDetector mScaleDetector;
     private float mScaleFactor = 1.f;
@@ -87,6 +73,7 @@ public class FM_Score extends View {
 
     public FM_Score(Context context, AttributeSet attrs) {
         super(context, attrs);
+        ScoreBase = new FM_ScoreBase(this);
         this.context = context;
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         setBackgroundColor(android.graphics.Color.argb(255, 224, 211, 175));
@@ -100,8 +87,6 @@ public class FM_Score extends View {
         Lines = 1;
         TrimLastRow = false;
         progressBar = -1;
-        StaveCount = FM_StaveCount._1;
-        setVoiceCount(1);
         setNoteSpacing(5);
         setShowBrace(false);
         setDistanceBetweenStaveLines(10);
@@ -113,10 +98,6 @@ public class FM_Score extends View {
         setStartBar(true);
         setEndBar(true);
         setMultiRow(false);
-        setFirstStaveClef(FM_ClefValue.TREBLE);
-        setSecondStaveClef(FM_ClefValue.BASS);
-        setTimeSignature(FM_TimeSignatureValue.None, FM_TimeSignatureValue.None);
-        setKeySignature(FM_KeySignatureValue.DO);
         setNotesAlign(FM_Align.ALIGN_CENTER_MEASURES);
         ShowBoundingBoxes(FM_BoundingBoxType.None);
 
@@ -131,8 +112,8 @@ public class FM_Score extends View {
         if (measure == 1) {
             progressBar = -1;
         } else {
-            for (int i = 0; i < StaveNotes.size(); i++) {
-                if (StaveNotes.get(i).getType() == FM_NoteType.BAR) measure--;
+            for (int i = 0; i < ScoreBase.StaveNotes.size(); i++) {
+                if (ScoreBase.StaveNotes.get(i).getType() == FM_NoteType.BAR) measure--;
                 if (measure == 1) {
                     progressBar = i;
                     break;
@@ -144,9 +125,9 @@ public class FM_Score extends View {
 
     public void ProgressAdvance() {
         progressBar += 1;
-        if (StaveNotes.get(progressBar) instanceof FM_BarNote) progressBar += 1;
-        if (StaveNotes.get(progressBar) instanceof FM_Clef) progressBar += 1;
-        if (StaveNotes.get(progressBar) instanceof FM_KeySignature) progressBar += 1;
+        if (ScoreBase.StaveNotes.get(progressBar) instanceof FM_BarNote) progressBar += 1;
+        if (ScoreBase.StaveNotes.get(progressBar) instanceof FM_Clef) progressBar += 1;
+        if (ScoreBase.StaveNotes.get(progressBar) instanceof FM_KeySignature) progressBar += 1;
         invalidate();
     }
 
@@ -183,35 +164,32 @@ public class FM_Score extends View {
      * @return Return the numerator
      */
     public int getTimeSignature_n() {
-        return TimeSignature_n;
+        return ScoreBase.getTimeSignature_n();
     }
 
     /**
      * @return Return the denominator
      */
     public int getTimeSignature_d() {
-        return TimeSignature_d;
+        return ScoreBase.getTimeSignature_d();
     }
 
     public void setTimeSignature(@FM_TimeSignatureValue int numerator, @FM_TimeSignatureValue int denominator) {
-        TimeSignature_n = numerator;
-        TimeSignature_d = denominator;
+        ScoreBase.setTimeSignature(numerator, denominator);
         //invalidate();
         requestLayout();
     }
 
     public int getStaveCount() {
-        return StaveCount;
+        return ScoreBase.getStaveCount();
     }
 
     public int getVoiceCount() {
-        return VoiceCount;
+        return ScoreBase.getVoiceCount();
     }
 
     public void setVoiceCount(int voiceCount) {
-        VoiceCount = voiceCount;
-        //invalidate();
-        //requestLayout();
+        ScoreBase.setVoiceCount(voiceCount);
     }
 
     public boolean isShowBrace() {
@@ -220,13 +198,11 @@ public class FM_Score extends View {
 
     public void setShowBrace(boolean showBrace) {
         ShowBrace = showBrace;
-        //invalidate();
-        // requestLayout();
     }
 
     private float getDrawHeight() {
         float MaxHeight = Lines * (4 * getDistanceBetweenStaveLines()) + (Lines - 1) * +getDistanceBetweenRows() + 2 * PaddingV_cnt * getDistanceBetweenStaveLines();
-        if (StaveCount == FM_StaveCount._2)
+        if (ScoreBase.StaveCount == FM_StaveCount._2)
             MaxHeight = MaxHeight + Lines * (getDistanceBetweenStaves() + 4 * getDistanceBetweenStaveLines());
         //if (MaxHeight < height) return height;
         return MaxHeight;
@@ -281,11 +257,11 @@ public class FM_Score extends View {
 
             Font.setColor(Color);
             //draw clef
-            int clef = FirstStaveClef;
-            for (int n = 0; n < StaveNotes.size(); n++)
-                if (StaveNotes.get(n).line - 1 == l && StaveNotes.get(n).stave == 0) {
-                    if (StaveNotes.get(n) instanceof FM_Clef) {
-                        clef = ((FM_Clef) StaveNotes.get(n)).clef;
+            int clef = ScoreBase.FirstStaveClef;
+            for (int n = 0; n < ScoreBase.StaveNotes.size(); n++)
+                if (ScoreBase.StaveNotes.get(n).line - 1 == l && ScoreBase.StaveNotes.get(n).stave == 0) {
+                    if (ScoreBase.StaveNotes.get(n) instanceof FM_Clef) {
+                        clef = ((FM_Clef) ScoreBase.StaveNotes.get(n)).clef;
                         //StaveNotes.get(n).setVisible(false);
                     }
                     break;
@@ -293,12 +269,12 @@ public class FM_Score extends View {
             if (clef == FM_ClefValue.TREBLE) DrawTrebleClef(canvas, ys1);
             else DrawBassClef(canvas, ys1);
             //draw keySignature
-            FirstStaveKey.SetDrawParameters(PaddingS + getClefWidth(), ys1, ys1);
-            FirstStaveKey.DrawNote(canvas, clef);
+            ScoreBase.FirstStaveKey.SetDrawParameters(PaddingS + getClefWidth(), ys1, ys1);
+            ScoreBase.FirstStaveKey.DrawNote(canvas, clef);
             //draw timeSignature
             if (l == 0) DrawTimeSignature(canvas, ys1);
 
-            if (StaveCount == FM_StaveCount._2) {
+            if (ScoreBase.StaveCount == FM_StaveCount._2) {
                 ys2 = ys1 + (getDistanceBetweenStaves() + 4 * getDistanceBetweenStaveLines());
                 BarYe = ys2 + 4 * getDistanceBetweenStaveLines();
                 Font.setColor(StaveLineColor);
@@ -308,19 +284,19 @@ public class FM_Score extends View {
                     canvas.drawRect(PaddingS, ys2 + i * getDistanceBetweenStaveLines() - StaveLineHalfWidth, getLineWidth(l + 1), ys2 + i * getDistanceBetweenStaveLines() + StaveLineHalfWidth, Font);
                 Font.setColor(Color);
                 //draw clef
-                clef = SecondStaveClef;
-                for (int n = 0; n < StaveNotes.size(); n++)
-                    if (StaveNotes.get(n).line-1 == l && StaveNotes.get(n).stave == 1) {
-                        if (StaveNotes.get(n) instanceof FM_Clef) {
-                            clef = ((FM_Clef) StaveNotes.get(n)).clef;
+                clef = ScoreBase.SecondStaveClef;
+                for (int n = 0; n < ScoreBase.StaveNotes.size(); n++)
+                    if (ScoreBase.StaveNotes.get(n).line-1 == l && ScoreBase.StaveNotes.get(n).stave == 1) {
+                        if (ScoreBase.StaveNotes.get(n) instanceof FM_Clef) {
+                            clef = ((FM_Clef) ScoreBase.StaveNotes.get(n)).clef;
                             //StaveNotes.get(n).setVisible(false);
                         }
                         break;
                     }
                 if (clef == FM_ClefValue.TREBLE) DrawTrebleClef(canvas, ys2);
                 else DrawBassClef(canvas, ys2);
-                SecondStaveKey.SetDrawParameters(PaddingS + getClefWidth(), ys2, ys2);
-                SecondStaveKey.DrawNote(canvas, clef);
+                ScoreBase.SecondStaveKey.SetDrawParameters(PaddingS + getClefWidth(), ys2, ys2);
+                ScoreBase.SecondStaveKey.DrawNote(canvas, clef);
                 if (l == 0) DrawTimeSignature(canvas, ys2);
 
                 //Draw Bracket
@@ -349,21 +325,21 @@ public class FM_Score extends View {
             ys1 = ys2 + (getDistanceBetweenRows() + 4 * getDistanceBetweenStaveLines());
         }
 
-        for (int i = 0; i < StaveNotes.size(); i++) StaveNotes.get(i).DrawNote(canvas);
-        for (int j = 0; j < Ties.size(); j++) Ties.get(j).Draw(canvas);
-        for (int j = 0; j < Beams.size(); j++) Beams.get(j).Draw(canvas);
-        for (int j = 0; j < Tuplets.size(); j++) Tuplets.get(j).Draw(canvas);
+        for (int i = 0; i < ScoreBase.StaveNotes.size(); i++) ScoreBase.StaveNotes.get(i).DrawNote(canvas);
+        for (int j = 0; j < ScoreBase.Ties.size(); j++) ScoreBase.Ties.get(j).Draw(canvas);
+        for (int j = 0; j < ScoreBase.Beams.size(); j++) ScoreBase.Beams.get(j).Draw(canvas);
+        for (int j = 0; j < ScoreBase.Tuplets.size(); j++) ScoreBase.Tuplets.get(j).Draw(canvas);
 
         if (progressBar > -1) {
-            int line = StaveNotes.get(progressBar).line;
-            float x = StaveNotes.get(progressBar).StartX + StaveNotes.get(progressBar).Width() + FM_Const.dpTOpx(context, 3);
+            int line = ScoreBase.StaveNotes.get(progressBar).line;
+            float x = ScoreBase.StaveNotes.get(progressBar).StartX + ScoreBase.StaveNotes.get(progressBar).Width() + FM_Const.dpTOpx(context, 3);
             Paint f = new Paint();
             f.setAntiAlias(true);
             f.setColor(android.graphics.Color.RED);
             float ys = getPaddingVertical();
             float ye = getPaddingVertical() + 4 * getDistanceBetweenStaveLines();
             float mul = (getDistanceBetweenRows() + 4 * getDistanceBetweenStaveLines());
-            if (StaveCount == FM_StaveCount._2) {
+            if (ScoreBase.StaveCount == FM_StaveCount._2) {
                 ye = ye + getDistanceBetweenStaves() + 4 * getDistanceBetweenStaveLines();
                 mul = mul + getDistanceBetweenStaves() + 4 * getDistanceBetweenStaveLines();
             }
@@ -619,21 +595,21 @@ public class FM_Score extends View {
     }
 
     public int getFirstStaveClef() {
-        return FirstStaveClef;
+        return ScoreBase.getFirstStaveClef();
     }
 
     public void setFirstStaveClef(@FM_ClefValue int firstStaveClef) {
-        FirstStaveClef = firstStaveClef;
-        setKeySignature(KeySignature);
+        ScoreBase.setFirstStaveClef(firstStaveClef);
+        ScoreBase.setKeySignature(ScoreBase.KeySignature);
     }
 
     public int getSecondStaveClef() {
-        return SecondStaveClef;
+        return ScoreBase.getSecondStaveClef();
     }
 
     public void setSecondStaveClef(@FM_ClefValue int secondStaveClef) {
-        SecondStaveClef = secondStaveClef;
-        setKeySignature(KeySignature);
+        ScoreBase.setSecondStaveClef(secondStaveClef);
+        ScoreBase.setKeySignature(ScoreBase.KeySignature);
     }
 
     /**
@@ -644,22 +620,18 @@ public class FM_Score extends View {
     public void setColor(int color) {
         Color = color;
         Font.setColor(color);
-        FirstStaveKey.setColor(color);
-        SecondStaveKey.setColor(color);
+        ScoreBase.FirstStaveKey.setColor(color);
+        ScoreBase.SecondStaveKey.setColor(color);
         //invalidate();
         //requestLayout();
     }
 
     public Integer getKeySignature() {
-        return KeySignature;
+        return ScoreBase.getKeySignature();
     }
 
     public void setKeySignature(Integer keySignature) {
-        KeySignature = keySignature;
-        FirstStaveKey = new FM_KeySignature( FirstStaveClef, keySignature, this);
-        SecondStaveKey = new FM_KeySignature(SecondStaveClef, keySignature, this);
-        //invalidate();
-        //requestLayout();
+        ScoreBase.setKeySignature(keySignature);
     }
 
     protected float getClefWidth() {
@@ -682,7 +654,7 @@ public class FM_Score extends View {
     }
 
     protected float getTimeSignatureWidth() {
-        if (TimeSignature_n == FM_TimeSignatureValue.None) return 0;
+        if (ScoreBase.TimeSignature_n == FM_TimeSignatureValue.None) return 0;
         float w = FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
         FM_Const.AdjustFont(this, FM_Const._4, 2);
         return w + Font.measureText(FM_Const._4);
@@ -690,58 +662,49 @@ public class FM_Score extends View {
 
     private void DrawTimeSignature(Canvas canvas, float y) {
         Font.setColor(Color);
-        float pad = PaddingS + getClefWidth() + FirstStaveKey.Width();
+        float pad = PaddingS + getClefWidth() + ScoreBase.FirstStaveKey.Width();
         FM_Const.AdjustFont(this, FM_Const._4, 2);
-        if (TimeSignature_n == FM_TimeSignatureValue._2)
+        if (ScoreBase.TimeSignature_n == FM_TimeSignatureValue._2)
             canvas.drawText(FM_Const._2, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
-        if (TimeSignature_n == FM_TimeSignatureValue._3)
+        if (ScoreBase.TimeSignature_n == FM_TimeSignatureValue._3)
             canvas.drawText(FM_Const._3, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
-        if (TimeSignature_n == FM_TimeSignatureValue._4)
+        if (ScoreBase.TimeSignature_n == FM_TimeSignatureValue._4)
             canvas.drawText(FM_Const._4, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
-        if (TimeSignature_n == FM_TimeSignatureValue._5)
+        if (ScoreBase.TimeSignature_n == FM_TimeSignatureValue._5)
             canvas.drawText(FM_Const._5, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
-        if (TimeSignature_n == FM_TimeSignatureValue._6)
+        if (ScoreBase.TimeSignature_n == FM_TimeSignatureValue._6)
             canvas.drawText(FM_Const._6, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
-        if (TimeSignature_n == FM_TimeSignatureValue._7)
+        if (ScoreBase.TimeSignature_n == FM_TimeSignatureValue._7)
             canvas.drawText(FM_Const._7, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
-        if (TimeSignature_n == FM_TimeSignatureValue._8)
+        if (ScoreBase.TimeSignature_n == FM_TimeSignatureValue._8)
             canvas.drawText(FM_Const._8, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
-        if (TimeSignature_n == FM_TimeSignatureValue._9)
+        if (ScoreBase.TimeSignature_n == FM_TimeSignatureValue._9)
             canvas.drawText(FM_Const._9, pad, y + 1 * getDistanceBetweenStaveLines(), Font);
 
-        if (TimeSignature_d == FM_TimeSignatureValue._2)
+        if (ScoreBase.TimeSignature_d == FM_TimeSignatureValue._2)
             canvas.drawText(FM_Const._2, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
-        if (TimeSignature_d == FM_TimeSignatureValue._3)
+        if (ScoreBase.TimeSignature_d == FM_TimeSignatureValue._3)
             canvas.drawText(FM_Const._3, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
-        if (TimeSignature_d == FM_TimeSignatureValue._4)
+        if (ScoreBase.TimeSignature_d == FM_TimeSignatureValue._4)
             canvas.drawText(FM_Const._4, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
-        if (TimeSignature_d == FM_TimeSignatureValue._5)
+        if (ScoreBase.TimeSignature_d == FM_TimeSignatureValue._5)
             canvas.drawText(FM_Const._5, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
-        if (TimeSignature_d == FM_TimeSignatureValue._6)
+        if (ScoreBase.TimeSignature_d == FM_TimeSignatureValue._6)
             canvas.drawText(FM_Const._6, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
-        if (TimeSignature_d == FM_TimeSignatureValue._7)
+        if (ScoreBase.TimeSignature_d == FM_TimeSignatureValue._7)
             canvas.drawText(FM_Const._7, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
-        if (TimeSignature_d == FM_TimeSignatureValue._8)
+        if (ScoreBase.TimeSignature_d == FM_TimeSignatureValue._8)
             canvas.drawText(FM_Const._8, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
-        if (TimeSignature_d == FM_TimeSignatureValue._9)
+        if (ScoreBase.TimeSignature_d == FM_TimeSignatureValue._9)
             canvas.drawText(FM_Const._9, pad, y + 3 * getDistanceBetweenStaveLines(), Font);
     }
 
     public void clearStaveNotes() {
-        StaveNotes.clear();
-        Tuplets.clear();
-        Beams.clear();
-        Ties.clear();
+        ScoreBase.clearStaveNotes();
         mPosX = 0;
         mPosY = 0;
         Lines = 1;
         progressBar = -1;
-        StaveCount = FM_StaveCount._1;
-        setVoiceCount(1);
-        setFirstStaveClef(FM_ClefValue.TREBLE);
-        setSecondStaveClef(FM_ClefValue.BASS);
-        setTimeSignature(FM_TimeSignatureValue.None, FM_TimeSignatureValue.None);
-        setKeySignature(FM_KeySignatureValue.DO);
         invalidate();
     }
 
@@ -751,45 +714,30 @@ public class FM_Score extends View {
     }
 
     public void addStaveNote(FM_BaseNote n, int stave) {
-        if (n instanceof FM_BarNote) stave = 0;
-        if (stave == 1) StaveCount = FM_StaveCount._2;
-        n.stave = stave;
-        StaveNotes.add(n);
+        ScoreBase.addStaveNote(n, stave);
         ComputeLines();
     }
 
     public void addChord(List<FM_BaseNote> n, List<Integer> stave) {
-        if (n.get(0) instanceof FM_Clef) {
-            n.get(0).stave = stave.get(0);
-            StaveNotes.add(n.get(0));
-        } else {
-        FM_Chord C = new FM_Chord(this);
-        for (int i = 0; i < n.size(); i++) {
-            if (stave.get(i) == 1) StaveCount = FM_StaveCount._2;
-            n.get(i).stave = stave.get(i);
-            C.addNote(n.get(i));
-        }
-        C.Compute();
-        StaveNotes.add(C);
-        }
+        ScoreBase.addChord(n, stave);
         ComputeLines();
     }
 
     private float getStartX(int line) {
         if (line == 1)
-            return PaddingS + getClefWidth() + FirstStaveKey.Width() + getTimeSignatureWidth() + FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
+            return PaddingS + getClefWidth() + ScoreBase.FirstStaveKey.Width() + getTimeSignatureWidth() + FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
         else
-            return PaddingS + getClefWidth() + FirstStaveKey.Width() + FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
+            return PaddingS + getClefWidth() + ScoreBase.FirstStaveKey.Width() + FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
     }
 
     private float getLineWidth(int line) {
         float X = 0;
         float w = 0;
-        for (int j = 0; j < StaveNotes.size(); j++)
-            if (StaveNotes.get(j).line == line) {
-                if (X < StaveNotes.get(j).StartX) {
-                    X = StaveNotes.get(j).StartX;
-                    w = StaveNotes.get(j).Width();
+        for (int j = 0; j < ScoreBase.StaveNotes.size(); j++)
+            if (ScoreBase.StaveNotes.get(j).line == line) {
+                if (X < ScoreBase.StaveNotes.get(j).StartX) {
+                    X = ScoreBase.StaveNotes.get(j).StartX;
+                    w = ScoreBase.StaveNotes.get(j).Width();
                 }
             }
         float ret = X + w + 4 * FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING);
@@ -798,19 +746,19 @@ public class FM_Score extends View {
     }
 
     private void ComputeLines() {
-        if (StaveNotes.size() == 0) return;
+        if (ScoreBase.StaveNotes.size() == 0) return;
         int l = 1;
         float endX = width - PaddingE - 2 * FM_Const.dpTOpx(context, FM_Const.DEFAULT_EXTRA_PADDING) - FM_Const.dpTOpx(context, 10);
         float ys1 = getPaddingVertical();
         float ys2 = getPaddingVertical();
-        if (StaveCount == FM_StaveCount._2)
+        if (ScoreBase.StaveCount == FM_StaveCount._2)
             ys2 = ys1 + (getDistanceBetweenStaves() + 4 * getDistanceBetweenStaveLines());
 
         //set everything to be visible
-        for (int i = 0; i < StaveNotes.size(); i++) {
-            StaveNotes.get(i).setVisible(true);
-            if (StaveNotes.get(i) instanceof FM_BarNote)
-                ((FM_BarNote) StaveNotes.get(i)).lineEnd = false;
+        for (int i = 0; i < ScoreBase.StaveNotes.size(); i++) {
+            ScoreBase.StaveNotes.get(i).setVisible(true);
+            if (ScoreBase.StaveNotes.get(i) instanceof FM_BarNote)
+                ((FM_BarNote) ScoreBase.StaveNotes.get(i)).lineEnd = false;
         }
 
         if (MultiRow && Align == FM_Align.ALIGN_LEFT_NOTES) {
@@ -818,16 +766,16 @@ public class FM_Score extends View {
             int noteIndex = 0;
             FM_BaseNote last_note = null;
             boolean already_a_clef = false;
-            for (int i = 0; i < StaveNotes.size(); i++) {
-                float w = StaveNotes.get(i).Width() + NoteSpacing;
-                if (noteIndex == 0 && StaveNotes.get(i) instanceof FM_Clef) {
+            for (int i = 0; i < ScoreBase.StaveNotes.size(); i++) {
+                float w = ScoreBase.StaveNotes.get(i).Width() + NoteSpacing;
+                if (noteIndex == 0 && ScoreBase.StaveNotes.get(i) instanceof FM_Clef) {
                     w = 0;
-                    StaveNotes.get(i).setVisible(false);
+                    ScoreBase.StaveNotes.get(i).setVisible(false);
                     already_a_clef = true;
                 }
-                if (already_a_clef && noteIndex != 0 && StaveNotes.get(i) instanceof FM_Clef) {
+                if (already_a_clef && noteIndex != 0 && ScoreBase.StaveNotes.get(i) instanceof FM_Clef) {
                     w = 0;
-                    StaveNotes.get(i).setVisible(false);
+                    ScoreBase.StaveNotes.get(i).setVisible(false);
                     already_a_clef = true;
                 }
                 noteIndex++;
@@ -843,17 +791,17 @@ public class FM_Score extends View {
                     ys2 = ys1;
                     already_a_clef = false;
                 }
-                if (StaveCount == FM_StaveCount._2) ys2 = ys1 + (getDistanceBetweenStaves() + 4 * getDistanceBetweenStaveLines());
-                if (StaveNotes.get(i).stave == 0) StaveNotes.get(i).SetDrawParameters(X, ys1, ys2);
-                if (StaveNotes.get(i).stave == 1) StaveNotes.get(i).SetDrawParameters(X, ys2, ys2);
-                StaveNotes.get(i).line = l;
+                if (ScoreBase.StaveCount == FM_StaveCount._2) ys2 = ys1 + (getDistanceBetweenStaves() + 4 * getDistanceBetweenStaveLines());
+                if (ScoreBase.StaveNotes.get(i).stave == 0) ScoreBase.StaveNotes.get(i).SetDrawParameters(X, ys1, ys2);
+                if (ScoreBase.StaveNotes.get(i).stave == 1) ScoreBase.StaveNotes.get(i).SetDrawParameters(X, ys2, ys2);
+                ScoreBase.StaveNotes.get(i).line = l;
                 X = X + w;
-                last_note = StaveNotes.get(i);
+                last_note = ScoreBase.StaveNotes.get(i);
             }
             //If last note is a bar, hide it
-            if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote) {
-                ((FM_BarNote) StaveNotes.get(StaveNotes.size() - 1)).lineEnd = true;
-                StaveNotes.get(StaveNotes.size() - 1).setVisible(false);
+            if (ScoreBase.StaveNotes.get(ScoreBase.StaveNotes.size() - 1) instanceof FM_BarNote) {
+                ((FM_BarNote) ScoreBase.StaveNotes.get(ScoreBase.StaveNotes.size() - 1)).lineEnd = true;
+                ScoreBase.StaveNotes.get(ScoreBase.StaveNotes.size() - 1).setVisible(false);
             }
         }
 
@@ -866,27 +814,27 @@ public class FM_Score extends View {
             int bar_cnt = 0;
             int noteIndex = 0;
             int last_clef = getFirstStaveClef();
-            for (int i = 0; i < StaveNotes.size(); i++) {
+            for (int i = 0; i < ScoreBase.StaveNotes.size(); i++) {
                 noteIndex++;
-                float widthIncrement = StaveNotes.get(i).Width() + NoteSpacing;
-                if (StaveNotes.get(i) instanceof FM_Clef) {
+                float widthIncrement = ScoreBase.StaveNotes.get(i).Width() + NoteSpacing;
+                if (ScoreBase.StaveNotes.get(i) instanceof FM_Clef) {
                     if (noteIndex == 1) {
                         widthIncrement = 0;
-                        StaveNotes.get(i).setVisible(false);
-                    } else if (last_clef == ((FM_Clef) StaveNotes.get(i)).clef) {
+                        ScoreBase.StaveNotes.get(i).setVisible(false);
+                    } else if (last_clef == ((FM_Clef) ScoreBase.StaveNotes.get(i)).clef) {
                         widthIncrement = 0;
-                        StaveNotes.get(i).setVisible(false);
+                        ScoreBase.StaveNotes.get(i).setVisible(false);
                     }
-                    last_clef = ((FM_Clef) StaveNotes.get(i)).clef;
+                    last_clef = ((FM_Clef) ScoreBase.StaveNotes.get(i)).clef;
                 }
-                if (StaveNotes.get(i) instanceof FM_BarNote) {
+                if (ScoreBase.StaveNotes.get(i) instanceof FM_BarNote) {
                     last_bar = i;
                     bar_cnt++;
                 }
                 if (bar_cnt > 0 && X + widthIncrement > endX * scale) {
-                    StaveNotes.get(last_bar).line = l;
-                    StaveNotes.get(last_bar).setVisible(false);
-                    ((FM_BarNote) StaveNotes.get(last_bar)).lineEnd = true;
+                    ScoreBase.StaveNotes.get(last_bar).line = l;
+                    ScoreBase.StaveNotes.get(last_bar).setVisible(false);
+                    ((FM_BarNote) ScoreBase.StaveNotes.get(last_bar)).lineEnd = true;
                     l++;
                     noteIndex = 0;
                     X = getStartX(l);
@@ -896,25 +844,25 @@ public class FM_Score extends View {
                     i = last_bar;
                     continue;
                 }
-                if (StaveCount == FM_StaveCount._2)
+                if (ScoreBase.StaveCount == FM_StaveCount._2)
                     ys2 = ys1 + (getDistanceBetweenStaves() + 4 * getDistanceBetweenStaveLines());
-                if (StaveNotes.get(i).stave == 0) StaveNotes.get(i).SetDrawParameters(X, ys1, ys2);
-                if (StaveNotes.get(i).stave == 1) StaveNotes.get(i).SetDrawParameters(X, ys2, ys2);
-                StaveNotes.get(i).line = l;
+                if (ScoreBase.StaveNotes.get(i).stave == 0) ScoreBase.StaveNotes.get(i).SetDrawParameters(X, ys1, ys2);
+                if (ScoreBase.StaveNotes.get(i).stave == 1) ScoreBase.StaveNotes.get(i).SetDrawParameters(X, ys2, ys2);
+                ScoreBase.StaveNotes.get(i).line = l;
                 X = X + widthIncrement;
             }
             //If last note is a bar, hide it
-            if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote) {
-                ((FM_BarNote) StaveNotes.get(StaveNotes.size() - 1)).lineEnd = true;
-                StaveNotes.get(StaveNotes.size() - 1).setVisible(false);
+            if (ScoreBase.StaveNotes.get(ScoreBase.StaveNotes.size() - 1) instanceof FM_BarNote) {
+                ((FM_BarNote) ScoreBase.StaveNotes.get(ScoreBase.StaveNotes.size() - 1)).lineEnd = true;
+                ScoreBase.StaveNotes.get(ScoreBase.StaveNotes.size() - 1).setVisible(false);
             }
         }
 
         if (!MultiRow) {
             //If last note is a bar, hide it
-            if (StaveNotes.get(StaveNotes.size() - 1) instanceof FM_BarNote) {
-                ((FM_BarNote) StaveNotes.get(StaveNotes.size() - 1)).lineEnd = true;
-                StaveNotes.get(StaveNotes.size() - 1).setVisible(false);
+            if (ScoreBase.StaveNotes.get(ScoreBase.StaveNotes.size() - 1) instanceof FM_BarNote) {
+                ((FM_BarNote) ScoreBase.StaveNotes.get(ScoreBase.StaveNotes.size() - 1)).lineEnd = true;
+                ScoreBase.StaveNotes.get(ScoreBase.StaveNotes.size() - 1).setVisible(false);
             }
         }
         Lines = l;
@@ -924,10 +872,10 @@ public class FM_Score extends View {
                 float X = getStartX(i);
                 int cnt = 0;
                 float diff;
-                for (int j = 0; j < StaveNotes.size(); j++)
-                    if (StaveNotes.get(j).line == i) {
-                        float w = StaveNotes.get(j).Width();
-                        if (!StaveNotes.get(j).isVisible()) w = 0;
+                for (int j = 0; j < ScoreBase.StaveNotes.size(); j++)
+                    if (ScoreBase.StaveNotes.get(j).line == i) {
+                        float w = ScoreBase.StaveNotes.get(j).Width();
+                        if (!ScoreBase.StaveNotes.get(j).isVisible()) w = 0;
                         X = X + w;
                         cnt++;
 
@@ -936,19 +884,19 @@ public class FM_Score extends View {
                 diff = (endX - X) / (cnt - 1);
                 X = getStartX(i);
                 if (Align == FM_Align.ALIGN_CENTER_NOTES_ALL) {
-                    for (int j = 0; j < StaveNotes.size(); j++)
-                        if (StaveNotes.get(j).line == i) {
-                            float w = StaveNotes.get(j).Width();
-                            if (!StaveNotes.get(j).isVisible()) w = 0;
-                            StaveNotes.get(j).SetDrawParameters(X, StaveNotes.get(j).StartY1, StaveNotes.get(j).StartY2);
+                    for (int j = 0; j < ScoreBase.StaveNotes.size(); j++)
+                        if (ScoreBase.StaveNotes.get(j).line == i) {
+                            float w = ScoreBase.StaveNotes.get(j).Width();
+                            if (!ScoreBase.StaveNotes.get(j).isVisible()) w = 0;
+                            ScoreBase.StaveNotes.get(j).SetDrawParameters(X, ScoreBase.StaveNotes.get(j).StartY1, ScoreBase.StaveNotes.get(j).StartY2);
                             X = X + w + diff;
                         }
                 } else {
-                    for (int j = 0; j < StaveNotes.size(); j++)
-                        if (StaveNotes.get(j).line == i) {
-                            float w = StaveNotes.get(j).Width();
-                            if (!StaveNotes.get(j).isVisible()) w = 0;
-                            StaveNotes.get(j).SetDrawParameters(X + s, StaveNotes.get(j).StartY1, StaveNotes.get(j).StartY2);
+                    for (int j = 0; j < ScoreBase.StaveNotes.size(); j++)
+                        if (ScoreBase.StaveNotes.get(j).line == i) {
+                            float w = ScoreBase.StaveNotes.get(j).Width();
+                            if (!ScoreBase.StaveNotes.get(j).isVisible()) w = 0;
+                            ScoreBase.StaveNotes.get(j).SetDrawParameters(X + s, ScoreBase.StaveNotes.get(j).StartY1, ScoreBase.StaveNotes.get(j).StartY2);
                             X = X + w + s;
                         }
                 }
@@ -961,11 +909,11 @@ public class FM_Score extends View {
                 int cnt = 0;
                 float diff, w1;
                 w1 = -1;
-                for (int j = 0; j < StaveNotes.size(); j++)
-                    if (StaveNotes.get(j).line == i && StaveNotes.get(j).isVisible()) {
-                        if (w1 == -1) w1 = StaveNotes.get(j).Width();
+                for (int j = 0; j < ScoreBase.StaveNotes.size(); j++)
+                    if (ScoreBase.StaveNotes.get(j).line == i && ScoreBase.StaveNotes.get(j).isVisible()) {
+                        if (w1 == -1) w1 = ScoreBase.StaveNotes.get(j).Width();
                         else {
-                            float w = StaveNotes.get(j).Width();
+                            float w = ScoreBase.StaveNotes.get(j).Width();
                             X = X + w;
                             cnt++;
                         }
@@ -974,15 +922,15 @@ public class FM_Score extends View {
                 X = getStartX(i) + w1;
                 w1 = -1;
                 if ((Align != FM_Align.ALIGN_LEFT_MEASURES && (Align == FM_Align.ALIGN_LEFT_LAST_MEASURE && i != Lines)) || diff < 0)
-                    for (int j = 0; j < StaveNotes.size(); j++)
-                        if (StaveNotes.get(j).line == i && StaveNotes.get(j).isVisible()) {
+                    for (int j = 0; j < ScoreBase.StaveNotes.size(); j++)
+                        if (ScoreBase.StaveNotes.get(j).line == i && ScoreBase.StaveNotes.get(j).isVisible()) {
                             if (w1 == -1) {
                                 w1 = 0;
-                                StaveNotes.get(j).SetDrawParameters(getStartX(i), StaveNotes.get(j).StartY1, StaveNotes.get(j).StartY2);
+                                ScoreBase.StaveNotes.get(j).SetDrawParameters(getStartX(i), ScoreBase.StaveNotes.get(j).StartY1, ScoreBase.StaveNotes.get(j).StartY2);
                             } else {
-                                float w = StaveNotes.get(j).Width();
-                                if (!StaveNotes.get(j).isVisible()) w = 0;
-                                StaveNotes.get(j).SetDrawParameters(X + diff, StaveNotes.get(j).StartY1, StaveNotes.get(j).StartY2);
+                                float w = ScoreBase.StaveNotes.get(j).Width();
+                                if (!ScoreBase.StaveNotes.get(j).isVisible()) w = 0;
+                                ScoreBase.StaveNotes.get(j).SetDrawParameters(X + diff, ScoreBase.StaveNotes.get(j).StartY1, ScoreBase.StaveNotes.get(j).StartY2);
                                 X = X + w + diff;
                             }
                         }
@@ -992,14 +940,14 @@ public class FM_Score extends View {
         ys1 = getPaddingVertical();
         ys2 = getPaddingVertical();
         for (int i = 1; i <= Lines; i++) {
-            if (StaveCount == FM_StaveCount._2)
+            if (ScoreBase.StaveCount == FM_StaveCount._2)
                 ys2 = ys1 + (getDistanceBetweenStaves() + 4 * getDistanceBetweenStaveLines());
-            for (int j = 0; j < StaveNotes.size(); j++) {
-                if (StaveNotes.get(j).line == i) {
-                    if (StaveNotes.get(j).stave == 0)
-                        StaveNotes.get(j).SetDrawParameters(StaveNotes.get(j).StartX, ys1, ys2);
-                    if (StaveNotes.get(j).stave == 1)
-                        StaveNotes.get(j).SetDrawParameters(StaveNotes.get(j).StartX, ys2, ys2);
+            for (int j = 0; j < ScoreBase.StaveNotes.size(); j++) {
+                if (ScoreBase.StaveNotes.get(j).line == i) {
+                    if (ScoreBase.StaveNotes.get(j).stave == 0)
+                        ScoreBase.StaveNotes.get(j).SetDrawParameters(ScoreBase.StaveNotes.get(j).StartX, ys1, ys2);
+                    if (ScoreBase.StaveNotes.get(j).stave == 1)
+                        ScoreBase.StaveNotes.get(j).SetDrawParameters(ScoreBase.StaveNotes.get(j).StartX, ys2, ys2);
                 }
             }
             ys1 = ys2 + (getDistanceBetweenRows() + 4 * getDistanceBetweenStaveLines());
@@ -1016,134 +964,32 @@ public class FM_Score extends View {
         ComputeLines();
     }
 
-    HashMap<String, List<FM_Note>> TieNotes = new HashMap<>();
-
     public void AddToTie(String tie, FM_Note n) {
-        if (TieNotes.containsKey(tie)) {
-            Objects.requireNonNull(TieNotes.get(tie)).add(n);
-            EndTie(tie);
-        } else {
-            List <FM_Note> note_list = new ArrayList<>();
-            note_list.add(n);
-            TieNotes.put(tie, note_list);
-        }
+        ScoreBase.AddToTie(tie, n);
     }
-
-    private void EndTie(String tie) {
-        List <FM_Note> note_list = TieNotes.get(tie);
-        assert note_list != null;
-        if (note_list.size() != 2) return;
-        if (note_list.get(0).stave != note_list.get(1).stave || note_list.get(0).octave != note_list.get(1).octave || !note_list.get(0).note.equals(note_list.get(1).note))
-            return;
-        FM_Tie t;
-        if (tie.toLowerCase().contains("a")) t = new FM_Tie(this, true);
-        else if (tie.toLowerCase().contains("b")) t = new FM_Tie(this, false);
-        else t = new FM_Tie(this);
-        t.AddStart(note_list.get(0));
-        t.AddEnd(note_list.get(1));
-        note_list.get(0).isTieStart = true;
-        note_list.get(1).isTieEnd = true;
-        Ties.add(t);
-        TieNotes.remove(tie);
-    }
-
-    private boolean inTuplet = false;
-    private int TupletPosition = 0;
-    private int TupletSize = 0;
-    private int currentTuplet = 0;
-    List<FM_BaseNote> TupletNotes;
 
     public void BeginTuplet(String s) {
-        inTuplet = true;
-        TupletNotes = new ArrayList<>();
-        TupletPosition = 1;
-        TupletSize = 0;
-        if (s.toLowerCase().contains("a")) {
-            TupletPosition = 0;
-            try {
-                String size = s.toLowerCase().substring(s.toLowerCase().indexOf("a") + 1);
-                TupletSize = Integer.parseInt(size);
-            } catch (Exception ignored) {}
-        }
-        if (s.toLowerCase().contains("b")) {
-            TupletPosition = 1;
-            try {
-                String size = s.toLowerCase().substring(s.toLowerCase().indexOf("b") + 1);
-                TupletSize = Integer.parseInt(size);
-            } catch (Exception ignored) {}
-        }
+        ScoreBase.BeginTuplet(s);
     }
 
     public void AddToTuplet(FM_BaseNote n) {
-        if (inTuplet) TupletNotes.add(n);
+        ScoreBase.AddToTuplet(n);
     }
 
     public void EndTuplet() {
-        inTuplet = false;
-        for (int i = 0; i < TupletNotes.size(); i++)
-            if (!(TupletNotes.get(i) instanceof FM_Note || TupletNotes.get(i) instanceof FM_Pause)) return;
-        int stave = TupletNotes.get(0).stave;
-        if (TupletSize == 0) {
-            int minDuration = 6000;
-            int maxDuration = 0;
-            int allDuration = 0;
-            TupletSize = TupletNotes.size();
-            for (int i = 0; i < TupletSize; i++) {
-                int d = (int) (FM_Const.getDurationMs(TupletNotes.get(i).duration) * 1000);
-                allDuration += d;
-                if (d < minDuration) minDuration = d;
-                if (d > maxDuration) maxDuration = d;
-            }
-            if (allDuration % minDuration == 0) TupletSize = allDuration / minDuration;
-            if (allDuration % maxDuration == 0) TupletSize = allDuration / maxDuration;
-            //while (allDuration != cnt * minDuration) cnt++;
-        }
-        for (int i = 0; i < TupletNotes.size(); i++)
-            if ((TupletNotes.get(i).stave != stave) /*|| (TupletNotes.get(i)).duration != duration*/) return;
-        FM_Tuplet t = new FM_Tuplet(this, TupletSize, currentTuplet, TupletPosition);
-        currentTuplet++;
-        for (int i = 0; i < TupletNotes.size(); i++) {
-            TupletNotes.get(i).tuplet = true;
-            TupletNotes.get(i).tupletSize = TupletNotes.size();
-            t.AddNote(TupletNotes.get(i));
-        }
-        Tuplets.add(t);
+        ScoreBase.EndTuplet();
     }
 
-    private boolean inBeam = false;
-    private int currentBeam = 0;
-    List<FM_BaseNote> BeamNotes;
-
     public void BeginBeam() {
-        inBeam = true;
-        BeamNotes = new ArrayList<>();
+        ScoreBase.BeginBeam();
     }
 
     public void AddToBeam(FM_Note n) {
-        if (inBeam) BeamNotes.add(n);
+        ScoreBase.AddToBeam(n);
     }
 
     public void EndBeam() {
-        inBeam = false;
-        if (BeamNotes.size() < 2) return;
-        for (int i = 0; i < BeamNotes.size(); i++)
-            if (!(BeamNotes.get(i) instanceof FM_Note)) return;
-        for (int i = 0; i < BeamNotes.size(); i++) {
-            int d = ((FM_Note) BeamNotes.get(i)).duration;
-            if (d == FM_DurationValue.NOTE_WHOLE) return;
-            if (d == FM_DurationValue.NOTE_WHOLE_D) return;
-            if (d == FM_DurationValue.NOTE_HALF) return;
-            if (d == FM_DurationValue.NOTE_HALF_D) return;
-            if (d == FM_DurationValue.NOTE_QUARTER) return;
-            if (d == FM_DurationValue.NOTE_QUARTER_D) return;
-        }
-        FM_Beam t = new FM_Beam(this, currentBeam);
-        currentBeam++;
-        for (int i = 0; i < BeamNotes.size(); i++) {
-            ((FM_Note) BeamNotes.get(i)).beam = true;
-            t.AddNote((FM_Note) BeamNotes.get(i));
-        }
-        Beams.add(t);
+        ScoreBase.EndBeam();
     }
 
     public void setNoteSpacing(float noteSpacing) {
@@ -1214,138 +1060,21 @@ public class FM_Score extends View {
     }
 
     public int getNoteCount() {
-        return StaveNotes.size();
+        return ScoreBase.getNoteCount();
     }
 
     public FM_BaseNote getNote(int index) {
-        if (index < 0) return null;
-        if (index > StaveNotes.size() - 1) return null;
-        return StaveNotes.get(index);
+        return ScoreBase.getNote(index);
     }
 
     public FM_BaseNote getLastNote() {
-        if (getNoteCount() == 0) return null;
-        return StaveNotes.get(StaveNotes.size() - 1);
+        return ScoreBase.getLastNote();
     }
 
     public int LoadFromJson(JSONObject obj) {
-        List<String> key_list = new ArrayList<>();
-        List<String> clef_list = new ArrayList<>();
-        String keySignature;
-        String timeSignature;
-        try {
-            JSONArray keys = obj.getJSONArray("keys");
-            for (int k = 0; k < keys.length(); k++) key_list.add(keys.getJSONArray(k).toString());
-            JSONArray clef = obj.getJSONArray("clef");
-            for (int k = 0; k < clef.length(); k++) clef_list.add(clef.getString(k));
-            timeSignature = obj.optString("timesignature", "4/4");
-            keySignature = obj.optString("keysignature", "DO");
-        } catch (JSONException e) {
-            return -1;
-        }
-
+        int ret = ScoreBase.LoadFromJson(obj);
         setNotesAlign(FM_Align.ALIGN_LEFT_LAST_MEASURE);
-        clearStaveNotes();
-        setTimeSignature(FM_Const.getTimeSignature_n(timeSignature), FM_Const.getTimeSignature_d(timeSignature));
-        setKeySignature(FM_Const.StringToKeySignature(keySignature));
-
-        int firstStaveClef = FM_ClefValue.TREBLE;
-        int secondStaveClef = FM_ClefValue.BASS;
-
-        if (clef_list.size() >= 1) {
-            if (clef_list.get(0).equals("treble")) {
-                setFirstStaveClef(FM_ClefValue.TREBLE);
-                firstStaveClef = FM_ClefValue.TREBLE;
-            }
-            else {
-                setFirstStaveClef(FM_ClefValue.BASS);
-                firstStaveClef = FM_ClefValue.BASS;
-            }
-        }
-        if (clef_list.size() > 1) {
-            if (clef_list.get(1).equals("treble")) {
-                setSecondStaveClef(FM_ClefValue.TREBLE);
-                secondStaveClef = FM_ClefValue.TREBLE;
-            }
-            else {
-                setSecondStaveClef(FM_ClefValue.BASS);
-                secondStaveClef = FM_ClefValue.BASS;
-            }
-        }
-        int originalFirstStaveClef = firstStaveClef;
-        int originalSecondStaveClef = secondStaveClef;
-
-        int i = 0;
-        String beam = "";
-        String tie;
-        String tuple = "";
-        HashMap<Integer, List<FM_BaseNote>> Notes = new HashMap();
-        HashMap<Integer, List<Integer>> Staves = new HashMap();
-        while (i < key_list.size()) {
-            FM_Key key = new FM_Key(key_list.get(i));
-            if (key.type == FM_KeyType.Bar) {
-                for (Integer k : Notes.keySet())
-                    addChord(Objects.requireNonNull(Notes.get(k)), Staves.get(k));
-                Notes.clear();
-                Staves.clear();
-                addStaveNote(new FM_BarNote(this));
-                i++;
-                continue;
-            }
-            if (key.type == FM_KeyType.Clef) {
-                firstStaveClef = key.clef;
-                FM_BaseNote c;
-                if (firstStaveClef == FM_ClefValue.BASS) c = new FM_Clef(this, FM_ClefValue.BASS, 0);
-                else c = new FM_Clef(this, FM_ClefValue.TREBLE, 0);
-                List<FM_BaseNote> Note_List = new ArrayList<>();
-                List<Integer> stave_List = new ArrayList<>();
-                Note_List.add(c);
-                stave_List.add(0);
-                Notes.put(key.chord, Note_List);
-                Staves.put(key.chord, stave_List);
-                i++;
-                continue;
-            }
-
-            if (!beam.equals("") && (key.beam.equals("") || !key.beam.equals(beam))) EndBeam();
-            if (!tuple.equals("") && (key.tuple.equals("") || !key.tuple.equals(tuple))) EndTuplet();
-
-            if (!key.beam.equals(beam) && !key.beam.equals("")) BeginBeam();
-            if (!key.tuple.equals(tuple) && !key.tuple.equals("")) BeginTuplet(key.tuple);
-
-            beam = key.beam;
-            tie = key.tie;
-            tuple = key.tuple;
-
-            FM_BaseNote n;
-            if (key.note == FM_NoteValue.REST) {
-                n = new FM_Pause(this, key.duration, key.octave, key.voice);
-            } else {
-                int clef = firstStaveClef;
-                if (key.stave == 1) clef = secondStaveClef;
-                n = new FM_Note(this, key.note, key.octave, clef, key.accidental, key.duration, key.voice, key.stemUp);
-                if (!beam.equals("")) AddToBeam((FM_Note) n);
-                if (!tie.equals("")) AddToTie(tie, (FM_Note) n);
-            }
-            if (!tuple.equals("")) AddToTuplet(n);
-            List<FM_BaseNote> Note_List = Notes.get(key.chord);
-            List<Integer> stave_List = Staves.get(key.chord);
-            if (Note_List == null) Note_List = new ArrayList();
-            if (stave_List == null) stave_List = new ArrayList();
-            Note_List.add(n);
-            stave_List.add(key.stave);
-            Notes.put(key.chord, Note_List);
-            Staves.put(key.chord, stave_List);
-            i++;
-        }
-        for (Integer k : Notes.keySet()) addChord(Objects.requireNonNull(Notes.get(k)), Staves.get(k));
-        Notes.clear();
-        Staves.clear();
-        if (!beam.equals("")) EndBeam();
-        if (!tuple.equals("")) EndTuplet();
-        setFirstStaveClef(originalFirstStaveClef);
-        setSecondStaveClef(originalSecondStaveClef);
-        return 0;
+        return ret;
     }
 
     public void ShowScore(int measures) {
@@ -1353,10 +1082,10 @@ public class FM_Score extends View {
         if (measures == 0) AllowZoomControls = tmpZoomControls;
         else AllowZoomControls = false;
         new Thread(() -> {
-            for (int i = 0; i < StaveNotes.size(); i++) {
-                StaveNotes.get(i).setVisible(true);
-                if (StaveNotes.get(i) instanceof FM_BarNote && ((FM_BarNote) StaveNotes.get(i)).lineEnd)
-                    StaveNotes.get(i).setVisible(false);
+            for (int i = 0; i < ScoreBase.StaveNotes.size(); i++) {
+                ScoreBase.StaveNotes.get(i).setVisible(true);
+                if (ScoreBase.StaveNotes.get(i) instanceof FM_BarNote && ((FM_BarNote) ScoreBase.StaveNotes.get(i)).lineEnd)
+                    ScoreBase.StaveNotes.get(i).setVisible(false);
             }
             this.post(this::invalidate);
             try {
@@ -1367,9 +1096,9 @@ public class FM_Score extends View {
             if (measures != 0) {
                 int i = 0;
                 int bars = 0;
-                while (i < StaveNotes.size()) {
-                    if (StaveNotes.get(i) instanceof FM_BarNote) bars++;
-                    if (bars >= measures) StaveNotes.get(i).setVisible(false);
+                while (i < ScoreBase.StaveNotes.size()) {
+                    if (ScoreBase.StaveNotes.get(i) instanceof FM_BarNote) bars++;
+                    if (bars >= measures) ScoreBase.StaveNotes.get(i).setVisible(false);
                     i++;
                 }
             }

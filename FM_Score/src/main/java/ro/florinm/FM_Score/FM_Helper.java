@@ -146,7 +146,7 @@ class FM_Helper {
         return note;
     }
 
-    static FM_Audio_Song TempSongToSong(FM_Temp_Audio_Song input, FM_Score score, int tempo) {
+    static FM_Audio_Song TempSongToSong(FM_Temp_Audio_Song input, FM_ScoreBase score, int tempo) {
         FM_Audio_Song result = new FM_Audio_Song();
         result.keySignature = input.keySignature;
         FM_Audio_Measure m = new FM_Audio_Measure();
@@ -281,7 +281,7 @@ class FM_Helper {
     }
 
 
-    static FM_Audio_Song generateSongFromScore(FM_Score obj, int tempo) {
+    static FM_Audio_Song generateSongFromScore(FM_ScoreBase obj, int tempo) {
         FM_Temp_Audio_Song song = new FM_Temp_Audio_Song();
         song.keySignature = obj.getKeySignature();
         song.timeSignature_d = obj.getTimeSignature_d();

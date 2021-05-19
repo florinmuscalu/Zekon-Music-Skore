@@ -5,14 +5,14 @@ import android.graphics.Rect;
 
 public class FM_Pause extends FM_BaseNote {
     int adjustment = 1;
-    public FM_Pause(FM_Score Score, @FM_DurationValue int duration, int adjustment, int voice) {
+    public FM_Pause(FM_ScoreBase Score, @FM_DurationValue int duration, int adjustment, int voice) {
         super(FM_NoteType.PAUSE, Score);
         this.duration = duration;
         this.adjustment = adjustment;
         this.voice = voice;
     }
 
-    public FM_Pause(FM_Score Score, @FM_DurationValue int duration, int adjustment, int voice, int Color) {
+    public FM_Pause(FM_ScoreBase Score, @FM_DurationValue int duration, int adjustment, int voice, int Color) {
         super(FM_NoteType.PAUSE, Score);
         this.duration = duration;
         this.color = Color;
@@ -72,52 +72,60 @@ public class FM_Pause extends FM_BaseNote {
         return 0;
     }
     protected float WidthNoteNoStem(){
-        FM_Const.AdjustFont(score, FM_Const.Pause_8, 2);
-        return score.Font.measureText(asString());
+        if (score.score == null) return 0;
+        FM_Const.AdjustFont(score.score, FM_Const.Pause_8, 2);
+        return score.score.Font.measureText(asString());
     }
     protected float WidthNote(){
         return WidthNoteNoStem();
     }
     protected float WidthDot(){
-        FM_Const.AdjustFont(score, FM_Const.Pause_8, 2);
-        return score.Font.measureText(asStringDot());
+        if (score.score == null) return 0;
+        FM_Const.AdjustFont(score.score, FM_Const.Pause_8, 2);
+        return score.score.Font.measureText(asStringDot());
     }
 
     private float BottomMargin() {
-        FM_Const.AdjustFont(score, asString(), lineSpan());
+        if (score.score == null) return 0;
+        FM_Const.AdjustFont(score.score, asString(), lineSpan());
         Rect bounds = new Rect();
         String s = asString();
-        score.Font.getTextBounds(s, 0, s.length(), bounds);
+        score.score.Font.getTextBounds(s, 0, s.length(), bounds);
         return bounds.bottom;
     }
 
     private float TopMargin() {
-        FM_Const.AdjustFont(score, asString(), lineSpan());
+        if (score.score == null) return 0;
+        FM_Const.AdjustFont(score.score, asString(), lineSpan());
         Rect bounds = new Rect();
         String s = asString();
-        score.Font.getTextBounds(s, 0, s.length(), bounds);
+        score.score.Font.getTextBounds(s, 0, s.length(), bounds);
         return bounds.top;
     }
 
     void DrawNote(Canvas canvas) {
+        if (score.score == null) return;
         if (!isVisible()) return;
         super.DrawNote(canvas);
 
-        FM_Const.AdjustFont(score, FM_Const.Pause_8, 2);
-        canvas.drawText(asString(), StartX + paddingLeft + WidthAccidental() + paddingNote, StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines(), score.Font);
-        score.Font.setColor(score.getColor());
-        canvas.drawText(asStringDot(),  StartX + paddingLeft + WidthAccidental() + paddingNote + WidthNote() + paddingDot, StartY1 + (getDisplacement() + 0.5f) * score.getDistanceBetweenStaveLines(), score.Font);
+        FM_Const.AdjustFont(score.score, FM_Const.Pause_8, 2);
+        canvas.drawText(asString(), StartX + paddingLeft + WidthAccidental() + paddingNote, StartY1 + getDisplacement() * score.score.getDistanceBetweenStaveLines(), score.score.Font);
+        score.score.Font.setColor(score.score.getColor());
+        canvas.drawText(asStringDot(),  StartX + paddingLeft + WidthAccidental() + paddingNote + WidthNote() + paddingDot, StartY1 + (getDisplacement() + 0.5f) * score.score.getDistanceBetweenStaveLines(), score.score.Font);
     }
     float Left(){
         return StartX + paddingLeft;
     }
     float Bottom() {
-        return StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines() + BottomMargin();
+        if (score.score == null) return 0;
+        return StartY1 + getDisplacement() * score.score.getDistanceBetweenStaveLines() + BottomMargin();
     }
     float Right() {
+        if (score.score == null) return 0;
         return StartX + paddingLeft + WidthAccidental() + paddingNote + WidthNote() + paddingDot + WidthDot();
     }
     float Top(){
-        return StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines() + TopMargin();
+        if (score.score == null) return 0;
+        return StartY1 + getDisplacement() * score.score.getDistanceBetweenStaveLines() + TopMargin();
     }
 }

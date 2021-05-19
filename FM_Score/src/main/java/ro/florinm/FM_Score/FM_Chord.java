@@ -8,7 +8,7 @@ import java.util.List;
 public class FM_Chord extends FM_BaseNote {
     public List<FM_BaseNote> Notes;
 
-    FM_Chord(FM_Score Score) {
+    FM_Chord(FM_ScoreBase Score) {
         super(FM_NoteType.CHORD, Score);
         this.Notes = new ArrayList<>();
         duration = 0;

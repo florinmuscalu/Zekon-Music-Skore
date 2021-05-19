@@ -6,13 +6,13 @@ import android.graphics.Rect;
 class FM_Clef extends FM_BaseNote {
     @FM_ClefValue int clef;
 
-    FM_Clef(FM_Score Score, @FM_ClefValue int clef, int staff) {
+    FM_Clef(FM_ScoreBase Score, @FM_ClefValue int clef, int staff) {
         super(FM_NoteType.CLEF, Score);
         this.clef = clef;
         this.stave = staff;
     }
 
-    FM_Clef(FM_Score Score, @FM_ClefValue int clef, int staff, int Color) {
+    FM_Clef(FM_ScoreBase Score, @FM_ClefValue int clef, int staff, int Color) {
         super(FM_NoteType.CLEF, Score);
         this.clef = clef;
         this.stave = staff;
@@ -42,9 +42,10 @@ class FM_Clef extends FM_BaseNote {
         return 0;
     }
     protected float WidthNoteNoStem(){
-        FM_Const.AdjustFont(score, FM_Const._4, 2);
-        float w = score.Font.measureText(FM_Const.TrebleClef) + 2 * FM_Const.dpTOpx(score.context, FM_Const.DEFAULT_EXTRA_PADDING);
-        float w1 = score.Font.measureText(FM_Const.BassClef) + 2 * FM_Const.dpTOpx(score.context, FM_Const.DEFAULT_EXTRA_PADDING);
+        if (score.score == null) return 0;
+        FM_Const.AdjustFont(score.score, FM_Const._4, 2);
+        float w = score.score.Font.measureText(FM_Const.TrebleClef) + 2 * FM_Const.dpTOpx(score.score.context, FM_Const.DEFAULT_EXTRA_PADDING);
+        float w1 = score.score.Font.measureText(FM_Const.BassClef) + 2 * FM_Const.dpTOpx(score.score.context, FM_Const.DEFAULT_EXTRA_PADDING);
         return Math.max(w, w1);
     }
     protected float WidthNote(){
@@ -55,38 +56,43 @@ class FM_Clef extends FM_BaseNote {
     }
 
     private float BottomMargin() {
-        FM_Const.AdjustFont(score, asString(), lineSpan());
+        if (score.score == null) return 0;
+        FM_Const.AdjustFont(score.score, asString(), lineSpan());
         Rect bounds = new Rect();
         String s = asString();
-        score.Font.getTextBounds(s, 0, s.length(), bounds);
+        score.score.Font.getTextBounds(s, 0, s.length(), bounds);
         return bounds.bottom;
     }
 
     private float TopMargin() {
-        FM_Const.AdjustFont(score, asString(), lineSpan());
+        if (score.score == null) return 0;
+        FM_Const.AdjustFont(score.score, asString(), lineSpan());
         Rect bounds = new Rect();
         String s = asString();
-        score.Font.getTextBounds(s, 0, s.length(), bounds);
+        score.score.Font.getTextBounds(s, 0, s.length(), bounds);
         return bounds.top;
     }
 
     void DrawNote(Canvas canvas) {
+        if (score.score == null) return;
         if (!isVisible()) return;
         super.DrawNote(canvas);
-        score.Font.setColor(this.color);
-        FM_Const.AdjustFont(score, FM_Const._4, 2);
-        canvas.drawText(asString(), StartX + paddingLeft, StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines(), score.Font);
+        score.score.Font.setColor(this.color);
+        FM_Const.AdjustFont(score.score, FM_Const._4, 2);
+        canvas.drawText(asString(), StartX + paddingLeft, StartY1 + getDisplacement() * score.score.getDistanceBetweenStaveLines(), score.score.Font);
     }
     float Left(){
         return StartX;
     }
     float Bottom() {
-        return StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines() + BottomMargin();
+        if (score.score == null) return 0;
+        return StartY1 + getDisplacement() * score.score.getDistanceBetweenStaveLines() + BottomMargin();
     }
     float Right() {
         return StartX + paddingLeft + Width();
     }
     float Top(){
-        return StartY1 + getDisplacement() * score.getDistanceBetweenStaveLines() + TopMargin();
+        if (score.score == null) return 0;
+        return StartY1 + getDisplacement() * score.score.getDistanceBetweenStaveLines() + TopMargin();
     }
 }

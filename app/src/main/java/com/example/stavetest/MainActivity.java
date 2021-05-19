@@ -25,8 +25,11 @@ import ro.florinm.FM_Score.FM_Note;
 import ro.florinm.FM_Score.FM_NoteValue;
 import ro.florinm.FM_Score.FM_Pause;
 import ro.florinm.FM_Score.FM_Score;
+import ro.florinm.FM_Score.FM_ScoreBase;
 import ro.florinm.FM_Score.FM_TimeSignatureValue;
 import ro.florinm.FM_Score.FM_ScorePlayer;
+
+import static android.os.SystemClock.sleep;
 
 public class MainActivity extends AppCompatActivity {
     FM_ScorePlayer player;
@@ -78,10 +81,53 @@ public class MainActivity extends AppCompatActivity {
 //        n= new FM_Note(s, FM_NoteValue.LA, 4, FM_Accidental.None, FM_DurationValue.NOTE_QUARTER_D, 1, false);
 //        s.AddToTie("1", n);
 //        s.addStaveNote(n);
-        LoadJson();
+
 //        player = FM_ScorePlayer.getInstance(getApplicationContext());
 //        player.LoadFromScore(s, 70);
 //        player.setShowProgress(true);
+
+        player = FM_ScorePlayer.getInstance(getApplicationContext());
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (player.AssetsLoaded() != 100) {
+                    sleep (100);
+                }
+                FM_ScoreBase b = new FM_ScoreBase(null);
+
+                StringBuilder jingle = new StringBuilder();
+                BufferedReader reader = null;
+                index = index + 1;
+                if (index > 1) index = 0;
+                try {
+                    reader = new BufferedReader(new InputStreamReader(getAssets().open("test.json")));
+                    String mLine;
+                    while ((mLine = reader.readLine()) != null) {
+                        jingle.append(mLine);
+                    }
+                } catch (IOException e) {
+                    //log the exception
+                } finally {
+                    if (reader != null) {
+                        try {
+                            reader.close();
+                        } catch (IOException e) {
+                            //log the exception
+                        }
+                    }
+                }
+                JSONObject obj = null;
+                try {
+                    obj = new JSONObject(jingle.toString());
+                } catch (Exception ignored) {}
+
+                b.LoadFromJson(obj);
+                player.LoadFromScore(b, 80);
+                player.Play();
+
+            }
+        }).start();
 //
     }
 
@@ -151,8 +197,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception ignored) {}
 
         s.LoadFromJson(obj);
-        player = FM_ScorePlayer.getInstance(getApplicationContext());
-        player.LoadFromScore(s, 70);
+        player.LoadFromScore(s, 80);
         player.setShowProgress(true);
     }
 
@@ -484,6 +529,7 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
     public void OnClick(View v){
+        LoadJson();
         player.Play();
         //player.Play(2,2);
     }

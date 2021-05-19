@@ -15,7 +15,7 @@ public class FM_ScorePlayer {
     CountDownLatch SongLoadedCDL = new CountDownLatch(1);
     private int tempTimeSig_n;
     private int tempTimeSig_d;
-    private FM_Score score;
+    private FM_ScoreBase score;
     private boolean showProgress = false;
 
     private FM_ScorePlayer() {}
@@ -75,6 +75,10 @@ public class FM_ScorePlayer {
     }
 
     public void LoadFromScore(FM_Score obj, int tempo) {
+        LoadFromScore(obj.ScoreBase, tempo);
+    }
+
+    public void LoadFromScore(FM_ScoreBase obj, int tempo) {
         song = null;
         this.score = obj;
         if (FM_SoundPool.playing) StopPlaying();
@@ -85,7 +89,7 @@ public class FM_ScorePlayer {
                 soundPlayer.ClearAudioTracks();
                 setTimeSignature(obj.getTimeSignature_n(), obj.getTimeSignature_d());
                 song = FM_Helper.generateSongFromScore(obj, tempo);
-                if (showProgress) obj.ProgressReset();
+                if (showProgress && obj.score != null) obj.score.ProgressReset();
                 SongLoadedCDL.countDown();
             } catch (Exception ignored) {
             }
@@ -144,14 +148,14 @@ public class FM_ScorePlayer {
 
         //start playing
         boolean in_legato = false;
-        if (showProgress && score != null) score.ProgressSetStart(measure_start);
+        if (showProgress && score.score != null) score.score.ProgressSetStart(measure_start);
         long lastDuration = 0;
         for (int i = 0; i < ListNotes.size(); i++) {
             FM_Audio_Note n = ListNotes.get(i);
             boolean isEnd = false;
             if (i == ListNotes.size() - 1) isEnd = true;
             if (!FM_SoundPool.playing) break;
-            if (showProgress && score != null) score.ProgressAdvance();
+            if (showProgress && score.score != null) score.score.ProgressAdvance();
 
             if (in_legato || (!isEnd && n.legato)) {
                 if (n.audioIntInLegato > 0) soundPlayer.playKey(n.audioIntInLegato, n.NextPause);
@@ -175,7 +179,7 @@ public class FM_ScorePlayer {
         }
         FM_SoundPool.CustomDelay(lastDuration, false);
         soundPlayer.StopAllSound();
-        if (showProgress && score != null) score.ProgressReset();
+        if (showProgress && score.score != null) score.score.ProgressReset();
         FM_SoundPool.playing = false;
     }
 

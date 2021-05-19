@@ -23,6 +23,7 @@ public class FM_Key {
     @FM_DurationValue
     int duration;
     boolean stemUp;
+    boolean stem;
     String tie;
     String beam;
     String tuple;
@@ -197,7 +198,8 @@ public class FM_Key {
         if (s[1].equals("32d")) this.duration = FM_DurationValue.NOTE_THIRTY_SECOND_D;
         if (s[1].equals("32dr")) this.duration = FM_DurationValue.NOTE_THIRTY_SECOND_D;
 
-        this.stemUp = s[2].equals("up");
+        this.stemUp = !s[2].equals("down");
+        this.stem = !s[2].equals("none");
         this.tie = s[3];
         this.beam = s[4];
         this.tuple = s[5];

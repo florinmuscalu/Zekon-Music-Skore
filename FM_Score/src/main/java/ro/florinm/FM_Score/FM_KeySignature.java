@@ -13,7 +13,7 @@ class FM_KeySignature extends FM_BaseNote {
     List<Float> displacement = new ArrayList<>();
     List<Integer> accidental = new ArrayList<>();
 
-    FM_KeySignature(@FM_ClefValue int clef, @FM_KeySignatureValue int key, FM_Score Score) {
+    FM_KeySignature(@FM_ClefValue int clef, @FM_KeySignatureValue int key, FM_ScoreBase Score) {
         super(FM_NoteType.KEY_SIGNATURE, Score);
         this.value = key;
         this.clef = clef;
@@ -104,10 +104,11 @@ class FM_KeySignature extends FM_BaseNote {
         return 0;
     }
     protected float WidthNoteNoStem() {
+        if (score.score == null) return 0;
         String s = asString();
         if (s.equals("")) return 0;
-        FM_Const.AdjustFont(score, asString(), 2);
-        return score.Font.measureText(asString()) + (accidental.size() - 1) * FM_Const.dpTOpx(score.getContext(), 2);
+        FM_Const.AdjustFont(score.score, asString(), 2);
+        return score.score.Font.measureText(asString()) + (accidental.size() - 1) * FM_Const.dpTOpx(score.score.getContext(), 2);
     }
     protected float WidthNote() {
         return WidthNoDotNoStem();
@@ -117,6 +118,7 @@ class FM_KeySignature extends FM_BaseNote {
     }
 
     void DrawNote(Canvas canvas, @FM_ClefValue int clef) {
+        if (score.score == null) return;
         if (!isVisible()) return;
         this.clef = clef;
         Build();
@@ -125,16 +127,16 @@ class FM_KeySignature extends FM_BaseNote {
         float dx = StartX + getPaddingLeft();
         for (int i = 0; i < accidental.size(); i++) {
             float offset = displacement.get(i);
-            float dy = StartY1 + offset * score.getDistanceBetweenStaveLines();
+            float dy = StartY1 + offset * score.score.getDistanceBetweenStaveLines();
 
-            FM_Const.AdjustFont(score, asString(), 2);
+            FM_Const.AdjustFont(score.score, asString(), 2);
             if (accidental.get(i) == FM_Accidental.Sharp) {
-                canvas.drawText(FM_Const.Sharp, dx, dy, score.Font);
-                dx = dx + score.Font.measureText(FM_Const.Sharp) + FM_Const.dpTOpx(score.getContext(), 2);
+                canvas.drawText(FM_Const.Sharp, dx, dy, score.score.Font);
+                dx = dx + score.score.Font.measureText(FM_Const.Sharp) + FM_Const.dpTOpx(score.score.getContext(), 2);
             }
             if (accidental.get(i) == FM_Accidental.Flat) {
-                canvas.drawText(FM_Const.Flat, dx, dy, score.Font);
-                dx = dx + score.Font.measureText(FM_Const.Flat) + FM_Const.dpTOpx(score.getContext(), 2);
+                canvas.drawText(FM_Const.Flat, dx, dy, score.score.Font);
+                dx = dx + score.score.Font.measureText(FM_Const.Flat) + FM_Const.dpTOpx(score.score.getContext(), 2);
             }
         }
     }
@@ -143,11 +145,12 @@ class FM_KeySignature extends FM_BaseNote {
         return StartX + paddingLeft;
     }
     float Bottom() {
+        if (score.score == null) return 0;
         float dy;
         float maxDy = -100000;
         for (int i = 0; i < accidental.size(); i++) {
             float offset = displacement.get(i);
-            dy = StartY1 + offset * score.getDistanceBetweenStaveLines();
+            dy = StartY1 + offset * score.score.getDistanceBetweenStaveLines();
             if (dy > maxDy) maxDy = dy;
         }
         return maxDy + Height();
@@ -156,21 +159,23 @@ class FM_KeySignature extends FM_BaseNote {
         return StartX + Width();
     }
     float Top(){
+        if (score.score == null) return 0;
         float mindy = Bottom();
         float dy;
         for (int i = 0; i < accidental.size(); i++) {
             float offset = displacement.get(i);
-            dy = StartY1 + offset * score.getDistanceBetweenStaveLines();
+            dy = StartY1 + offset * score.score.getDistanceBetweenStaveLines();
             if (dy < mindy) mindy = dy;
         }
         return mindy - Height();
     }
 
     private float Height() {
-        FM_Const.AdjustFont(score, asString(), 1);
+        if (score.score == null) return 0;
+        FM_Const.AdjustFont(score.score, asString(), 1);
         Rect bounds = new Rect();
         String s = asString();
-        score.Font.getTextBounds(s, 0, s.length(), bounds);
+        score.score.Font.getTextBounds(s, 0, s.length(), bounds);
         return bounds.height();
     }
 }
