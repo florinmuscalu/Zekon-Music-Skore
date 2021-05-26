@@ -910,8 +910,8 @@ class FM_SoundPool {
 
     void playKey(int key, boolean NextPause, boolean silent) {
         if (key == -1) return;
-        if (threadMap.size() < 16 && isKeyNotPlaying(key)) {
-            PlayThread thread = new PlayThread(key, NextPause, silent, this::stopKey);
+        if (isKeyNotPlaying(key)) {
+            PlayThread thread = new PlayThread(key, NextPause, silent);
             thread.start();
             threadMap.put(key, thread);
         }
@@ -1009,19 +1009,13 @@ class FM_SoundPool {
         }
     }
 
-    interface PlayThreadFinish {
-        void callbackCall(int key);
-    }
-
     class PlayThread extends Thread {
-        PlayThreadFinish callback;
         private final int key;
         private final CountDownLatch stop;
         private final boolean NextPause;
         private final float volume;
 
-        PlayThread(int key, boolean NextPause, boolean silent, PlayThreadFinish cb) {
-            callback = cb;
+        PlayThread(int key, boolean NextPause, boolean silent) {
             if (silent) volume = 0f;
             else volume = 1f;
             this.NextPause = NextPause;
@@ -1054,7 +1048,6 @@ class FM_SoundPool {
                 sndPool.setVolume(stream, 0, 0);
             }
             sndPool.stop(stream);
-            if (callback != null) callback.callbackCall(key);
         }
     }
 }
