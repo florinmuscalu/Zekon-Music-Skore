@@ -24,7 +24,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static android.os.SystemClock.sleep;
 
 class FM_AudioSubTrack implements Comparable<FM_AudioSubTrack>{
     int track;
@@ -303,7 +306,7 @@ class FM_AudioTrack {
         //if (playing) return;
         if (output.length == 0) return;
         new Thread(() -> {
-            while (loading) SystemClock.sleep(10);
+            while (loading) sleep(10);
             AudioTrack audioTrack = new AudioTrack.Builder()
                     .setTransferMode(AudioTrack.MODE_STATIC)
                     .setPerformanceMode(AudioTrack.PERFORMANCE_MODE_LOW_LATENCY)
@@ -868,7 +871,7 @@ class FM_SoundPool {
                 .build();
         sndPool = new SoundPool.Builder()
                 .setAudioAttributes(attributes)
-                .setMaxStreams(20)
+                .setMaxStreams(16)
                 .build();
 
         FM_ScorePlayer.getInstance(context).SoundsLoaded = 0;
@@ -885,9 +888,10 @@ class FM_SoundPool {
         for (int i = 1; i <= 88; i++) {
             try {
                 fileDescriptor = assetManager.openFd(assetFiles.get(i));
-                soundMap.put(i, sndPool.load(fileDescriptor, 1));
+                soundMap.put(i, sndPool.load(fileDescriptor, 0));
             } catch (IOException ignored) {
             }
+            sleep(20);
         }
         mInstance = this;
     }
@@ -907,7 +911,7 @@ class FM_SoundPool {
     void playKey(int key, boolean NextPause, boolean silent) {
         if (key == -1) return;
         if (threadMap.size() < 16 && isKeyNotPlaying(key)) {
-            PlayThread thread = new PlayThread(key, NextPause, silent);
+            PlayThread thread = new PlayThread(key, NextPause, silent, this::stopKey);
             thread.start();
             threadMap.put(key, thread);
         }
@@ -1005,13 +1009,19 @@ class FM_SoundPool {
         }
     }
 
+    interface PlayThreadFinish {
+        void callbackCall(int key);
+    }
+
     class PlayThread extends Thread {
+        PlayThreadFinish callback;
         private final int key;
         private final CountDownLatch stop;
         private final boolean NextPause;
         private final float volume;
 
-        PlayThread(int key, boolean NextPause, boolean silent) {
+        PlayThread(int key, boolean NextPause, boolean silent, PlayThreadFinish cb) {
+            callback = cb;
             if (silent) volume = 0f;
             else volume = 1f;
             this.NextPause = NextPause;
@@ -1027,7 +1037,7 @@ class FM_SoundPool {
         public void run() {
             int stream = sndPool.play(soundMap.get(key), volume, volume, 100, 0, 1);
             try {
-                stop.await();
+                stop.await(8, TimeUnit.SECONDS);
             } catch (InterruptedException ignored) {
             }
             if (volume > 0) {
@@ -1044,6 +1054,7 @@ class FM_SoundPool {
                 sndPool.setVolume(stream, 0, 0);
             }
             sndPool.stop(stream);
+            if (callback != null) callback.callbackCall(key);
         }
     }
 }
