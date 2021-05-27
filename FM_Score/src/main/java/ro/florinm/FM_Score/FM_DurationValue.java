@@ -2,8 +2,12 @@ package ro.florinm.FM_Score;
 
 import androidx.annotation.IntDef;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 @IntDef({FM_DurationValue.NOTE_WHOLE, FM_DurationValue.NOTE_HALF, FM_DurationValue.NOTE_QUARTER, FM_DurationValue.NOTE_EIGHTH, FM_DurationValue.NOTE_SIXTEENTH, FM_DurationValue.NOTE_THIRTY_SECOND,
 FM_DurationValue.NOTE_WHOLE_D, FM_DurationValue.NOTE_HALF_D, FM_DurationValue.NOTE_QUARTER_D, FM_DurationValue.NOTE_EIGHTH_D, FM_DurationValue.NOTE_SIXTEENTH_D, FM_DurationValue.NOTE_THIRTY_SECOND_D})
+@Retention(RetentionPolicy.SOURCE)
 public @interface FM_DurationValue {
     int NOTE_WHOLE = 1;
     int NOTE_WHOLE_D = 51;

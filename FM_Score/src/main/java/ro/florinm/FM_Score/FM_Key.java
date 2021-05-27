@@ -2,7 +2,11 @@ package ro.florinm.FM_Score;
 
 import androidx.annotation.IntDef;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 @IntDef({FM_KeyType.Bar, FM_KeyType.Clef, FM_KeyType.Key})
+@Retention(RetentionPolicy.SOURCE)
 @interface FM_KeyType {
     int Bar = 0;
     int Clef = 1;

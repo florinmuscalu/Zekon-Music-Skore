@@ -2,10 +2,14 @@ package ro.florinm.FM_Score;
 
 import androidx.annotation.IntDef;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 @IntDef({FM_KeySignatureValue.DO, FM_KeySignatureValue.FA, FM_KeySignatureValue.SIb, FM_KeySignatureValue.MIb, FM_KeySignatureValue.LAb, FM_KeySignatureValue.REb, FM_KeySignatureValue.SOLb, FM_KeySignatureValue.DOb,
         FM_KeySignatureValue.SOL, FM_KeySignatureValue.RE, FM_KeySignatureValue.LA, FM_KeySignatureValue.MI, FM_KeySignatureValue.SI, FM_KeySignatureValue.FAsharp, FM_KeySignatureValue.DOsharp, FM_KeySignatureValue.LAm,
         FM_KeySignatureValue.REm, FM_KeySignatureValue.SOLm, FM_KeySignatureValue.DOm, FM_KeySignatureValue.FAm, FM_KeySignatureValue.SIbm, FM_KeySignatureValue.MIbm, FM_KeySignatureValue.LAbm, FM_KeySignatureValue.MIm,
         FM_KeySignatureValue.FAsharpm, FM_KeySignatureValue.DOsharpm, FM_KeySignatureValue.SOLsharpm, FM_KeySignatureValue.REsharpm, FM_KeySignatureValue.LAsharpm})
+@Retention(RetentionPolicy.SOURCE)
 public @interface FM_KeySignatureValue {
     int DO = 0;
     int FA = 1;

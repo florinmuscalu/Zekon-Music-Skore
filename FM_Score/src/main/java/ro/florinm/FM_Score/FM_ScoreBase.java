@@ -257,7 +257,7 @@ public class FM_ScoreBase {
         for (int i = 0; i < BeamNotes.size(); i++)
             if (!(BeamNotes.get(i) instanceof FM_Note)) return;
         for (int i = 0; i < BeamNotes.size(); i++) {
-            int d = ((FM_Note) BeamNotes.get(i)).duration;
+            int d = BeamNotes.get(i).duration;
             if (d == FM_DurationValue.NOTE_WHOLE) return;
             if (d == FM_DurationValue.NOTE_WHOLE_D) return;
             if (d == FM_DurationValue.NOTE_HALF) return;
