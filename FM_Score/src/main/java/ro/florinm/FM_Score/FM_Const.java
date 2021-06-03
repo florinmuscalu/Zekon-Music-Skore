@@ -363,6 +363,7 @@ public class FM_Const {
         String[] japanese = {"ハ", "ニ", "ホ", "ヘ", "ト", "イ", "ロ"};
         String[] korean = {"다", "라", "바", "아", "사", "가", "나"};
         String[] indian = {"सा", "रे", "ग", "म", "प", "ध", "नि"};
+        String[] cyrillic = {"до", "ре", "ми", "фа", "соль", "ля", "си"};
 
         boolean isItalian = false;
         for (String s : italian)
@@ -378,6 +379,7 @@ public class FM_Const {
             if (system == FM_NotationSystem.JAPANESE) replacement = japanese[i];
             if (system == FM_NotationSystem.KOREAN) replacement = korean[i];
             if (system == FM_NotationSystem.INDIAN) replacement = indian[i];
+            if (system == FM_NotationSystem.CYRILLIC) replacement = cyrillic[i];
 
             if (isItalian) Key = Key.replace(italian[i], replacement);
             else {
@@ -385,6 +387,7 @@ public class FM_Const {
                 Key = Key.replace(german[i], replacement);
                 Key = Key.replace(japanese[i], replacement);
                 Key = Key.replace(korean[i], replacement);
+                Key = Key.replace(cyrillic[i], replacement);
             }
         }
         return Key;

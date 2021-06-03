@@ -8,10 +8,12 @@ import java.lang.annotation.RetentionPolicy;
 @IntDef({FM_NotationSystem.ENGLISH, FM_NotationSystem.GERMAN, FM_NotationSystem.ITALIAN, FM_NotationSystem.JAPANESE, FM_NotationSystem.INDIAN, FM_NotationSystem.KOREAN})
 @Retention(RetentionPolicy.SOURCE)
 public @interface FM_NotationSystem {
-    int ENGLISH = 0;
-    int GERMAN = 1;
-    int ITALIAN = 2;
-    int JAPANESE = 3;
-    int INDIAN = 4;
-    int KOREAN = 5;
+    int NONE = 0;
+    int ENGLISH = 1;
+    int GERMAN = 2;
+    int ITALIAN = 3;
+    int JAPANESE = 4;
+    int INDIAN = 5;
+    int KOREAN = 6;
+    int CYRILLIC = 7;
 }
