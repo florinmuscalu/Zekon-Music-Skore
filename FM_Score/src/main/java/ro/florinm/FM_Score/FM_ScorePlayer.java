@@ -196,9 +196,14 @@ public class FM_ScorePlayer {
      * @return True if the key is not currently playing
      */
     public boolean isKeyNotPlaying(int key) {
-        if (key<1 || key>88) return false;
-        return soundPlayer.isKeyNotPlaying(key);
+        try {
+            if (key < 1 || key > 88) return false;
+            return soundPlayer.isKeyNotPlaying(key);
+        } catch (Exception ignored) {
+            return false;
+        }
     }
+
     /**
      * Start playing the key you specify.
      * @param key The index of the key you want to check. It starts from 1 (A/0) to 88 (c/8).
@@ -212,8 +217,11 @@ public class FM_ScorePlayer {
      * @param key The index of the key you want to check. It starts from 1 (A/0) to 88 (c/8).
      */
     public void stopKey(int key) {
-        if (key<1 || key>88) return;
-        soundPlayer.stopKey(key);
+        if (key < 1 || key > 88) return;
+        try {
+            soundPlayer.stopKey(key);
+        } catch (Exception ignored) {
+        }
     }
 
     public boolean isFirstMeasureComplete(){

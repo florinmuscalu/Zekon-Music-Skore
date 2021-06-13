@@ -920,7 +920,7 @@ class FM_SoundPool {
     void stopKey(int key) {
         if (key == -1) return;
         try {
-            PlayThread thread = threadMap.get(key);
+            PlayThread thread = threadMap.get(key, null);
             if (thread != null) {
                 thread.Stop();
                 threadMap.remove(key);
@@ -930,7 +930,7 @@ class FM_SoundPool {
     }
 
     boolean isKeyNotPlaying(int key) {
-        return threadMap.get(key) == null;
+        return threadMap.get(key, null) == null;
     }
 
     static private String TranslateKey(String Key) {
@@ -949,7 +949,7 @@ class FM_SoundPool {
         if (Key.startsWith("r"))
             return -1;
         Key = Key.replace("n", "");
-        Integer r = KeyMapping.get(Key);
+        Integer r = KeyMapping.getOrDefault(Key, null);
         if (r != null)
             return r;
         else
@@ -1045,7 +1045,7 @@ class FM_SoundPool {
                     float p = 1f - d / fall;
                     sndPool.setVolume(stream, p, p);
                 }
-                sndPool.setVolume(stream, 0, 0);
+                //sndPool.setVolume(stream, 0, 0);
             }
             sndPool.stop(stream);
         }
