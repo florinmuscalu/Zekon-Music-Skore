@@ -19,7 +19,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ro.florinm.FM_Score.FM_Score
+    <tech.zekon.FM_Score.FM_Score
         android:id="@+id/stave"
         android:layout_width="match_parent"
         android:layout_height="0dp"

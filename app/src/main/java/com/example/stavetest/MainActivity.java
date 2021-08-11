@@ -14,22 +14,15 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import ro.florinm.FM_Score.FM_Accidental;
-import ro.florinm.FM_Score.FM_Align;
-import ro.florinm.FM_Score.FM_BarNote;
-import ro.florinm.FM_Score.FM_BaseNote;
-import ro.florinm.FM_Score.FM_ClefValue;
-import ro.florinm.FM_Score.FM_DurationValue;
-import ro.florinm.FM_Score.FM_KeySignatureValue;
-import ro.florinm.FM_Score.FM_Note;
-import ro.florinm.FM_Score.FM_NoteValue;
-import ro.florinm.FM_Score.FM_Pause;
-import ro.florinm.FM_Score.FM_Score;
-import ro.florinm.FM_Score.FM_ScoreBase;
-import ro.florinm.FM_Score.FM_TimeSignatureValue;
-import ro.florinm.FM_Score.FM_ScorePlayer;
-
 import static android.os.SystemClock.sleep;
+
+import tech.zekon.FM_Score.FM_Align;
+import tech.zekon.FM_Score.FM_ClefValue;
+import tech.zekon.FM_Score.FM_KeySignatureValue;
+import tech.zekon.FM_Score.FM_Score;
+import tech.zekon.FM_Score.FM_ScoreBase;
+import tech.zekon.FM_Score.FM_ScorePlayer;
+import tech.zekon.FM_Score.FM_TimeSignatureValue;
 
 public class MainActivity extends AppCompatActivity {
     FM_ScorePlayer player;
@@ -529,7 +522,7 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
     public void OnClick(View v){
-        LoadJson();
+        //LoadJson();
         player.Play();
         //player.Play(2,2);
     }
