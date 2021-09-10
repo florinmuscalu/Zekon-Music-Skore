@@ -10,6 +10,7 @@ public abstract class FM_BaseNote{
     boolean tuplet = false;
     int tupletSize = 0;
     int voice = 0;
+    int displacedot = 0; //if 1, move dot up. If -1, move dot down.
     
     //On which staff do you want this Note? First (0) or Second (1). First staff uses FM_Score.FirstStaffKey, second one uses FM_Score.SecondStaffKey
     int stave;

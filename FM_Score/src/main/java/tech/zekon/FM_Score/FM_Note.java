@@ -298,6 +298,8 @@ public class FM_Note extends FM_BaseNote {
                 if (stem_up) adjustDotY = -score.score.getDistanceBetweenStaveLines() * 0.2f;
                 else adjustDotY = +score.score.getDistanceBetweenStaveLines() * 0.2f;
             }
+            adjustDotY += displacedot * score.score.getDistanceBetweenStaveLines() * 0.25f;
+
             canvas.drawText(asStringDot(), StartX + paddingLeft + width_accidental + paddingNote + widthNoteNoStem + paddingDot, dy + adjustDotY, score.score.Font);
         }
         score.score.Font.setColor(score.score.getColor());

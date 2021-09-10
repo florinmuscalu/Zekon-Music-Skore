@@ -45,6 +45,8 @@ public class FM_Chord extends FM_BaseNote {
                 if (distance == 0) {
                     Notes.get(j).RemoveAccidental();      //remove accidental
                     if (Notes.get(i).duration == Notes.get(j).duration && Notes.get(i).duration > 50) {
+                        Notes.get(i).displacedot = 1;
+                        Notes.get(j).displacedot = -1;
                         Notes.get(j).duration = Notes.get(j).duration;// - 50;
                     }
                 }
