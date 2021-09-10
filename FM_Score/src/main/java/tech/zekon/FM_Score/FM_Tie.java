@@ -1,5 +1,6 @@
 package tech.zekon.FM_Score;
 
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Path;
 
@@ -29,7 +30,10 @@ class FM_Tie {
     }
 
     void Draw(Canvas canvas) {
-        if (!s.visible) return;
+        if (!s.blurred && !s.visible) return;
+        if (s.isBlurred())
+            score.Font.setMaskFilter(new BlurMaskFilter(15, BlurMaskFilter.Blur.NORMAL));
+        else score.Font.setMaskFilter(null);
         float x = s.startX + s.paddingLeft + s.WidthAccidental() + s.paddingNote + s.WidthNote();
         float xe = e.startX + e.paddingLeft + e.WidthAccidental() + e.paddingNote;
         float y = s.ys + (s.getDisplacement() + 0.5f) * score.getDistanceBetweenStaveLines();
@@ -92,5 +96,6 @@ class FM_Tie {
             }
         }
         canvas.drawPath(p, score.Font);
+        score.Font.setMaskFilter(null);
     }
 }

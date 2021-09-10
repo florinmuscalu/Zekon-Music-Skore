@@ -12,7 +12,7 @@ public class FM_ScorePlayer {
     private FM_SoundPool soundPlayer;
     volatile int SoundsLoaded;
     CountDownLatch SoundsLoadedCDL = new CountDownLatch(1);
-    CountDownLatch SongLoadedCDL = new CountDownLatch(1);
+    public CountDownLatch SongLoadedCDL = new CountDownLatch(1);
     private int tempTimeSig_n;
     private int tempTimeSig_d;
     private FM_ScoreBase score;
@@ -83,7 +83,7 @@ public class FM_ScorePlayer {
         this.score = obj;
         if (FM_SoundPool.playing) StopPlaying();
         SongLoadedCDL = new CountDownLatch(1);
-        new Thread(() -> {
+        Thread loadingThread = new Thread(() -> {
             try {
                 SoundsLoadedCDL.await();
                 soundPlayer.ClearAudioTracks();
@@ -93,7 +93,8 @@ public class FM_ScorePlayer {
                 SongLoadedCDL.countDown();
             } catch (Exception ignored) {
             }
-        }).start();
+        });
+        loadingThread.start();
     }
 
     public void Play() {

@@ -31,6 +31,7 @@ public abstract class FM_BaseNote{
     float WidthNoDotNoStem(){ return paddingLeft + WidthAccidental() + paddingNote + WidthNoteNoStem(); }
 
     boolean visible;
+    boolean blurred;
     FM_ScoreBase score;
     float StartX;
     float StartY1, StartY2;
@@ -54,6 +55,7 @@ public abstract class FM_BaseNote{
         stave = 0;
         this.score = score;
         this.visible = true;
+        this.blurred = false;
         this.line = 1;
         if (score.score != null) color = score.score.getColor();
         note = FM_NoteValue.DO;
@@ -106,6 +108,12 @@ public abstract class FM_BaseNote{
     }
     public boolean isVisible() {
         return visible;
+    }
+    public boolean isBlurred() {
+        return blurred;
+    }
+    public void setBlurred(boolean blurred) {
+        this.blurred = blurred;
     }
     public void setVisible(boolean visible) {
         this.visible = visible;

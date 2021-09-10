@@ -1,5 +1,6 @@
 package tech.zekon.FM_Score;
 
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
@@ -245,10 +246,13 @@ public class FM_Note extends FM_BaseNote {
 
     void DrawNote(Canvas canvas) {
         if (score.score == null) return;
-        if (!isVisible()) return;
+        if (!isBlurred() && !isVisible()) return;
         super.DrawNote(canvas);
 
         score.score.Font.setColor(score.score.getStaveLineColor());
+        if (isBlurred())
+            score.score.Font.setMaskFilter(new BlurMaskFilter(30, BlurMaskFilter.Blur.NORMAL));
+        else score.score.Font.setMaskFilter(null);
         ys = StartY1;
         startX = StartX;
         float ly;
@@ -297,6 +301,7 @@ public class FM_Note extends FM_BaseNote {
             canvas.drawText(asStringDot(), StartX + paddingLeft + width_accidental + paddingNote + widthNoteNoStem + paddingDot, dy + adjustDotY, score.score.Font);
         }
         score.score.Font.setColor(score.score.getColor());
+        score.score.Font.setMaskFilter(null);
     }
 
     float Left(){

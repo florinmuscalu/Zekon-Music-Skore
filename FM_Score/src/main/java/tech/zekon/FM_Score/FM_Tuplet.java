@@ -1,5 +1,6 @@
 package tech.zekon.FM_Score;
 
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Path;
 
@@ -26,7 +27,10 @@ class FM_Tuplet {
     }
 
     void Draw(Canvas canvas) {
-        if (!n.get(0).visible) return;
+        if (!n.get(0).blurred && !n.get(0).visible) return;
+        if (n.get(0).blurred)
+            score.Font.setMaskFilter(new BlurMaskFilter(15, BlurMaskFilter.Blur.NORMAL));
+        else score.Font.setMaskFilter(null);
         float x, xe, y, ye;
         float StaveLineHalfWidth = FM_Const.dpTOpx(score.getContext(), 0.25f);
         int EndIndex = n.size() - 1;
@@ -188,5 +192,6 @@ class FM_Tuplet {
         //canvas.drawLine(x, y - stave.getDistanceBetweenStaveLines(), xe,ye - stave.getDistanceBetweenStaveLines() , stave.StaveFont);
         if (position == 0) canvas.drawText(text, (x + xe) / 2 - w / 2, (y + ye) / 2 - 1.2f * score.getDistanceBetweenStaveLines(), score.Font);
         else canvas.drawText(text, (x + xe) / 2 - w / 2, (y + ye) / 2 + 0.8f * score.getDistanceBetweenStaveLines(), score.Font);
+        score.Font.setMaskFilter(null);
     }
 }

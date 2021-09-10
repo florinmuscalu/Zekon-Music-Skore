@@ -1,6 +1,9 @@
 package tech.zekon.FM_Score;
 
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
+import android.graphics.EmbossMaskFilter;
+import android.graphics.MaskFilter;
 import android.graphics.Path;
 
 import java.util.ArrayList;
@@ -22,7 +25,10 @@ class FM_Beam {
     }
 
     void Draw(Canvas canvas) {
-        if (!n.get(0).visible) return;
+        if (!n.get(0).blurred && !n.get(0).visible) return;
+        if (n.get(0).blurred)
+            score.Font.setMaskFilter(new BlurMaskFilter(15, BlurMaskFilter.Blur.NORMAL));
+        else score.Font.setMaskFilter(null);
         float x, xe, y, ye;
         int EndIndex = n.size() - 1;
         float StemLength = 2.5f;
@@ -197,5 +203,6 @@ class FM_Beam {
             bottomPath.lineTo(tmpX1, tmpY1);
             canvas.drawPath(bottomPath, score.Font);
         }
+        score.Font.setMaskFilter(null);
     }
 }

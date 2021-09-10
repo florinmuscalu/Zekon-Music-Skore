@@ -1,5 +1,6 @@
 package tech.zekon.FM_Score;
 
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 
 public class FM_BarNote extends FM_BaseNote {
@@ -36,16 +37,19 @@ public class FM_BarNote extends FM_BaseNote {
         return 0;
     }
     void DrawNote(Canvas canvas) {
-        if (!isVisible()) return;
+        if (!isBlurred() && !isVisible()) return;
         super.DrawNote(canvas);
         if (score == null) return;
-
+        if (isBlurred())
+            score.score.Font.setMaskFilter(new BlurMaskFilter(15, BlurMaskFilter.Blur.NORMAL));
+        else score.score.Font.setMaskFilter(null);
         float BarYs = StartY1;
         float BarYe;
         if (StartY2 == 0)  BarYe = StartY1 + 4 * score.score.getDistanceBetweenStaveLines();
         else BarYe = StartY2 + 4 * score.score.getDistanceBetweenStaveLines();
         canvas.drawRect(StartX + paddingLeft, BarYs, StartX + paddingLeft + FM_Const.dpTOpx(score.score.getContext(),1), BarYe, score.score.Font);
         score.score.Font.setColor(score.score.getColor());
+        score.score.Font.setMaskFilter(null);
     }
     float Left(){
         return StartX;

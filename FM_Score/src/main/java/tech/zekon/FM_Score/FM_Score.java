@@ -3,6 +3,7 @@ package tech.zekon.FM_Score;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -1072,15 +1073,17 @@ public class FM_Score extends View {
         return ret;
     }
 
-    public void ShowScore(int measures) {
+    public void ShowScore(int measures, boolean blur) {
         finishedDraw = new CountDownLatch(1);
         if (measures == 0) AllowZoomControls = tmpZoomControls;
         else AllowZoomControls = false;
         new Thread(() -> {
             for (int i = 0; i < ScoreBase.StaveNotes.size(); i++) {
                 ScoreBase.StaveNotes.get(i).setVisible(true);
-                if (ScoreBase.StaveNotes.get(i) instanceof FM_BarNote && ((FM_BarNote) ScoreBase.StaveNotes.get(i)).lineEnd)
+                ScoreBase.StaveNotes.get(i).setBlurred(false);
+                if (ScoreBase.StaveNotes.get(i) instanceof FM_BarNote && ((FM_BarNote) ScoreBase.StaveNotes.get(i)).lineEnd) {
                     ScoreBase.StaveNotes.get(i).setVisible(false);
+                }
             }
             this.post(this::invalidate);
             try {
@@ -1092,8 +1095,15 @@ public class FM_Score extends View {
                 int i = 0;
                 int bars = 0;
                 while (i < ScoreBase.StaveNotes.size()) {
-                    if (ScoreBase.StaveNotes.get(i) instanceof FM_BarNote) bars++;
-                    if (bars >= measures) ScoreBase.StaveNotes.get(i).setVisible(false);
+                    if (ScoreBase.StaveNotes.get(i) instanceof FM_BarNote) {
+                        bars++;
+                        i++;
+                        continue;
+                    }
+                    if (bars >= measures) {
+                        if (blur) ScoreBase.StaveNotes.get(i).setBlurred(true);
+                        ScoreBase.StaveNotes.get(i).setVisible(false);
+                    }
                     i++;
                 }
             }

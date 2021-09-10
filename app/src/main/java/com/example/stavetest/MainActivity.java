@@ -80,47 +80,47 @@ public class MainActivity extends AppCompatActivity {
 //        player.setShowProgress(true);
 
         player = FM_ScorePlayer.getInstance(getApplicationContext());
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (player.AssetsLoaded() != 100) {
-                    sleep (100);
-                }
-                FM_ScoreBase b = new FM_ScoreBase(null);
-
-                StringBuilder jingle = new StringBuilder();
-                BufferedReader reader = null;
-                index = index + 1;
-                if (index > 1) index = 0;
-                try {
-                    reader = new BufferedReader(new InputStreamReader(getAssets().open("test.json")));
-                    String mLine;
-                    while ((mLine = reader.readLine()) != null) {
-                        jingle.append(mLine);
-                    }
-                } catch (IOException e) {
-                    //log the exception
-                } finally {
-                    if (reader != null) {
-                        try {
-                            reader.close();
-                        } catch (IOException e) {
-                            //log the exception
-                        }
-                    }
-                }
-                JSONObject obj = null;
-                try {
-                    obj = new JSONObject(jingle.toString());
-                } catch (Exception ignored) {}
-
-                b.LoadFromJson(obj);
-                player.LoadFromScore(b, 80);
-                player.Play();
-
-            }
-        }).start();
+        LoadJson();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                while (player.AssetsLoaded() != 100) {
+//                    sleep (100);
+//                }
+//                FM_ScoreBase b = new FM_ScoreBase(null);
+//
+//                StringBuilder jingle = new StringBuilder();
+//                BufferedReader reader = null;
+//                index = index + 1;
+//                if (index > 1) index = 0;
+//                try {
+//                    reader = new BufferedReader(new InputStreamReader(getAssets().open("test.json")));
+//                    String mLine;
+//                    while ((mLine = reader.readLine()) != null) {
+//                        jingle.append(mLine);
+//                    }
+//                } catch (IOException e) {
+//                    //log the exception
+//                } finally {
+//                    if (reader != null) {
+//                        try {
+//                            reader.close();
+//                        } catch (IOException e) {
+//                            //log the exception
+//                        }
+//                    }
+//                }
+//                JSONObject obj = null;
+//                try {
+//                    obj = new JSONObject(jingle.toString());
+//                } catch (Exception ignored) {}
+//
+//                b.LoadFromJson(obj);
+//                player.LoadFromScore(b, 80);
+//                player.Play();
+//
+//            }
+//        }).start();
 //
     }
 
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     String[] files = {"test.json", "furelise.json"};
-    int index = 0;
+    int index = 1;
 
     public void LoadJson(){
         FM_Score s = findViewById(R.id.stave);
@@ -544,11 +544,11 @@ public class MainActivity extends AppCompatActivity {
         FM_Score s = findViewById(R.id.stave);
         if (show) {
             s.setVisibility(View.INVISIBLE);
-            s.ShowScore(0);
+            s.ShowScore(0, false);
         }
         else {
             s.setVisibility(View.VISIBLE);
-            s.ShowScore(1);
+            s.ShowScore(1, true);
         }
         show = !show;
     }

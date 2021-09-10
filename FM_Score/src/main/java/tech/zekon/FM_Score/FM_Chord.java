@@ -22,10 +22,13 @@ public class FM_Chord extends FM_BaseNote {
 
     void Compute() {
         FM_BaseNote tmp;
+
+        /*
+        Fist step is to sort the notes in the chord by staff.
+        If they belong to the same staff, sort them by Displacement (by note, basically).
+         */
         for (int i = 0; i < Notes.size() - 1; i++)
             for (int j = i + 1; j < Notes.size(); j++) {
-                //Step 1
-                //Fist step is to sort the notes in the chord by staff. If they belong to the same staff, sort them by Displacement (by note, basically)
                 if ((Notes.get(i).stave > Notes.get(j).stave) || (Notes.get(i).stave == Notes.get(j).stave && Notes.get(i).getDisplacement() <= Notes.get(j).getDisplacement())) {
                     tmp = Notes.get(i);
                     Notes.set(i, Notes.get(j));
@@ -33,21 +36,23 @@ public class FM_Chord extends FM_BaseNote {
                 }
             }
 
-        //Step 2
-        //if the distance between any two notes is 0, remove accidental and/or dot from the second note
+        /*
+        if the distance between any two notes is 0, remove accidental and/or dot from the second note.
+         */
         for (int i = 0; i < Notes.size(); i++)
             for (int j = i + 1; j < Notes.size(); j++) {
                 int distance = Math.abs(FM_Const.distanceBetweenNotes(Notes.get(i), Notes.get(j)));
                 if (distance == 0) {
                     Notes.get(j).RemoveAccidental();      //remove accidental
                     if (Notes.get(i).duration == Notes.get(j).duration && Notes.get(i).duration > 50) {
-                        Notes.get(j).duration = Notes.get(j).duration - 50;
+                        Notes.get(j).duration = Notes.get(j).duration;// - 50;
                     }
                 }
             }
 
-        //Step 3
-        //Get the maximum width without the DOT
+        /*
+        Get the maximum width without the DOT
+         */
         float maxW = 0;
         float w;
         for (int i = 0; i < Notes.size(); i++) {
@@ -171,7 +176,7 @@ public class FM_Chord extends FM_BaseNote {
     }
 
     void DrawNote(Canvas canvas) {
-        if (!isVisible()) return;
+        if (!isBlurred() && !isVisible()) return;
         for (int i = 0; i< Notes.size(); i++) {
             if (Notes.get(i).stave == 0) Notes.get(i).DrawNote(canvas);
             if (Notes.get(i).stave == 1) Notes.get(i).DrawNote(canvas);
@@ -211,6 +216,10 @@ public class FM_Chord extends FM_BaseNote {
         for (int i = 0; i< Notes.size(); i++) Notes.get(i).setColor(color);
     }
 
+    public void setBlurred(boolean blur) {
+        this.blurred = blur;
+        for (int i = 0; i < Notes.size(); i++) Notes.get(i).setBlurred(blur);
+    }
     public void setVisible(boolean visible) {
         //if (!visible) line = -1;
         //else line = 1;
