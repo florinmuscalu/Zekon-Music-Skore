@@ -1,5 +1,8 @@
 # FM Score
 
+## Support me
+<a href="https://www.buymeacoffee.com/zekon" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
 ## What is FM Score?
 An Android Java library for rendering music notation, as well as for listening to it. Copyright (c) 2020 - 2021 Florin Muscalu
 
@@ -34,3 +37,4 @@ dependencies {
 
 ## Resources
 To learn and contribute, check out the [Wiki](https://github.com/florinmuscalu/FM_Score/wiki)
+
