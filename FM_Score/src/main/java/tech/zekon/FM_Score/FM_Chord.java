@@ -112,7 +112,9 @@ public class FM_Chord extends FM_BaseNote {
 
                 //Step 7
                 //pad the accidentals when the distance between notes is les or equal to 3
-                if (distance <= 3 && distance!= 0 && Notes.get(i).paddingNote == 0) {
+                if (Notes.get(i).accidental != 0 && Notes.get(j).accidental != 0 && distance <= 3 && distance != 0) {
+
+                //if (distance <= 3 && distance!= 0 && Notes.get(i).paddingNote == 0) {
                     Notes.get(j).setPaddingLeft(Notes.get(j).paddingLeft - Notes.get(i).paddingNote - Notes.get(i).WidthAccidental());
                     Notes.get(j).setPaddingNote(Notes.get(j).paddingNote + Notes.get(i).paddingNote + Notes.get(i).WidthAccidental());
                 }

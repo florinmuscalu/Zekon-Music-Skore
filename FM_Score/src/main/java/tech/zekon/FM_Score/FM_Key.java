@@ -175,7 +175,10 @@ public class FM_Key {
 
         //octave
         if (temp.equals("")) this.octave = 0;
-        else this.octave = Integer.parseInt(temp.substring(temp.length() - 1));
+        else {
+            if (temp.contains("-")) this.octave = Integer.parseInt(temp.substring(temp.length() - 2));
+            else this.octave = Integer.parseInt(temp.substring(temp.length() - 1));
+        }
 
         //duration
         this.duration = FM_DurationValue.NOTE_WHOLE;

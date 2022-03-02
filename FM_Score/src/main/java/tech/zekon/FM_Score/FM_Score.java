@@ -65,7 +65,7 @@ public class FM_Score extends View {
     @FM_BoundingBoxType
     private int DrawBoundingBox;
 
-    private CountDownLatch finishedDraw = null;
+    //private CountDownLatch finishedDraw = null;
 
     public FM_Score(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -371,7 +371,7 @@ public class FM_Score extends View {
             canvas.drawLine(width - 60, height - 90, width - 60, height - 30, zoomBtnFnt);
             canvas.drawLine(width - 190, height - 60, width - 150, height - 60, zoomBtnFnt);
         }
-        if (finishedDraw != null) finishedDraw.countDown();
+        //if (finishedDraw != null) finishedDraw.countDown();
     }
 
     public int getColor() {
@@ -1074,7 +1074,7 @@ public class FM_Score extends View {
     }
 
     public void ShowScore(int measures, boolean blur) {
-        finishedDraw = new CountDownLatch(1);
+        //finishedDraw = new CountDownLatch(1);
         if (measures == 0) AllowZoomControls = tmpZoomControls;
         else AllowZoomControls = false;
         new Thread(() -> {
@@ -1085,12 +1085,12 @@ public class FM_Score extends View {
                     ScoreBase.StaveNotes.get(i).setVisible(false);
                 }
             }
-            this.post(this::invalidate);
-            try {
-                finishedDraw.await();
-                finishedDraw = null;
-            } catch (Exception ignored) {
-            }
+//            this.post(this::invalidate);
+//            try {
+//                finishedDraw.await();
+//                finishedDraw = null;
+//            } catch (Exception ignored) {
+//            }
             if (measures != 0) {
                 int i = 0;
                 int bars = 0;
