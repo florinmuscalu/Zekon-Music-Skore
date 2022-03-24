@@ -216,7 +216,7 @@ public class FM_Score extends View {
         this.height = height;
         PaddingS = PaddingS_p * width / 100.f;
         PaddingE = PaddingE_p * width / 100.f;
-        ComputeLines();
+        this.ComputeLines();
         invalidate();
         //requestLayout();
     }
@@ -258,7 +258,7 @@ public class FM_Score extends View {
                 if (ScoreBase.StaveNotes.get(n).line - 1 == l && ScoreBase.StaveNotes.get(n).stave == 0) {
                     if (ScoreBase.StaveNotes.get(n) instanceof FM_Clef) {
                         clef = ((FM_Clef) ScoreBase.StaveNotes.get(n)).clef;
-                        //StaveNotes.get(n).setVisible(false);
+                        //ScoreBase.StaveNotes.get(n).setVisible(false);
                     }
                     break;
                 }
@@ -711,12 +711,12 @@ public class FM_Score extends View {
 
     public void addStaveNote(FM_BaseNote n, int stave) {
         ScoreBase.addStaveNote(n, stave);
-        ComputeLines();
+        this.ComputeLines();
     }
 
     public void addChord(List<FM_BaseNote> n, List<Integer> stave) {
         ScoreBase.addChord(n, stave);
-        ComputeLines();
+        this.ComputeLines();
     }
 
     private float getStartX(int line) {
@@ -957,7 +957,7 @@ public class FM_Score extends View {
 
     public void setNotesAlign(@FM_Align int align) {
         Align = align;
-        ComputeLines();
+        this.ComputeLines();
     }
 
     public void AddToTie(String tie, FM_Note n) {
@@ -998,7 +998,7 @@ public class FM_Score extends View {
 
     public void setMultiRow(boolean multiRow) {
         MultiRow = multiRow;
-        ComputeLines();
+        this.ComputeLines();
     }
 
     public boolean isAllowZoomPan() {
@@ -1079,7 +1079,7 @@ public class FM_Score extends View {
         else AllowZoomControls = false;
         new Thread(() -> {
             for (int i = 0; i < ScoreBase.StaveNotes.size(); i++) {
-                ScoreBase.StaveNotes.get(i).setVisible(true);
+                if (! (ScoreBase.StaveNotes.get(i) instanceof FM_Clef)) ScoreBase.StaveNotes.get(i).setVisible(true);
                 ScoreBase.StaveNotes.get(i).setBlurred(false);
                 if (ScoreBase.StaveNotes.get(i) instanceof FM_BarNote && ((FM_BarNote) ScoreBase.StaveNotes.get(i)).lineEnd) {
                     ScoreBase.StaveNotes.get(i).setVisible(false);
