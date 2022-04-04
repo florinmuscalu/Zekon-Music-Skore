@@ -958,7 +958,7 @@ class FM_SoundPool {
         if (time_signature_d == 0) time_signature_d = TIME_SIGNATURE_D;
         if (time_signature_d == 0) time_signature_d = 4;
         int time_signature_n = TIME_SIGNATURE_N;
-        if (time_signature_n == 0) time_signature_d = 4;
+        if (time_signature_n == 0) time_signature_n = 4;
         int multiply = 1;       //simple meter (2, 3 and 4)
         if (time_signature_n == 6 || time_signature_n == 9 || time_signature_n == 12) multiply = 3; //compound meter
 
