@@ -175,13 +175,41 @@ class FM_AudioTrack {
                 double sample5 = 0;
                 double sample6 = 0;
                 double sample7 = 0;
-                if (track1 != null && i < td1) sample1 = music1[i];
-                if (track2 != null && i < td2) sample2 = music2[i];
-                if (track3 != null && i < td3) sample3 = music3[i];
-                if (track4 != null && i < td4) sample4 = music4[i];
-                if (track5 != null && i < td5) sample5 = music5[i];
-                if (track6 != null && i < td6) sample6 = music6[i];
-                if (track7 != null && i < td7) sample7 = music7[i];
+                if (track1 != null && i < td1) {
+                    double adjust = 1;
+                    if (td1 - i < fallback) adjust = (td1 - i) / (fallback * 1.0);
+                    sample1 = adjust * music1[i];
+                }
+                if (track2 != null && i < td2) {
+                    double adjust = 1;
+                    if (td2 - i < fallback) adjust = (td2 - i) / (fallback * 1.0);
+                    sample2 = adjust * music2[i];
+                }
+                if (track3 != null && i < td3) {
+                    double adjust = 1;
+                    if (td3 - i < fallback) adjust = (td3 - i) / (fallback * 1.0);
+                    sample3 = adjust * music3[i];
+                }
+                if (track4 != null && i < td4) {
+                    double adjust = 1;
+                    if (td4 - i < fallback) adjust = (td4 - i) / (fallback * 1.0);
+                    sample4 = adjust * music4[i];
+                }
+                if (track5 != null && i < td5) {
+                    double adjust = 1;
+                    if (td5 - i < fallback) adjust = (td5 - i) / (fallback * 1.0);
+                    sample5 = adjust * music5[i];
+                }
+                if (track6 != null && i < td6) {
+                    double adjust = 1;
+                    if (td6 - i < fallback) adjust = (td6 - i) / (fallback * 1.0);
+                    sample6 = adjust * music6[i];
+                }
+                if (track7 != null && i < td7) {
+                    double adjust = 1;
+                    if (td7 - i < fallback) adjust = (td7 - i) / (fallback * 1.0);
+                    sample7 = adjust * music7[i];
+                }
                 double mixed = sample1 + sample2 + sample3 + sample4 + sample5 + sample6 + sample7;
                 if (mixed > max) max = mixed;
                 outputTmp[i] = mixed;
@@ -252,15 +280,9 @@ class FM_AudioTrack {
             audioTrack.write(output, 0, output.length);
             audioTrack.play();
             FM_SoundPool.CustomDelay(duration, false);
-            float d = 0;
             float fall = FM_SoundPool.FALLBACK_DURATION;
-            if (NextPause)
-                fall = fall / 5f;
-            while (d < fall) {
-                d += FM_SoundPool.CustomDelay(2, true);
-                float p = 1 - d / fall;
-                audioTrack.setVolume(p);
-            }
+            if (NextPause) fall = fall / 5f;
+            FM_SoundPool.CustomDelay((long) fall, true);
             audioTrack.stop();
             audioTrack.release();
         }).start();
