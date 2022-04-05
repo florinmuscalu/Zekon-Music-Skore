@@ -164,33 +164,31 @@ class FM_AudioTrack {
             }
 
             output = new short[l];
-            float[] outputTmp = new float[l];
-            float max = 0;
+            double[] outputTmp = new double[l];
+            double max = 0;
 
             for (int i = 0; i < output.length; i++) {
-                float sample1 = 0;
-                float sample2 = 0;
-                float sample3 = 0;
-                float sample4 = 0;
-                float sample5 = 0;
-                float sample6 = 0;
-                float sample7 = 0;
-                if (track1 != null && i < td1) sample1 = music1[i] / 32768.0f;
-                if (track2 != null && i < td2) sample2 = music2[i] / 32768.0f;
-                if (track3 != null && i < td3) sample3 = music3[i] / 32768.0f;
-                if (track4 != null && i < td4) sample4 = music4[i] / 32768.0f;
-                if (track5 != null && i < td5) sample5 = music5[i] / 32768.0f;
-                if (track6 != null && i < td6) sample6 = music6[i] / 32768.0f;
-                if (track7 != null && i < td7) sample7 = music7[i] / 32768.0f;
-                float mixed = sample1 + sample2 + sample3 + sample4 + sample5 + sample6 + sample7;
+                double sample1 = 0;
+                double sample2 = 0;
+                double sample3 = 0;
+                double sample4 = 0;
+                double sample5 = 0;
+                double sample6 = 0;
+                double sample7 = 0;
+                if (track1 != null && i < td1) sample1 = music1[i];
+                if (track2 != null && i < td2) sample2 = music2[i];
+                if (track3 != null && i < td3) sample3 = music3[i];
+                if (track4 != null && i < td4) sample4 = music4[i];
+                if (track5 != null && i < td5) sample5 = music5[i];
+                if (track6 != null && i < td6) sample6 = music6[i];
+                if (track7 != null && i < td7) sample7 = music7[i];
+                double mixed = sample1 + sample2 + sample3 + sample4 + sample5 + sample6 + sample7;
                 if (mixed > max) max = mixed;
                 outputTmp[i] = mixed;
             }
-            if (max < 1) max = 1;
-            for (int i = 0; i < output.length; i++) {
-                float tmp = outputTmp[i] / max;
-                output[i] = (short) (tmp * 32768.0f);
-            }
+            double adjust = 1;
+            if (max > 32768) adjust = 32768.0 / max;
+            for (int i = 0; i < output.length; i++) output[i] = (short) (outputTmp[i] * adjust);
 
             loading = false;
         } catch (Exception ignored) {
