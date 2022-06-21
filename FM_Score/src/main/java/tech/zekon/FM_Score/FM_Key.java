@@ -17,13 +17,13 @@ import java.lang.annotation.RetentionPolicy;
 public class FM_Key {
     //common
     @FM_KeyType
-    int type;
+    public int type;
     //if it's a Key
     @FM_NoteValue
-    int note;
+    public int note;
     @FM_Accidental
     int accidental;
-    int octave;
+    public int octave;
     @FM_DurationValue
     int duration;
     boolean stemUp;
@@ -39,7 +39,7 @@ public class FM_Key {
     //common for Key and Clef
     int chord;
 
-    FM_Key(String key) {
+    public FM_Key(String key) {
         key = key.replace(" ", "").replace("\\", "").replace("\"", "").replace("[", "").replace("]", "").toLowerCase().trim();
         if (key.contains("bar")) {
             this.type = FM_KeyType.Bar;
