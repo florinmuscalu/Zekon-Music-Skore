@@ -30,6 +30,16 @@ public class FM_ScoreBase {
     protected final List<FM_Tuplet> Tuplets = new ArrayList<>();
     protected final List<FM_Beam> Beams = new ArrayList<>();
 
+    HashMap<String, List<FM_Note>> TieNotes = new HashMap<>();
+    private boolean inTuplet = false;
+    private int TupletPosition = 0;
+    private int TupletSize = 0;
+    private int currentTuplet = 0;
+    List<FM_BaseNote> TupletNotes;
+    private boolean inBeam = false;
+    private int currentBeam = 0;
+    List<FM_BaseNote> BeamNotes;
+
     public FM_ScoreBase(FM_Score score) {
         this.score = score;
         StaveCount = FM_StaveCount._1;
@@ -144,8 +154,6 @@ public class FM_ScoreBase {
         }
     }
 
-    HashMap<String, List<FM_Note>> TieNotes = new HashMap<>();
-
     public void AddToTie(String tie, FM_Note n) {
         if (TieNotes.containsKey(tie)) {
             Objects.requireNonNull(TieNotes.get(tie)).add(n);
@@ -174,12 +182,6 @@ public class FM_ScoreBase {
         Ties.add(t);
         TieNotes.remove(tie);
     }
-
-    private boolean inTuplet = false;
-    private int TupletPosition = 0;
-    private int TupletSize = 0;
-    private int currentTuplet = 0;
-    List<FM_BaseNote> TupletNotes;
 
     public void BeginTuplet(String s) {
         inTuplet = true;
@@ -237,10 +239,6 @@ public class FM_ScoreBase {
         }
         Tuplets.add(t);
     }
-
-    private boolean inBeam = false;
-    private int currentBeam = 0;
-    List<FM_BaseNote> BeamNotes;
 
     public void BeginBeam() {
         inBeam = true;

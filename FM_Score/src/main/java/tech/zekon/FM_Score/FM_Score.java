@@ -65,6 +65,9 @@ public class FM_Score extends View {
     @FM_BoundingBoxType
     private int DrawBoundingBox;
 
+    private float startY;
+    private float startX;
+
     //private CountDownLatch finishedDraw = null;
 
     public FM_Score(Context context, AttributeSet attrs) {
@@ -195,6 +198,7 @@ public class FM_Score extends View {
     public void setShowBrace(boolean showBrace) {
         ShowBrace = showBrace;
     }
+
 
     private float getDrawHeight() {
         float MaxHeight = Lines * (4 * getDistanceBetweenStaveLines()) + (Lines - 1) * +getDistanceBetweenRows() + 2 * PaddingV_cnt * getDistanceBetweenStaveLines();
@@ -467,9 +471,6 @@ public class FM_Score extends View {
         //invalidate();
         //requestLayout();
     }
-
-    private float startY;
-    private float startX;
 
     private boolean isAClick(float startX, float endX, float startY, float endY) {
         float differenceX = Math.abs(startX - endX);
