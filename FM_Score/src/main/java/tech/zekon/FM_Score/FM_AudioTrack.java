@@ -938,10 +938,14 @@ class FM_SoundPool {
     }
 
     static float CustomDelay(long duration, boolean coolDown) {
-        long current = System.nanoTime();
-        long start = current;
-        long end = current + duration * 1000000;
+        long start = System.nanoTime();
+        long end = start + duration * 1000000L;
+        long current = start;
         while (current < end) {
+            // Sleep (freeing the CPU) while there is time to spare, and spin only
+            // for the final ~2ms so note timing stays tight. Previously this spun
+            // for the whole delay, pinning a CPU core for every note and fade-out.
+            if (end - current > 2_000_000L) sleep(1);
             current = System.nanoTime();
             if ((!coolDown) && (!playing)) return duration;
         }
