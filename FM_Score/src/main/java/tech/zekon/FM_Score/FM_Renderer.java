@@ -24,6 +24,8 @@ public final class FM_Renderer {
     public static final int SAMPLE_RATE = 24000;
     private static final int SAMPLES_PER_MS = SAMPLE_RATE / 1000; // 24
     private static final int FADE_MS = 220;     // release fade once a key is lifted
+    private static final int ATTACK_MS = 5;     // short fade-in to avoid onset clicks
+    private static final double HEADROOM = 28000.0; // peak ceiling (~-1.4 dBFS) so lossy AAC won't clip
     private static final int HEADER_BYTES = 44; // WAV header length in the bundled samples
 
     /** One note to render: piano key {@code sound} (1..88), starting at {@code startMs}, held for {@code durationMs}. */
@@ -51,6 +53,7 @@ public final class FM_Renderer {
         double[] mix = new double[total];
         Map<Integer, short[]> cache = new HashMap<>();
         int fadeSamples = FADE_MS * SAMPLES_PER_MS;
+        int attackSamples = ATTACK_MS * SAMPLES_PER_MS;
 
         for (Note n : notes) {
             short[] sample = cache.get(n.sound);
@@ -66,10 +69,12 @@ public final class FM_Renderer {
                 int pos = start + i;
                 if (pos < 0 || pos >= mix.length) continue;
                 double gain = 1.0;
+                if (i < attackSamples) gain = (double) i / attackSamples;    // anti-click attack fade-in
                 if (i > held) {
-                    gain = 1.0 - (double) (i - held) / fadeSamples; // linear release fade
-                    if (gain < 0) gain = 0;
+                    double release = 1.0 - (double) (i - held) / fadeSamples; // release fade-out
+                    if (release < gain) gain = release;
                 }
+                if (gain < 0) gain = 0;
                 mix[pos] += sample[i] * gain;
             }
         }
@@ -79,7 +84,7 @@ public final class FM_Renderer {
             double a = Math.abs(v);
             if (a > peak) peak = a;
         }
-        double scale = (peak > 32767) ? 32767.0 / peak : 1.0; // normalize to avoid clipping
+        double scale = (peak > HEADROOM) ? HEADROOM / peak : 1.0; // keep headroom so lossy AAC won't clip
 
         short[] pcm = new short[total];
         for (int i = 0; i < total; i++) {
