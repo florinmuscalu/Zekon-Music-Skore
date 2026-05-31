@@ -91,7 +91,8 @@ public class FM_ScorePlayer {
                 song = FM_Helper.generateSongFromScore(obj, tempo);
                 if (showProgress && obj.score != null) obj.score.ProgressReset();
                 SongLoadedCDL.countDown();
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                FM_Log.e("FM_ScorePlayer", "Failed to load song from score", e);
             }
         });
         loadingThread.start();
@@ -200,7 +201,8 @@ public class FM_ScorePlayer {
         try {
             if (key < 1 || key > 88) return false;
             return soundPlayer.isKeyNotPlaying(key);
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            FM_Log.w("FM_ScorePlayer", "isKeyNotPlaying failed for key " + key, e);
             return false;
         }
     }
@@ -221,7 +223,8 @@ public class FM_ScorePlayer {
         if (key < 1 || key > 88) return;
         try {
             soundPlayer.stopKey(key);
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            FM_Log.w("FM_ScorePlayer", "stopKey failed for key " + key, e);
         }
     }
 

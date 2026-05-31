@@ -219,7 +219,8 @@ class FM_AudioTrack {
             for (int i = 0; i < output.length; i++) output[i] = (short) (outputTmp[i] * adjust);
 
             loading = false;
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            FM_Log.e("FM_AudioTrack", "Failed to build mixed audio track", e);
         }
     }
 
@@ -875,7 +876,8 @@ class FM_SoundPool {
                 thread.Stop();
                 threadMap.remove(key);
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            FM_Log.w("FM_SoundPool", "stopKey failed for key " + key, e);
         }
     }
 
