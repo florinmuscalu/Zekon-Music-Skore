@@ -18,10 +18,10 @@ android {
     }
     compileSdk = 36
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
-    namespace 'tech.zekon.FM_Score'
+    namespace = 'tech.zekon.FM_Score'
 }
 
 dependencies {
