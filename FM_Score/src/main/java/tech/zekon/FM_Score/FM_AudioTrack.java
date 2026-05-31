@@ -231,31 +231,45 @@ class FM_AudioTrack {
     private static byte[] sampleToByteArray(InputStream sample) throws IOException {
         ByteArrayOutputStream bOutStream = new ByteArrayOutputStream();
         BufferedInputStream bis = new BufferedInputStream(sample);
-        byte[] header = new byte[44];
-        if (bis.read(header) == -1) throw new IOException();
-        int bufferSize = 1024 * 8;
-        byte[] buffer = new byte[bufferSize];
-        while (bis.read(buffer) != -1) {
-            bOutStream.write(buffer);
+        byte[] buffer = new byte[1024 * 8];
+        int n;
+        while ((n = bis.read(buffer)) != -1) {
+            bOutStream.write(buffer, 0, n); // only the bytes actually read (was writing the whole buffer)
         }
-        byte[] outputByteArray = bOutStream.toByteArray();
         bis.close();
+        byte[] all = bOutStream.toByteArray();
         bOutStream.close();
 
-        return outputByteArray;
+        int data = findDataChunk(all); // start at the real PCM, not a fixed 44-byte header
+        if (data < 0) return all;
+        byte[] out = new byte[all.length - data];
+        System.arraycopy(all, data, out, 0, out.length);
+        return out;
+    }
+
+    /** Byte offset of the WAV "data" chunk payload, walking the chunk list, or -1 if absent. */
+    private static int findDataChunk(byte[] b) {
+        if (b.length < 12) return -1;
+        int p = 12; // skip RIFF(4) size(4) WAVE(4)
+        while (p + 8 <= b.length) {
+            int size = (b[p + 4] & 0xff) | ((b[p + 5] & 0xff) << 8)
+                    | ((b[p + 6] & 0xff) << 16) | ((b[p + 7] & 0xff) << 24);
+            if (b[p] == 'd' && b[p + 1] == 'a' && b[p + 2] == 't' && b[p + 3] == 'a') {
+                return p + 8;
+            }
+            if (size < 0) break;
+            p += 8 + size + (size & 1); // chunks are word-aligned
+        }
+        return -1;
     }
 
     private static short[] sampleToShortArray(InputStream sample) throws IOException {
-
-        short[] outputArray = new short[sample.available() / 2];
-        byte[] outputByteArray = sampleToByteArray(sample);
-        for (int i = 0, j = 0; i < outputByteArray.length; i += 2, j++) {
-            try {
-                outputArray[j] = swapBytes(outputByteArray[i], outputByteArray[i + 1]);
-            } catch (Exception ignored) {
-            }
+        byte[] bytes = sampleToByteArray(sample);
+        short[] out = new short[bytes.length / 2];
+        for (int i = 0, j = 0; j < out.length; i += 2, j++) {
+            out[j] = swapBytes(bytes[i], bytes[i + 1]);
         }
-        return outputArray;
+        return out;
     }
 
     void Play(long duration, boolean NextPause) {
