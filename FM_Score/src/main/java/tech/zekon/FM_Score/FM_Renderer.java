@@ -137,12 +137,30 @@ public final class FM_Renderer {
             while ((read = in.read(buf)) != -1) bos.write(buf, 0, read);
         }
         byte[] bytes = bos.toByteArray();
-        int dataLen = Math.max(0, bytes.length - HEADER_BYTES);
+        int dataOffset = findDataChunk(bytes); // header size varies (fmt extensions, LIST/fact chunks)
+        if (dataOffset < 0) return new short[0];
+        int dataLen = bytes.length - dataOffset;
         short[] samples = new short[dataLen / 2];
-        for (int i = 0, j = HEADER_BYTES; i < samples.length; i++, j += 2) {
+        for (int i = 0, j = dataOffset; i < samples.length; i++, j += 2) {
             samples[i] = (short) ((bytes[j] & 0xff) | (bytes[j + 1] << 8)); // little-endian PCM16
         }
         return samples;
+    }
+
+    /** Byte offset of the WAV "data" chunk payload, walking the chunk list, or -1 if absent. */
+    private static int findDataChunk(byte[] b) {
+        if (b.length < 12) return -1;
+        int p = 12; // skip RIFF(4) size(4) WAVE(4)
+        while (p + 8 <= b.length) {
+            int size = (b[p + 4] & 0xff) | ((b[p + 5] & 0xff) << 8)
+                    | ((b[p + 6] & 0xff) << 16) | ((b[p + 7] & 0xff) << 24);
+            if (b[p] == 'd' && b[p + 1] == 'a' && b[p + 2] == 't' && b[p + 3] == 'a') {
+                return p + 8;
+            }
+            if (size < 0) break;
+            p += 8 + size + (size & 1); // chunks are word-aligned
+        }
+        return -1;
     }
 
     private static void putAscii(byte[] b, int off, String s) {
