@@ -16,8 +16,11 @@ import java.io.InputStream;
  * <p>The SoundFont ({@code assets/soundfont.sf3}, ~22&nbsp;MB) is heavy to load and
  * decode, so it is loaded lazily on the first non-piano selection — piano-only users
  * never pay for it. Live playing streams {@code tsf_render_short} into a {@link AudioTrack};
- * {@link #renderPcm} produces offline PCM for audio export. TSF is not thread-safe, so all
- * native render/note calls are serialized on {@link #lock}.
+ * {@link #renderPcm} produces offline PCM for audio export on an independent {@code tsf_copy}
+ * (shares the read-only samples, separate voices), so it runs concurrently with live play.
+ *
+ * <p>TSF is not thread-safe per instance: the live instance's render/note calls are serialized
+ * on {@link #lock}, and stream start/stop is serialized on {@link #streamLock}.
  */
 class FM_Synth {
 
@@ -255,35 +258,34 @@ class FM_Synth {
         short[] out = new short[totalFrames];
         short[] block = new short[BLOCK_FRAMES];
 
-        // The live stream and the offline render share one native instance, so stop the
-        // stream (joining its thread) before driving the synth ourselves, then restart it.
-        boolean wasStreaming = streaming;
-        if (wasStreaming) stopStreaming();
-        synchronized (lock) {
-            nativeReset(handle);
-            nativeSetProgram(handle, 0, program);
-
+        // Render on an independent copy of the synth: it shares the (read-only) decoded samples
+        // but has its own voice state, so the export never touches the live `lock` and never has
+        // to stop live playback — both can render concurrently and safely.
+        long h = nativeCopy(handle, SAMPLE_RATE);
+        if (h == 0) return new short[0];
+        try {
+            nativeSetProgram(h, 0, program);
             int cursor = 0;
             for (int idx : order) {
                 int target = (int) (times[idx] * SAMPLE_RATE / 1000L);
-                cursor = renderInto(out, block, cursor, target);
-                if (on[idx]) nativeNoteOn(handle, 0, midi[idx], VELOCITY);
-                else nativeNoteOff(handle, 0, midi[idx]);
+                cursor = renderInto(h, out, block, cursor, target);
+                if (on[idx]) nativeNoteOn(h, 0, midi[idx], VELOCITY);
+                else nativeNoteOff(h, 0, midi[idx]);
             }
-            renderInto(out, block, cursor, totalFrames);
-            nativeReset(handle);
+            renderInto(h, out, block, cursor, totalFrames);
+        } finally {
+            nativeFree(h);
         }
-        if (wasStreaming) start(currentProgram);
         return out;
     }
 
-    /** Renders frames into {@code out[from..toFrame)} in blocks; returns the new cursor. */
-    private int renderInto(short[] out, short[] block, int from, int toFrame) {
+    /** Renders frames into {@code out[from..toFrame)} in blocks on synth {@code h}; returns the new cursor. */
+    private int renderInto(long h, short[] out, short[] block, int from, int toFrame) {
         if (toFrame > out.length) toFrame = out.length;
         int cursor = from;
         while (cursor < toFrame) {
             int count = Math.min(BLOCK_FRAMES, toFrame - cursor);
-            nativeRender(handle, block, count);
+            nativeRender(h, block, count);
             System.arraycopy(block, 0, out, cursor, count);
             cursor += count;
         }
@@ -303,6 +305,9 @@ class FM_Synth {
     // ---- native ----
 
     private native long nativeLoad(byte[] data, int sampleRate);
+
+    /** Returns an independent synth sharing this one's loaded samples (for offline render); free with nativeFree. */
+    private native long nativeCopy(long handle, int sampleRate);
 
     private native int nativeSetProgram(long handle, int channel, int program);
 

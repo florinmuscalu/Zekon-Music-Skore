@@ -38,6 +38,21 @@ Java_tech_zekon_FM_1Score_FM_1Synth_nativeLoad(JNIEnv* env, jobject thiz,
     return (jlong) (intptr_t) f;
 }
 
+// Independent synth instance that shares the loaded (read-only) sample/preset data by
+// refcount but has its own voice/channel state — used for offline export so it can render
+// concurrently with live playback without locking. Free it with nativeFree.
+JNIEXPORT jlong JNICALL
+Java_tech_zekon_FM_1Score_FM_1Synth_nativeCopy(JNIEnv* env, jobject thiz,
+                                               jlong handle, jint sampleRate) {
+    tsf* f = TSF_HANDLE(handle);
+    if (f == NULL) return 0;
+    tsf* c = tsf_copy(f);
+    if (c == NULL) return 0;
+    tsf_set_output(c, TSF_MONO, (int) sampleRate, 0.0f);
+    tsf_set_max_voices(c, 48);
+    return (jlong) (intptr_t) c;
+}
+
 JNIEXPORT jint JNICALL
 Java_tech_zekon_FM_1Score_FM_1Synth_nativeSetProgram(JNIEnv* env, jobject thiz,
                                                      jlong handle, jint channel, jint program) {
