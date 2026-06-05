@@ -276,6 +276,16 @@ public class FM_ScorePlayer {
         return synth != null && synth.isReady();
     }
 
+    /**
+     * Begins loading the SoundFont now (async), without selecting an instrument or starting audio.
+     * Call this at app startup when the saved instrument is a SoundFont one, so it decodes in
+     * parallel with the piano samples instead of only when the keyboard appears.
+     */
+    public void preloadSoundFont() {
+        if (synth == null) synth = FM_Synth.getInstance(context);
+        synth.ensureLoaded();
+    }
+
     /** PCM sample rate of {@link #renderInstrumentPcm}. */
     public int getInstrumentSampleRate() {
         return FM_Synth.SAMPLE_RATE;
