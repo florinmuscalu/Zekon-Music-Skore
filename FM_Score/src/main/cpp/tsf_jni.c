@@ -81,6 +81,12 @@ Java_tech_zekon_FM_1Score_FM_1Synth_nativeAllNotesOff(JNIEnv* env, jobject thiz,
     if (f != NULL) tsf_note_off_all(f);
 }
 
+JNIEXPORT jint JNICALL
+Java_tech_zekon_FM_1Score_FM_1Synth_nativeActiveVoiceCount(JNIEnv* env, jobject thiz, jlong handle) {
+    tsf* f = TSF_HANDLE(handle);
+    return f == NULL ? 0 : tsf_active_voice_count(f);
+}
+
 JNIEXPORT void JNICALL
 Java_tech_zekon_FM_1Score_FM_1Synth_nativeRender(JNIEnv* env, jobject thiz,
                                                  jlong handle, jshortArray out, jint frames) {

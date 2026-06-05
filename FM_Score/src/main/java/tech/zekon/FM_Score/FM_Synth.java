@@ -55,6 +55,8 @@ class FM_Synth {
     private volatile boolean streaming = false;
     private volatile boolean startWhenReady = false;   // a start() arrived before the SoundFont finished loading
     private Thread renderThread;
+    private final Object wake = new Object();           // wakes the idle render thread when a note is played / on stop
+    private boolean woken;                              // guarded by `wake`
 
     private FM_Synth(Context context) {
         this.context = context;
@@ -139,6 +141,14 @@ class FM_Synth {
         synchronized (lock) {
             nativeNoteOn(handle, 0, key + KEY_TO_MIDI, VELOCITY);
         }
+        wakeRenderThread();   // resume streaming if it went idle while silent
+    }
+
+    private void wakeRenderThread() {
+        synchronized (wake) {
+            woken = true;
+            wake.notify();
+        }
     }
 
     void stopKey(int key) {
@@ -174,14 +184,39 @@ class FM_Synth {
                     .setTransferMode(AudioTrack.MODE_STREAM)
                     .setBufferSizeInBytes(bufBytes)
                     .build();
-            track.play();
             short[] buf = new short[BLOCK_FRAMES];
+            boolean paused = true;   // stay silent (and cheap) until the first note
             try {
                 while (streaming) {
+                    int active;
                     synchronized (lock) {
                         nativeRender(handle, buf, BLOCK_FRAMES);
+                        active = nativeActiveVoiceCount(handle);
                     }
-                    track.write(buf, 0, BLOCK_FRAMES);   // blocks, pacing the loop
+                    if (active > 0) {
+                        if (paused) {
+                            track.play();
+                            paused = false;
+                        }
+                        track.write(buf, 0, BLOCK_FRAMES);   // blocks, pacing the loop
+                    } else {
+                        // Nothing sounding (including release tails): stop feeding the track and
+                        // sleep until a note wakes us, instead of spinning out silence.
+                        if (!paused) {
+                            track.pause();
+                            track.flush();
+                            paused = true;
+                        }
+                        synchronized (wake) {
+                            while (streaming && !woken) {
+                                try {
+                                    wake.wait(1000);
+                                } catch (InterruptedException ignored) {
+                                }
+                            }
+                            woken = false;
+                        }
+                    }
                 }
             } catch (Exception e) {
                 FM_Log.w("FM_Synth", "Render loop stopped", e);
@@ -199,6 +234,7 @@ class FM_Synth {
     private void stopStreaming() {
         synchronized (streamLock) {
             streaming = false;
+            wakeRenderThread();   // in case it's idle-waiting, so it sees streaming==false and exits promptly
             Thread t = renderThread;
             renderThread = null;
             if (t != null) {
@@ -316,6 +352,8 @@ class FM_Synth {
     private native void nativeNoteOff(long handle, int channel, int key);
 
     private native void nativeAllNotesOff(long handle);
+
+    private native int nativeActiveVoiceCount(long handle);
 
     private native void nativeRender(long handle, short[] out, int frames);
 
