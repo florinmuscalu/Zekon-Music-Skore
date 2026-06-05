@@ -49,6 +49,7 @@ class FM_Synth {
 
     // live streaming
     private volatile boolean streaming = false;
+    private volatile boolean startWhenReady = false;   // a start() arrived before the SoundFont finished loading
     private Thread renderThread;
 
     private FM_Synth(Context context) {
@@ -79,6 +80,9 @@ class FM_Synth {
             } finally {
                 loading = false;
             }
+            // If an instrument was selected before the SoundFont finished loading (e.g. it was the
+            // saved instrument restored at startup), begin streaming it now.
+            if (ready && startWhenReady) start(currentProgram);
         }, "FM_Synth-load").start();
     }
 
@@ -86,9 +90,14 @@ class FM_Synth {
 
     /** Selects the current GM program (0..127) and (re)starts the live render stream. */
     void start(int program) {
-        ensureLoaded();
         currentProgram = program;
-        if (!ready) return;          // becomes audible once loading finishes and start() is called again
+        if (!ready) {
+            // SoundFont still loading: remember the intent so the load thread starts us when ready.
+            startWhenReady = true;
+            ensureLoaded();
+            return;
+        }
+        startWhenReady = false;
         synchronized (lock) {
             nativeSetProgram(handle, 0, program);
         }
@@ -97,6 +106,7 @@ class FM_Synth {
 
     /** Stops live playback and releases the audio stream (e.g. when switching back to piano). */
     void stop() {
+        startWhenReady = false;   // cancel any pending auto-start (e.g. app paused mid-load)
         stopStreaming();
         for (int i = 1; i <= 88; i++) activeKeys[i] = false;
         if (ready) {
