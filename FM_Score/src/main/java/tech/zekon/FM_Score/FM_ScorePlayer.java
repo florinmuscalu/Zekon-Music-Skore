@@ -261,6 +261,17 @@ public class FM_ScorePlayer {
         return instrumentProgram;
     }
 
+    /**
+     * Whether key {@code 1..88} can be played by the current instrument. The piano covers all keys;
+     * a SoundFont instrument only covers the keys its preset has samples for (others should be
+     * shown disabled). Returns true while the SoundFont is still loading (range not yet known).
+     */
+    public boolean isKeyAvailable(int key) {
+        if (instrumentProgram < 0) return true;
+        if (synth == null || !synth.isReady()) return true;
+        return synth.isKeyPlayable(key);
+    }
+
     /** Pauses live SoundFont streaming (call from the foreground Activity's {@code onPause}). */
     public void pauseLiveInstrument() {
         if (synth != null && instrumentProgram >= 0) synth.stop();

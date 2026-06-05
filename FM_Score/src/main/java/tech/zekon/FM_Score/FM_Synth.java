@@ -61,6 +61,7 @@ class FM_Synth {
     private volatile boolean ready = false;
     private volatile boolean loading = false;
     private int currentProgram = 0;
+    private volatile boolean[] playable;   // [1..88] = key has a sample in the current program; null = unknown
 
     // live streaming
     private volatile boolean streaming = false;
@@ -119,8 +120,15 @@ class FM_Synth {
             synchronized (lock) {
                 nativeSetProgram(handle, 0, program);
             }
+            playable = nativePlayableKeys(handle, program);   // which keys this instrument can actually play
             startStreaming();
         }
+    }
+
+    /** True if {@code key} (1..88) is mapped in the current instrument; true while the range is still unknown. */
+    boolean isKeyPlayable(int key) {
+        boolean[] p = playable;
+        return p == null || key < 1 || key >= p.length || p[key];
     }
 
     /** Stops live playback and releases the audio stream (e.g. when switching back to piano). */
@@ -358,6 +366,9 @@ class FM_Synth {
     private native long nativeCopy(long handle, int sampleRate);
 
     private native int nativeSetProgram(long handle, int channel, int program);
+
+    /** Returns a boolean[89] where index 1..88 marks keys the GM {@code program} has a sample for. */
+    private native boolean[] nativePlayableKeys(long handle, int program);
 
     private native void nativeNoteOn(long handle, int channel, int key, float velocity);
 
