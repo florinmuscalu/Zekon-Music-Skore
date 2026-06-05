@@ -27,7 +27,6 @@ class FM_Synth {
     static final int SAMPLE_RATE = 44100;
     private static final int BLOCK_FRAMES = 1024;   // ~23 ms render block
     private static final float VELOCITY = 100f / 127f;
-    private static final int KEY_TO_MIDI = 20;      // key 1 (A0) -> MIDI note 21
     private static final long TAIL_MS = 1500;       // release tail rendered after the last note
 
     /** False if the native synth library couldn't load — the synth then stays silent instead of crashing. */
@@ -120,7 +119,7 @@ class FM_Synth {
             synchronized (lock) {
                 nativeSetProgram(handle, 0, program);
             }
-            playable = nativePlayableKeys(handle, program);   // which keys this instrument can actually play
+            playable = computePlayable(program);   // which keys this instrument can actually play
             startStreaming();
         }
     }
@@ -129,6 +128,19 @@ class FM_Synth {
     boolean isKeyPlayable(int key) {
         boolean[] p = playable;
         return p == null || key < 1 || key >= p.length || p[key];
+    }
+
+    /** Maps the program's covered MIDI notes to a per-key (1..88) playable flag via {@link FM_ScorePlayer#keyToMidi}. */
+    private boolean[] computePlayable(int program) {
+        boolean[] covered = nativeCoveredNotes(handle, program);
+        boolean[] pk = new boolean[89];
+        if (covered != null) {
+            for (int key = 1; key <= 88; key++) {
+                int note = FM_ScorePlayer.keyToMidi(key);
+                pk[key] = note >= 0 && note < covered.length && covered[note];
+            }
+        }
+        return pk;
     }
 
     /** Stops live playback and releases the audio stream (e.g. when switching back to piano). */
@@ -158,7 +170,7 @@ class FM_Synth {
         if (!ready || key < 1 || key > 88) return;
         activeKeys[key] = true;
         synchronized (lock) {
-            nativeNoteOn(handle, 0, key + KEY_TO_MIDI, VELOCITY);
+            nativeNoteOn(handle, 0, FM_ScorePlayer.keyToMidi(key), VELOCITY);
         }
         wakeRenderThread();   // resume streaming if it went idle while silent
     }
@@ -174,7 +186,7 @@ class FM_Synth {
         if (!ready || key < 1 || key > 88) return;
         activeKeys[key] = false;
         synchronized (lock) {
-            nativeNoteOff(handle, 0, key + KEY_TO_MIDI);
+            nativeNoteOff(handle, 0, FM_ScorePlayer.keyToMidi(key));
         }
     }
 
@@ -295,11 +307,12 @@ class FM_Synth {
         for (int i = 0; i < n; i++) {
             long end = startMs[i] + durMs[i];
             if (end > maxEnd) maxEnd = end;
+            int note = FM_ScorePlayer.keyToMidi(keys[i]);
             times[i] = startMs[i];
-            midi[i] = keys[i] + KEY_TO_MIDI;
+            midi[i] = note;
             on[i] = true;
             times[n + i] = end;
-            midi[n + i] = keys[i] + KEY_TO_MIDI;
+            midi[n + i] = note;
             on[n + i] = false;
         }
         Integer[] order = new Integer[n * 2];
@@ -367,8 +380,8 @@ class FM_Synth {
 
     private native int nativeSetProgram(long handle, int channel, int program);
 
-    /** Returns a boolean[89] where index 1..88 marks keys the GM {@code program} has a sample for. */
-    private native boolean[] nativePlayableKeys(long handle, int program);
+    /** Returns a boolean[128] marking which MIDI notes the GM {@code program} has a sample region for. */
+    private native boolean[] nativeCoveredNotes(long handle, int program);
 
     private native void nativeNoteOn(long handle, int channel, int key, float velocity);
 

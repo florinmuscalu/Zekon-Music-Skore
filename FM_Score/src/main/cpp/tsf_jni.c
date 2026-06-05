@@ -75,29 +75,28 @@ Java_tech_zekon_FM_1Score_FM_1Synth_nativeNoteOff(JNIEnv* env, jobject thiz,
     if (f != NULL) tsf_channel_note_off(f, channel, key);
 }
 
-// Fills out[1..88] with 1 for each chromatic key the GM `program` preset actually has a sample
-// region for (MIDI note = key + 20), so the UI can disable/grey keys the instrument can't play.
+// Marks which MIDI notes (0..127) the GM `program` preset has a sample region for, so the caller
+// can map them to keyboard keys and disable/grey the ones the instrument can't play.
 JNIEXPORT jbooleanArray JNICALL
-Java_tech_zekon_FM_1Score_FM_1Synth_nativePlayableKeys(JNIEnv* env, jobject thiz,
+Java_tech_zekon_FM_1Score_FM_1Synth_nativeCoveredNotes(JNIEnv* env, jobject thiz,
                                                        jlong handle, jint program) {
-    jboolean out[89];
+    jboolean out[128];
     int i, r, note;
     tsf* f = TSF_HANDLE(handle);
-    for (i = 0; i < 89; i++) out[i] = JNI_FALSE;
+    for (i = 0; i < 128; i++) out[i] = JNI_FALSE;
     if (f != NULL) {
         int pi = tsf_get_presetindex(f, 0, program);
         if (pi >= 0 && pi < f->presetNum) {
             struct tsf_preset* p = &f->presets[pi];
             for (r = 0; r < p->regionNum; r++) {
                 for (note = p->regions[r].lokey; note <= p->regions[r].hikey; note++) {
-                    int key = note - 20;
-                    if (key >= 1 && key <= 88) out[key] = JNI_TRUE;
+                    if (note >= 0 && note < 128) out[note] = JNI_TRUE;
                 }
             }
         }
     }
-    jbooleanArray arr = (*env)->NewBooleanArray(env, 89);
-    if (arr != NULL) (*env)->SetBooleanArrayRegion(env, arr, 0, 89, out);
+    jbooleanArray arr = (*env)->NewBooleanArray(env, 128);
+    if (arr != NULL) (*env)->SetBooleanArrayRegion(env, arr, 0, 128, out);
     return arr;
 }
 

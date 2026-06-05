@@ -238,6 +238,23 @@ public class FM_ScorePlayer {
         }
     }
 
+    // Semitone offsets, relative to each octave's C, in the order the keyboard assigns key indices
+    // within an octave: C, D, C#, E, D#, F, G, F#, A, G#, B, A# (white-then-black draw order).
+    private static final int[] KEY_OCTAVE_OFFSETS = {0, 2, 1, 4, 3, 5, 7, 6, 9, 8, 11, 10};
+
+    /**
+     * Maps a keyboard key index (1..88, in the app's white/black draw order — NOT chromatic) to its
+     * MIDI note number (A0 = 21). The sample engine indexes WAVs in this same order; the SoundFont
+     * synth and MIDI export must use this to avoid swapping neighbouring notes.
+     */
+    public static int keyToMidi(int key) {
+        if (key == 1) return 21;   // A0
+        if (key == 2) return 23;   // B0
+        if (key == 3) return 22;   // A#0
+        int n = key - 4;           // 0-based from C1 (MIDI 24)
+        return 24 + (n / 12) * 12 + KEY_OCTAVE_OFFSETS[n % 12];
+    }
+
     // ---- Instruments ----
 
     /**
