@@ -39,7 +39,8 @@ class FM_Synth {
     }
 
     private final Context context;
-    private final Object lock = new Object();
+    private final Object lock = new Object();            // serializes native render/note calls (TSF is not thread-safe)
+    private final Object streamLock = new Object();      // serializes stream lifecycle (start/stop) across threads
     private final boolean[] activeKeys = new boolean[89];   // 1..88, for re-trigger guard
 
     private volatile long handle = 0;
@@ -97,17 +98,21 @@ class FM_Synth {
             ensureLoaded();
             return;
         }
-        startWhenReady = false;
-        synchronized (lock) {
-            nativeSetProgram(handle, 0, program);
+        synchronized (streamLock) {
+            startWhenReady = false;
+            synchronized (lock) {
+                nativeSetProgram(handle, 0, program);
+            }
+            startStreaming();
         }
-        startStreaming();
     }
 
     /** Stops live playback and releases the audio stream (e.g. when switching back to piano). */
     void stop() {
-        startWhenReady = false;   // cancel any pending auto-start (e.g. app paused mid-load)
-        stopStreaming();
+        synchronized (streamLock) {
+            startWhenReady = false;   // cancel any pending auto-start (e.g. app paused mid-load)
+            stopStreaming();
+        }
         for (int i = 1; i <= 88; i++) activeKeys[i] = false;
         if (ready) {
             synchronized (lock) {
@@ -145,6 +150,7 @@ class FM_Synth {
         return key < 1 || key > 88 || !activeKeys[key];
     }
 
+    // Always called while holding streamLock (from start()); the guard below is therefore atomic.
     private void startStreaming() {
         if (streaming) return;
         streaming = true;
@@ -188,13 +194,15 @@ class FM_Synth {
     }
 
     private void stopStreaming() {
-        streaming = false;
-        Thread t = renderThread;
-        renderThread = null;
-        if (t != null) {
-            try {
-                t.join(500);
-            } catch (InterruptedException ignored) {
+        synchronized (streamLock) {
+            streaming = false;
+            Thread t = renderThread;
+            renderThread = null;
+            if (t != null) {
+                try {
+                    t.join(500);   // the render thread only takes `lock`, never streamLock — no deadlock
+                } catch (InterruptedException ignored) {
+                }
             }
         }
     }
