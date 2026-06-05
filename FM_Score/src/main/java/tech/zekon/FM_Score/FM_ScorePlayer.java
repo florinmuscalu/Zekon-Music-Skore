@@ -8,8 +8,12 @@ import java.util.concurrent.CountDownLatch;
 
 public class FM_ScorePlayer {
     private static FM_ScorePlayer mInstance = null;
+    private Context context;
     private FM_Audio_Song song;
     private FM_SoundPool soundPlayer;
+    /** Current live instrument: {@code -1} = piano (recorded samples); {@code 0..127} = a GM program via the SoundFont synth. */
+    private volatile int instrumentProgram = -1;
+    private FM_Synth synth;
     volatile int SoundsLoaded;
     CountDownLatch SoundsLoadedCDL = new CountDownLatch(1);
     public CountDownLatch SongLoadedCDL = new CountDownLatch(1);
@@ -27,6 +31,8 @@ public class FM_ScorePlayer {
             synchronized (FM_ScorePlayer.class) {
                 if (mInstance == null) {
                     mInstance = new FM_ScorePlayer();
+                    mInstance.context = context.getApplicationContext();
+                    mInstance.instrumentProgram = -1;
                     mInstance.score = null;
                     mInstance.showProgress = false;
                     mInstance.SoundsLoaded = 0;
@@ -187,6 +193,7 @@ public class FM_ScorePlayer {
 
     public void StopPlaying() {
         soundPlayer.StopAllSound();
+        if (synth != null) synth.allNotesOff();
     }
 
 
@@ -200,6 +207,7 @@ public class FM_ScorePlayer {
     public boolean isKeyNotPlaying(int key) {
         try {
             if (key < 1 || key > 88) return false;
+            if (instrumentProgram >= 0 && synth != null) return synth.isKeyNotPlaying(key);
             return soundPlayer.isKeyNotPlaying(key);
         } catch (Exception e) {
             FM_Log.w("FM_ScorePlayer", "isKeyNotPlaying failed for key " + key, e);
@@ -213,7 +221,8 @@ public class FM_ScorePlayer {
      */
     public void playKey(int key) {
         if (key<1 || key>88) return;
-        soundPlayer.playKey(key);
+        if (instrumentProgram >= 0 && synth != null) synth.playKey(key);
+        else soundPlayer.playKey(key);
     }
     /**
      * Start playing the key you specify.
@@ -222,10 +231,64 @@ public class FM_ScorePlayer {
     public void stopKey(int key) {
         if (key < 1 || key > 88) return;
         try {
-            soundPlayer.stopKey(key);
+            if (instrumentProgram >= 0 && synth != null) synth.stopKey(key);
+            else soundPlayer.stopKey(key);
         } catch (Exception e) {
             FM_Log.w("FM_ScorePlayer", "stopKey failed for key " + key, e);
         }
+    }
+
+    // ---- Instruments ----
+
+    /**
+     * Selects the live keyboard instrument. {@code -1} restores the piano (recorded samples);
+     * a GM program {@code 0..127} switches to that SoundFont instrument. The SoundFont loads
+     * lazily on first non-piano use.
+     */
+    public void setInstrument(int gmProgram) {
+        if (gmProgram < 0) {
+            instrumentProgram = -1;
+            if (synth != null) synth.stop();
+            return;
+        }
+        if (synth == null) synth = FM_Synth.getInstance(context);
+        instrumentProgram = gmProgram;
+        synth.start(gmProgram);
+    }
+
+    /** Current live instrument: {@code -1} = piano, else the GM program. */
+    public int getInstrumentProgram() {
+        return instrumentProgram;
+    }
+
+    /** Pauses live SoundFont streaming (call from the foreground Activity's {@code onPause}). */
+    public void pauseLiveInstrument() {
+        if (synth != null && instrumentProgram >= 0) synth.stop();
+    }
+
+    /** Resumes live SoundFont streaming for the selected instrument (call from {@code onResume}). */
+    public void resumeLiveInstrument() {
+        if (synth != null && instrumentProgram >= 0) synth.start(instrumentProgram);
+    }
+
+    /** True once the SoundFont has finished loading (always false until a non-piano instrument is used). */
+    public boolean isSoundFontReady() {
+        return synth != null && synth.isReady();
+    }
+
+    /** PCM sample rate of {@link #renderInstrumentPcm}. */
+    public int getInstrumentSampleRate() {
+        return FM_Synth.SAMPLE_RATE;
+    }
+
+    /**
+     * Offline-renders a performance with a GM instrument to mono 16-bit PCM (for audio export).
+     * Each parallel-array entry is one note: chromatic key 1..88, start and duration in ms.
+     */
+    public short[] renderInstrumentPcm(int gmProgram, int[] keys, long[] startMs, long[] durMs) {
+        if (synth == null) synth = FM_Synth.getInstance(context);
+        synth.ensureLoaded();
+        return synth.renderPcm(gmProgram, keys, startMs, durMs);
     }
 
     public boolean isFirstMeasureComplete(){
