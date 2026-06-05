@@ -99,12 +99,6 @@ Java_tech_zekon_FM_1Score_FM_1Synth_nativeRender(JNIEnv* env, jobject thiz,
 }
 
 JNIEXPORT void JNICALL
-Java_tech_zekon_FM_1Score_FM_1Synth_nativeReset(JNIEnv* env, jobject thiz, jlong handle) {
-    tsf* f = TSF_HANDLE(handle);
-    if (f != NULL) tsf_reset(f);
-}
-
-JNIEXPORT void JNICALL
 Java_tech_zekon_FM_1Score_FM_1Synth_nativeFree(JNIEnv* env, jobject thiz, jlong handle) {
     tsf* f = TSF_HANDLE(handle);
     if (f != NULL) tsf_close(f);

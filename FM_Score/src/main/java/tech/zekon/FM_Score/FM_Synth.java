@@ -30,8 +30,17 @@ class FM_Synth {
     private static final int KEY_TO_MIDI = 20;      // key 1 (A0) -> MIDI note 21
     private static final long TAIL_MS = 1500;       // release tail rendered after the last note
 
-    static {
-        System.loadLibrary("fmsynth");
+    /** False if the native synth library couldn't load — the synth then stays silent instead of crashing. */
+    private static final boolean NATIVE_OK = loadNative();
+
+    private static boolean loadNative() {
+        try {
+            System.loadLibrary("fmsynth");
+            return true;
+        } catch (Throwable t) {
+            FM_Log.e("FM_Synth", "Native synth library failed to load; MIDI instruments unavailable", t);
+            return false;
+        }
     }
 
     private static FM_Synth mInstance;
@@ -44,7 +53,9 @@ class FM_Synth {
     private final Context context;
     private final Object lock = new Object();            // serializes native render/note calls (TSF is not thread-safe)
     private final Object streamLock = new Object();      // serializes stream lifecycle (start/stop) across threads
-    private final boolean[] activeKeys = new boolean[89];   // 1..88, for re-trigger guard
+    // 1..88, re-trigger guard for the live keyboard. Touched from the UI thread (play/stopKey) and
+    // cleared from stop()/allNotesOff(); races are benign (at worst a missed re-trigger guard).
+    private final boolean[] activeKeys = new boolean[89];
 
     private volatile long handle = 0;
     private volatile boolean ready = false;
@@ -66,9 +77,9 @@ class FM_Synth {
         return ready;
     }
 
-    /** Kicks off the one-time async SoundFont load. Safe to call repeatedly. */
+    /** Kicks off the one-time async SoundFont load. Safe to call repeatedly. No-op if the native lib is missing. */
     void ensureLoaded() {
-        if (ready || loading) return;
+        if (!NATIVE_OK || ready || loading) return;
         synchronized (this) {
             if (ready || loading) return;
             loading = true;
@@ -254,6 +265,7 @@ class FM_Synth {
      * in milliseconds. Returns an empty array if the SoundFont is not loaded yet.
      */
     short[] renderPcm(int program, int[] keys, long[] startMs, long[] durMs) {
+        if (keys.length == 0) return new short[0];
         if (!ready) {
             // Export runs off the main thread, so it's safe to block until the SoundFont loads.
             ensureLoaded();
@@ -356,8 +368,6 @@ class FM_Synth {
     private native int nativeActiveVoiceCount(long handle);
 
     private native void nativeRender(long handle, short[] out, int frames);
-
-    private native void nativeReset(long handle);
 
     private native void nativeFree(long handle);
 }
