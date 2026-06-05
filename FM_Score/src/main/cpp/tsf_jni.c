@@ -61,18 +61,39 @@ Java_tech_zekon_FM_1Score_FM_1Synth_nativeSetProgram(JNIEnv* env, jobject thiz,
     return tsf_channel_set_presetnumber(f, channel, program, 0);
 }
 
+// Many SoundFont presets only map samples across part of the keyboard, so notes outside that
+// range produce no voice. Fold an out-of-range key into the channel preset's actual key range by
+// octaves (clamping if the range is narrower than an octave) so every key still sounds. Returns
+// the key unchanged when it is already in range. Deterministic, so note-off folds to the same key.
+static int fold_key(tsf* f, int channel, int key) {
+    int i, lo = 128, hi = -1;
+    int pi = tsf_channel_get_preset_index(f, channel);
+    struct tsf_preset* p;
+    if (pi < 0 || pi >= f->presetNum) return key;
+    p = &f->presets[pi];
+    for (i = 0; i < p->regionNum; i++) {
+        if (p->regions[i].lokey < lo) lo = p->regions[i].lokey;
+        if (p->regions[i].hikey > hi) hi = p->regions[i].hikey;
+    }
+    if (hi < lo) return key;                 // preset has no regions
+    while (key < lo) key += 12;
+    while (key > hi) key -= 12;
+    if (key < lo) key = lo;                  // range spans less than an octave
+    return key;
+}
+
 JNIEXPORT void JNICALL
 Java_tech_zekon_FM_1Score_FM_1Synth_nativeNoteOn(JNIEnv* env, jobject thiz,
                                                  jlong handle, jint channel, jint key, jfloat velocity) {
     tsf* f = TSF_HANDLE(handle);
-    if (f != NULL) tsf_channel_note_on(f, channel, key, velocity);
+    if (f != NULL) tsf_channel_note_on(f, channel, fold_key(f, channel, key), velocity);
 }
 
 JNIEXPORT void JNICALL
 Java_tech_zekon_FM_1Score_FM_1Synth_nativeNoteOff(JNIEnv* env, jobject thiz,
                                                   jlong handle, jint channel, jint key) {
     tsf* f = TSF_HANDLE(handle);
-    if (f != NULL) tsf_channel_note_off(f, channel, key);
+    if (f != NULL) tsf_channel_note_off(f, channel, fold_key(f, channel, key));
 }
 
 JNIEXPORT void JNICALL
