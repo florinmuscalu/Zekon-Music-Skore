@@ -34,7 +34,7 @@ Java_tech_zekon_FM_1Score_FM_1Synth_nativeLoad(JNIEnv* env, jobject thiz,
     if (f == NULL) return 0;
 
     tsf_set_output(f, TSF_MONO, (int) sampleRate, 0.0f);
-    tsf_set_max_voices(f, 48);
+    tsf_set_max_voices(f, 64);   // with sustain holding voices, the tsf.h patch steals the oldest past this
     return (jlong) (intptr_t) f;
 }
 
@@ -49,7 +49,7 @@ Java_tech_zekon_FM_1Score_FM_1Synth_nativeCopy(JNIEnv* env, jobject thiz,
     tsf* c = tsf_copy(f);
     if (c == NULL) return 0;
     tsf_set_output(c, TSF_MONO, (int) sampleRate, 0.0f);
-    tsf_set_max_voices(c, 48);
+    tsf_set_max_voices(c, 64);
     return (jlong) (intptr_t) c;
 }
 

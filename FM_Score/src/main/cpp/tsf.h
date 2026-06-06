@@ -1595,6 +1595,15 @@ TSFDEF int tsf_note_on(tsf* f, int preset_index, int key, float vel)
 					}
 				}
 				if (!voice)
+				{
+					// RPK PATCH: nothing is in its release phase (e.g. the sustain pedal is holding
+					// every voice), so the release-stealing above found none. Steal the oldest-started
+					// voice instead, so new notes keep sounding rather than going silent once
+					// maxVoiceNum is reached.
+					for (v = f->voices; v != vEnd; v++)
+						if (v->playingPreset != -1 && (!voice || v->playIndex < voice->playIndex)) voice = v;
+				}
+				if (!voice)
 					continue;
 				tsf_voice_kill(voice);
 			}
