@@ -1016,7 +1016,9 @@ class FM_SoundPool {
                     fall = fall / 5f;
                 while (d < fall) {
                     d += CustomDelay(2, true);
-                    float p = 1f - d / fall;
+                    // Fade from the note's own volume (not full scale) so a soft note doesn't
+                    // jump UP to full when released.
+                    float p = volume * (1f - d / fall);
                     sndPool.setVolume(stream, p, p);
                 }
                 //sndPool.setVolume(stream, 0, 0);
