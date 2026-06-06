@@ -26,7 +26,6 @@ class FM_Synth {
 
     static final int SAMPLE_RATE = 44100;
     private static final int BLOCK_FRAMES = 1024;   // ~23 ms render block
-    private static final float VELOCITY = 100f / 127f;
     private static final long TAIL_MS = 1500;       // release tail rendered after the last note
 
     /** False if the native synth library couldn't load — the synth then stays silent instead of crashing. */
@@ -286,7 +285,7 @@ class FM_Synth {
      * Each entry of the parallel arrays is one note: chromatic key 1..88, start, and duration
      * in milliseconds. Returns an empty array if the SoundFont is not loaded yet.
      */
-    short[] renderPcm(int program, int[] keys, long[] startMs, long[] durMs) {
+    short[] renderPcm(int program, int[] keys, long[] startMs, long[] durMs, float[] velocities) {
         if (keys.length == 0) return new short[0];
         if (!ready) {
             // Export runs off the main thread, so it's safe to block until the SoundFont loads.
@@ -305,14 +304,19 @@ class FM_Synth {
         long[] times = new long[n * 2];
         int[] midi = new int[n * 2];
         boolean[] on = new boolean[n * 2];
+        float[] vel = new float[n * 2];
         long maxEnd = 0;
         for (int i = 0; i < n; i++) {
             long end = startMs[i] + durMs[i];
             if (end > maxEnd) maxEnd = end;
             int note = FM_ScorePlayer.keyToMidi(keys[i]);
+            float v = velocities[i];
+            if (v < 0f) v = 0f;
+            else if (v > 1f) v = 1f;
             times[i] = startMs[i];
             midi[i] = note;
             on[i] = true;
+            vel[i] = v;
             times[n + i] = end;
             midi[n + i] = note;
             on[n + i] = false;
@@ -340,7 +344,7 @@ class FM_Synth {
             for (int idx : order) {
                 int target = (int) (times[idx] * SAMPLE_RATE / 1000L);
                 cursor = renderInto(h, out, block, cursor, target);
-                if (on[idx]) nativeNoteOn(h, 0, midi[idx], VELOCITY);
+                if (on[idx]) nativeNoteOn(h, 0, midi[idx], vel[idx]);
                 else nativeNoteOff(h, 0, midi[idx]);
             }
             renderInto(h, out, block, cursor, totalFrames);

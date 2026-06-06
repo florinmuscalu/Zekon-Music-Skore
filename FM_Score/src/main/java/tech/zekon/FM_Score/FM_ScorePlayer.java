@@ -331,10 +331,10 @@ public class FM_ScorePlayer {
      * Offline-renders a performance with a GM instrument to mono 16-bit PCM (for audio export).
      * Each parallel-array entry is one note: chromatic key 1..88, start and duration in ms.
      */
-    public short[] renderInstrumentPcm(int gmProgram, int[] keys, long[] startMs, long[] durMs) {
+    public short[] renderInstrumentPcm(int gmProgram, int[] keys, long[] startMs, long[] durMs, float[] velocities) {
         if (synth == null) synth = FM_Synth.getInstance(context);
         synth.ensureLoaded();
-        return synth.renderPcm(gmProgram, keys, startMs, durMs);
+        return synth.renderPcm(gmProgram, keys, startMs, durMs, velocities);
     }
 
     public boolean isFirstMeasureComplete(){

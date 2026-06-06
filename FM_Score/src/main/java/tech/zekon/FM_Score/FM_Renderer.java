@@ -28,16 +28,21 @@ public final class FM_Renderer {
     private static final double HEADROOM = 28000.0; // peak ceiling (~-1.4 dBFS) so lossy AAC won't clip
     private static final int HEADER_BYTES = 44; // WAV header length in the bundled samples
 
-    /** One note to render: piano key {@code sound} (1..88), starting at {@code startMs}, held for {@code durationMs}. */
+    /**
+     * One note to render: piano key {@code sound} (1..88), starting at {@code startMs}, held for
+     * {@code durationMs}, at {@code velocity} (0..1, scales the sample's amplitude).
+     */
     public static final class Note {
         public final int sound;
         public final long startMs;
         public final long durationMs;
+        public final float velocity;
 
-        public Note(int sound, long startMs, long durationMs) {
+        public Note(int sound, long startMs, long durationMs, float velocity) {
             this.sound = sound;
             this.startMs = startMs;
             this.durationMs = durationMs;
+            this.velocity = velocity;
         }
     }
 
@@ -65,13 +70,14 @@ public final class FM_Renderer {
             int start = (int) (n.startMs * SAMPLES_PER_MS);
             int held = (int) (n.durationMs * SAMPLES_PER_MS);
             int len = Math.min(sample.length, held + fadeSamples);
+            double vel = n.velocity;     // 0..1, how hard the key was struck
             for (int i = 0; i < len; i++) {
                 int pos = start + i;
                 if (pos < 0 || pos >= mix.length) continue;
-                double gain = 1.0;
-                if (i < attackSamples) gain = (double) i / attackSamples;    // anti-click attack fade-in
+                double gain = vel;
+                if (i < attackSamples) gain *= (double) i / attackSamples;    // anti-click attack fade-in
                 if (i > held) {
-                    double release = 1.0 - (double) (i - held) / fadeSamples; // release fade-out
+                    double release = vel * (1.0 - (double) (i - held) / fadeSamples); // release fade-out
                     if (release < gain) gain = release;
                 }
                 if (gain < 0) gain = 0;
