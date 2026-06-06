@@ -106,6 +106,13 @@ Java_tech_zekon_FM_1Score_FM_1Synth_nativeAllNotesOff(JNIEnv* env, jobject thiz,
     if (f != NULL) tsf_note_off_all(f);
 }
 
+// Sustain pedal: while on, key-offs are held; turning it off releases the held notes (TSF built-in).
+JNIEXPORT void JNICALL
+Java_tech_zekon_FM_1Score_FM_1Synth_nativeSetSustain(JNIEnv* env, jobject thiz, jlong handle, jint on) {
+    tsf* f = TSF_HANDLE(handle);
+    if (f != NULL) tsf_channel_set_sustain(f, 0, on);
+}
+
 JNIEXPORT jint JNICALL
 Java_tech_zekon_FM_1Score_FM_1Synth_nativeActiveVoiceCount(JNIEnv* env, jobject thiz, jlong handle) {
     tsf* f = TSF_HANDLE(handle);

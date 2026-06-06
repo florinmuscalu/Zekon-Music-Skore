@@ -156,6 +156,14 @@ class FM_Synth {
         }
     }
 
+    /** Sustain pedal: while on, released keys keep ringing until it's turned off. */
+    void setSustain(boolean on) {
+        if (!ready) return;
+        synchronized (lock) {
+            nativeSetSustain(handle, on ? 1 : 0);
+        }
+    }
+
     /** Silences all currently-sounding notes without tearing down the live stream. */
     void allNotesOff() {
         for (int i = 1; i <= 88; i++) activeKeys[i] = false;
@@ -394,6 +402,8 @@ class FM_Synth {
     private native void nativeNoteOff(long handle, int channel, int key);
 
     private native void nativeAllNotesOff(long handle);
+
+    private native void nativeSetSustain(long handle, int on);
 
     private native int nativeActiveVoiceCount(long handle);
 

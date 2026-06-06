@@ -351,6 +351,9 @@ class FM_SoundPool {
 
     //hold the playing threads
     private final SparseArray<PlayThread> threadMap;
+    // Sustain pedal: while on, released keys keep ringing here instead of stopping.
+    private volatile boolean sustain = false;
+    private final ArrayList<PlayThread> sustainedThreads = new ArrayList<>();
     volatile static boolean playing;
     //hold the audio files
     protected static final SparseArray<String> assetFiles = new SparseArray<>();
@@ -892,11 +895,28 @@ class FM_SoundPool {
         try {
             PlayThread thread = threadMap.get(key, null);
             if (thread != null) {
-                thread.Stop();
-                threadMap.remove(key);
+                threadMap.remove(key);   // removed so the key can be re-struck while it rings
+                if (sustain) {
+                    synchronized (sustainedThreads) {
+                        sustainedThreads.add(thread);   // keep ringing until the pedal is released
+                    }
+                } else {
+                    thread.Stop();
+                }
             }
         } catch (Exception e) {
             FM_Log.w("FM_SoundPool", "stopKey failed for key " + key, e);
+        }
+    }
+
+    /** Sustain pedal: while on, released keys keep ringing; turning it off stops the held notes. */
+    void setSustain(boolean on) {
+        sustain = on;
+        if (!on) {
+            synchronized (sustainedThreads) {
+                for (PlayThread t : sustainedThreads) t.Stop();
+                sustainedThreads.clear();
+            }
         }
     }
 
@@ -981,6 +1001,10 @@ class FM_SoundPool {
                 thread.Stop();
                 threadMap.remove(i);
             }
+        }
+        synchronized (sustainedThreads) {
+            for (PlayThread t : sustainedThreads) t.Stop();
+            sustainedThreads.clear();
         }
     }
 

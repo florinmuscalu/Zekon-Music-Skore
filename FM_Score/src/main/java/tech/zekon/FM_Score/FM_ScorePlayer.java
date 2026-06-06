@@ -14,6 +14,7 @@ public class FM_ScorePlayer {
     /** Current live instrument: {@code -1} = piano (recorded samples); {@code 0..127} = a GM program via the SoundFont synth. */
     private volatile int instrumentProgram = -1;
     private FM_Synth synth;
+    private boolean sustain = false;
     volatile int SoundsLoaded;
     CountDownLatch SoundsLoadedCDL = new CountDownLatch(1);
     public CountDownLatch SongLoadedCDL = new CountDownLatch(1);
@@ -279,6 +280,19 @@ public class FM_ScorePlayer {
         if (synth == null) synth = FM_Synth.getInstance(context);
         instrumentProgram = gmProgram;
         synth.start(gmProgram);
+        synth.setSustain(sustain);   // carry the current pedal state to the newly-active synth
+    }
+
+    /** Sustain pedal on/off — applies to whichever engine is playing; released keys ring until off. */
+    public void setSustain(boolean on) {
+        sustain = on;
+        if (soundPlayer != null) soundPlayer.setSustain(on);
+        if (synth != null) synth.setSustain(on);
+    }
+
+    /** Whether the sustain pedal is currently engaged. */
+    public boolean isSustain() {
+        return sustain;
     }
 
     /** Current live instrument: {@code -1} = piano, else the GM program. */
