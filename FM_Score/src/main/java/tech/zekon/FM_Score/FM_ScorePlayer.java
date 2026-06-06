@@ -264,6 +264,20 @@ public class FM_ScorePlayer {
         return 24 + (n / 12) * 12 + KEY_OCTAVE_OFFSETS[n % 12];
     }
 
+    /**
+     * Inverse of {@link #keyToMidi}: maps a MIDI note (A0=21 .. C8=108) to a keyboard key index
+     * (1..88), or {@code -1} if the note is outside the 88-key range (e.g. a transposed controller).
+     * Used for external MIDI input. ({@link #KEY_OCTAVE_OFFSETS} is its own inverse permutation.)
+     */
+    public static int midiToKey(int midi) {
+        if (midi == 21) return 1;   // A0
+        if (midi == 22) return 3;   // A#0
+        if (midi == 23) return 2;   // B0
+        if (midi < 24 || midi > 108) return -1;
+        int n = midi - 24;          // 0-based from C1
+        return 4 + (n / 12) * 12 + KEY_OCTAVE_OFFSETS[n % 12];
+    }
+
     // ---- Instruments ----
 
     /**

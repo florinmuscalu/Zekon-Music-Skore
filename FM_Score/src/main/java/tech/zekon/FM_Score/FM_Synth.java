@@ -64,6 +64,7 @@ class FM_Synth {
     // live streaming
     private volatile boolean streaming = false;
     private volatile boolean startWhenReady = false;   // a start() arrived before the SoundFont finished loading
+    private boolean sustain = false;                   // desired pedal state, re-applied whenever the synth starts
     private Thread renderThread;
     private final Object wake = new Object();           // wakes the idle render thread when a note is played / on stop
     private boolean woken;                              // guarded by `wake`
@@ -117,6 +118,7 @@ class FM_Synth {
             startWhenReady = false;
             synchronized (lock) {
                 nativeSetProgram(handle, 0, program);
+                nativeSetSustain(handle, sustain ? 1 : 0);   // re-apply pedal state on (re)start / load
             }
             playable = computePlayable(program);   // which keys this instrument can actually play
             startStreaming();
@@ -156,8 +158,10 @@ class FM_Synth {
         }
     }
 
-    /** Sustain pedal: while on, released keys keep ringing until it's turned off. */
+    /** Sustain pedal: while on, released keys keep ringing until it's turned off. Stored so it
+     *  survives a (re)start — e.g. switching to a not-yet-loaded instrument then auto-starting. */
     void setSustain(boolean on) {
+        sustain = on;
         if (!ready) return;
         synchronized (lock) {
             nativeSetSustain(handle, on ? 1 : 0);

@@ -38,6 +38,19 @@ public class FM_ScorePlayerTest {
     }
 
     @Test
+    public void midiToKeyIsTheInverseOfKeyToMidi() {
+        for (int key = 1; key <= 88; key++) {
+            assertEquals(key, FM_ScorePlayer.midiToKey(FM_ScorePlayer.keyToMidi(key)));
+        }
+        for (int midi = 21; midi <= 108; midi++) {
+            assertEquals(midi, FM_ScorePlayer.keyToMidi(FM_ScorePlayer.midiToKey(midi)));
+        }
+        // Out-of-range MIDI notes have no key.
+        assertEquals(-1, FM_ScorePlayer.midiToKey(20));
+        assertEquals(-1, FM_ScorePlayer.midiToKey(109));
+    }
+
+    @Test
     public void allKeysMapBijectivelyOntoMidi21To108() {
         Set<Integer> notes = new HashSet<>();
         for (int key = 1; key <= 88; key++) {
