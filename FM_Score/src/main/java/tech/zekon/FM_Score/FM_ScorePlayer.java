@@ -220,9 +220,17 @@ public class FM_ScorePlayer {
      * @param key The index of the key you want to check. It starts from 1 (A/0) to 88 (c/8).
      */
     public void playKey(int key) {
-        if (key<1 || key>88) return;
-        if (instrumentProgram >= 0 && synth != null) synth.playKey(key);
-        else soundPlayer.playKey(key);
+        playKey(key, 1f);
+    }
+
+    /**
+     * Start playing {@code key} at {@code velocity} (0..1, e.g. from touch position).
+     * Routes to the piano samples or the SoundFont synth depending on the current instrument.
+     */
+    public void playKey(int key, float velocity) {
+        if (key < 1 || key > 88) return;
+        if (instrumentProgram >= 0 && synth != null) synth.playKey(key, velocity);
+        else soundPlayer.playKey(key, velocity);
     }
     /**
      * Start playing the key you specify.

@@ -166,11 +166,13 @@ class FM_Synth {
         }
     }
 
-    void playKey(int key) {
+    void playKey(int key, float velocity) {
         if (!ready || key < 1 || key > 88) return;
+        if (velocity < 0f) velocity = 0f;
+        else if (velocity > 1f) velocity = 1f;
         activeKeys[key] = true;
         synchronized (lock) {
-            nativeNoteOn(handle, 0, FM_ScorePlayer.keyToMidi(key), VELOCITY);
+            nativeNoteOn(handle, 0, FM_ScorePlayer.keyToMidi(key), velocity);
         }
         wakeRenderThread();   // resume streaming if it went idle while silent
     }

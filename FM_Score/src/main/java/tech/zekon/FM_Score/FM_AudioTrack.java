@@ -862,21 +862,26 @@ class FM_SoundPool {
     }
 
     void playKey(int key) {
-        playKey(key, false, false);
+        playKey(key, false, 1f);
     }
 
     void playKey(int key, boolean NextPause) {
-        playKey(key, NextPause, false);
+        playKey(key, NextPause, 1f);
+    }
+
+    /** Plays a live key press at {@code volume} (0..1), e.g. from touch velocity. */
+    void playKey(int key, float volume) {
+        playKey(key, false, volume);
     }
 
     void playSilentKey(int key) {
-        playKey(key, false, true);
+        playKey(key, false, 0f);
     }
 
-    void playKey(int key, boolean NextPause, boolean silent) {
+    void playKey(int key, boolean NextPause, float volume) {
         if (key == -1) return;
         if (isKeyNotPlaying(key)) {
-            PlayThread thread = new PlayThread(key, NextPause, silent);
+            PlayThread thread = new PlayThread(key, NextPause, volume);
             thread.start();
             threadMap.put(key, thread);
         }
@@ -985,9 +990,8 @@ class FM_SoundPool {
         private final boolean NextPause;
         private final float volume;
 
-        PlayThread(int key, boolean NextPause, boolean silent) {
-            if (silent) volume = 0f;
-            else volume = 1f;
+        PlayThread(int key, boolean NextPause, float volume) {
+            this.volume = volume;
             this.NextPause = NextPause;
             this.key = key;
             this.stop = new CountDownLatch(1);
