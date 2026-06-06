@@ -20,6 +20,21 @@
 
 #define TSF_HANDLE(h) ((tsf*) (intptr_t) (h))
 
+// Soft-knee limiter applied to the float mix before 16-bit conversion.
+// Below the knee T it is the identity (bit-for-bit the same as before), so normal playing is
+// unchanged; above T it saturates smoothly toward full scale and never exceeds it. This replaces
+// TSF's hard clip: under the sustain pedal many voices ring at once and their sum runs past
+// 0 dBFS, and that hard clip is audible as buzzy distortion. The knee is C1-continuous (slope 1
+// at T), so there's no kink. Mono path only — the synth always renders TSF_MONO.
+static inline float fm_soft_limit(float x) {
+    const float T = 0.8f;
+    float a = x < 0.0f ? -x : x;
+    if (a <= T) return x;
+    float sign = x < 0.0f ? -1.0f : 1.0f;
+    float over = (a - T) / (1.0f - T);            // >= 0
+    return sign * (T + (1.0f - T) * (over / (1.0f + over)));
+}
+
 JNIEXPORT jlong JNICALL
 Java_tech_zekon_FM_1Score_FM_1Synth_nativeLoad(JNIEnv* env, jobject thiz,
                                                jbyteArray data, jint sampleRate) {
@@ -126,7 +141,23 @@ Java_tech_zekon_FM_1Score_FM_1Synth_nativeRender(JNIEnv* env, jobject thiz,
     if (f == NULL) return;
     jshort* buf = (*env)->GetShortArrayElements(env, out, NULL);
     if (buf == NULL) return;
-    tsf_render_short(f, buf, (int) frames, 0);
+
+    // Render to float and soft-limit before converting to 16-bit, instead of tsf_render_short
+    // (which hard-clips). Chunked through a small stack buffer so it stays reentrant — the live
+    // render thread and the offline-export render run on different handles concurrently.
+    float fbuf[1024];
+    int total = (int) frames, done = 0;
+    while (done < total) {
+        int n = total - done;
+        if (n > 1024) n = 1024;
+        tsf_render_float(f, fbuf, n, 0);
+        for (int i = 0; i < n; i++) {
+            int vi = (int) (fm_soft_limit(fbuf[i]) * 32767.5f);
+            buf[done + i] = (jshort) (vi < -32768 ? -32768 : (vi > 32767 ? 32767 : vi));
+        }
+        done += n;
+    }
+
     (*env)->ReleaseShortArrayElements(env, out, buf, 0);
 }
 
