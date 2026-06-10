@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -898,6 +899,16 @@ class FM_SoundPool {
                 threadMap.remove(key);   // removed so the key can be re-struck while it rings
                 if (sustain) {
                     synchronized (sustainedThreads) {
+                        // Replace an older ringing copy of this key — re-striking under the pedal
+                        // would otherwise stack phasing duplicates of the same sample — and sweep
+                        // entries whose 8 s await already ran out.
+                        for (Iterator<PlayThread> it = sustainedThreads.iterator(); it.hasNext(); ) {
+                            PlayThread t = it.next();
+                            if (t.key == key || !t.isAlive()) {
+                                t.Stop();
+                                it.remove();
+                            }
+                        }
                         sustainedThreads.add(thread);   // keep ringing until the pedal is released
                     }
                 } else {
