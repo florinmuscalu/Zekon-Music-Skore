@@ -8,8 +8,13 @@ import java.util.concurrent.CountDownLatch;
 
 public class FM_ScorePlayer {
     private static FM_ScorePlayer mInstance = null;
+    private Context context;
     private FM_Audio_Song song;
     private FM_SoundPool soundPlayer;
+    /** Current live instrument: {@code -1} = piano (recorded samples); {@code 0..127} = a GM program via the SoundFont synth. */
+    private volatile int instrumentProgram = -1;
+    private FM_Synth synth;
+    private boolean sustain = false;
     volatile int SoundsLoaded;
     CountDownLatch SoundsLoadedCDL = new CountDownLatch(1);
     public CountDownLatch SongLoadedCDL = new CountDownLatch(1);
@@ -27,6 +32,8 @@ public class FM_ScorePlayer {
             synchronized (FM_ScorePlayer.class) {
                 if (mInstance == null) {
                     mInstance = new FM_ScorePlayer();
+                    mInstance.context = context.getApplicationContext();
+                    mInstance.instrumentProgram = -1;
                     mInstance.score = null;
                     mInstance.showProgress = false;
                     mInstance.SoundsLoaded = 0;
@@ -187,6 +194,7 @@ public class FM_ScorePlayer {
 
     public void StopPlaying() {
         soundPlayer.StopAllSound();
+        if (synth != null) synth.allNotesOff();
     }
 
 
@@ -200,6 +208,7 @@ public class FM_ScorePlayer {
     public boolean isKeyNotPlaying(int key) {
         try {
             if (key < 1 || key > 88) return false;
+            if (instrumentProgram >= 0 && synth != null) return synth.isKeyNotPlaying(key);
             return soundPlayer.isKeyNotPlaying(key);
         } catch (Exception e) {
             FM_Log.w("FM_ScorePlayer", "isKeyNotPlaying failed for key " + key, e);
@@ -212,8 +221,17 @@ public class FM_ScorePlayer {
      * @param key The index of the key you want to check. It starts from 1 (A/0) to 88 (c/8).
      */
     public void playKey(int key) {
-        if (key<1 || key>88) return;
-        soundPlayer.playKey(key);
+        playKey(key, 1f);
+    }
+
+    /**
+     * Start playing {@code key} at {@code velocity} (0..1, e.g. from touch position).
+     * Routes to the piano samples or the SoundFont synth depending on the current instrument.
+     */
+    public void playKey(int key, float velocity) {
+        if (key < 1 || key > 88) return;
+        if (instrumentProgram >= 0 && synth != null) synth.playKey(key, velocity);
+        else soundPlayer.playKey(key, velocity);
     }
     /**
      * Start playing the key you specify.
@@ -222,10 +240,129 @@ public class FM_ScorePlayer {
     public void stopKey(int key) {
         if (key < 1 || key > 88) return;
         try {
-            soundPlayer.stopKey(key);
+            if (instrumentProgram >= 0 && synth != null) synth.stopKey(key);
+            else soundPlayer.stopKey(key);
         } catch (Exception e) {
             FM_Log.w("FM_ScorePlayer", "stopKey failed for key " + key, e);
         }
+    }
+
+    // Semitone offsets, relative to each octave's C, in the order the keyboard assigns key indices
+    // within an octave: C, D, C#, E, D#, F, G, F#, A, G#, B, A# (white-then-black draw order).
+    private static final int[] KEY_OCTAVE_OFFSETS = {0, 2, 1, 4, 3, 5, 7, 6, 9, 8, 11, 10};
+
+    /**
+     * Maps a keyboard key index (1..88, in the app's white/black draw order — NOT chromatic) to its
+     * MIDI note number (A0 = 21). The sample engine indexes WAVs in this same order; the SoundFont
+     * synth and MIDI export must use this to avoid swapping neighbouring notes.
+     */
+    public static int keyToMidi(int key) {
+        if (key == 1) return 21;   // A0
+        if (key == 2) return 23;   // B0
+        if (key == 3) return 22;   // A#0
+        int n = key - 4;           // 0-based from C1 (MIDI 24)
+        return 24 + (n / 12) * 12 + KEY_OCTAVE_OFFSETS[n % 12];
+    }
+
+    /**
+     * Inverse of {@link #keyToMidi}: maps a MIDI note (A0=21 .. C8=108) to a keyboard key index
+     * (1..88), or {@code -1} if the note is outside the 88-key range (e.g. a transposed controller).
+     * Used for external MIDI input. ({@link #KEY_OCTAVE_OFFSETS} is its own inverse permutation.)
+     */
+    public static int midiToKey(int midi) {
+        if (midi == 21) return 1;   // A0
+        if (midi == 22) return 3;   // A#0
+        if (midi == 23) return 2;   // B0
+        if (midi < 24 || midi > 108) return -1;
+        int n = midi - 24;          // 0-based from C1
+        return 4 + (n / 12) * 12 + KEY_OCTAVE_OFFSETS[n % 12];
+    }
+
+    // ---- Instruments ----
+
+    /**
+     * Selects the live keyboard instrument. {@code -1} restores the piano (recorded samples);
+     * a GM program {@code 0..127} switches to that SoundFont instrument. The SoundFont loads
+     * lazily on first non-piano use.
+     */
+    public void setInstrument(int gmProgram) {
+        if (gmProgram < 0) {
+            instrumentProgram = -1;
+            if (synth != null) synth.stop();
+            return;
+        }
+        if (synth == null) synth = FM_Synth.getInstance(context);
+        instrumentProgram = gmProgram;
+        synth.start(gmProgram);
+        synth.setSustain(sustain);   // carry the current pedal state to the newly-active synth
+    }
+
+    /** Sustain pedal on/off — applies to whichever engine is playing; released keys ring until off. */
+    public void setSustain(boolean on) {
+        sustain = on;
+        if (soundPlayer != null) soundPlayer.setSustain(on);
+        if (synth != null) synth.setSustain(on);
+    }
+
+    /** Whether the sustain pedal is currently engaged. */
+    public boolean isSustain() {
+        return sustain;
+    }
+
+    /** Current live instrument: {@code -1} = piano, else the GM program. */
+    public int getInstrumentProgram() {
+        return instrumentProgram;
+    }
+
+    /**
+     * Whether key {@code 1..88} can be played by the current instrument. The piano covers all keys;
+     * a SoundFont instrument only covers the keys its preset has samples for (others should be
+     * shown disabled). Returns true while the SoundFont is still loading (range not yet known).
+     */
+    public boolean isKeyAvailable(int key) {
+        if (instrumentProgram < 0) return true;
+        if (synth == null || !synth.isReady()) return true;
+        return synth.isKeyPlayable(key);
+    }
+
+    /** Pauses live SoundFont streaming (call from the foreground Activity's {@code onPause}). */
+    public void pauseLiveInstrument() {
+        if (synth != null && instrumentProgram >= 0) synth.stop();
+    }
+
+    /** Resumes live SoundFont streaming for the selected instrument (call from {@code onResume}). */
+    public void resumeLiveInstrument() {
+        if (synth != null && instrumentProgram >= 0) synth.start(instrumentProgram);
+    }
+
+    /** True once the SoundFont has finished loading (always false until a non-piano instrument is used). */
+    public boolean isSoundFontReady() {
+        return synth != null && synth.isReady();
+    }
+
+    /**
+     * Begins loading the SoundFont now (async), without selecting an instrument or starting audio.
+     * Call this at app startup when the saved instrument is a SoundFont one, so it decodes in
+     * parallel with the piano samples instead of only when the keyboard appears.
+     */
+    public void preloadSoundFont() {
+        if (synth == null) synth = FM_Synth.getInstance(context);
+        synth.ensureLoaded();
+    }
+
+    /** PCM sample rate of {@link #renderInstrumentPcm}. */
+    public int getInstrumentSampleRate() {
+        return FM_Synth.SAMPLE_RATE;
+    }
+
+    /**
+     * Offline-renders a performance with a GM instrument to mono 16-bit PCM (for audio export).
+     * Each parallel-array entry is one note: chromatic key 1..88, start and duration in ms.
+     */
+    public short[] renderInstrumentPcm(int gmProgram, int[] keys, long[] startMs, long[] durMs, float[] velocities) {
+        if (synth == null) synth = FM_Synth.getInstance(context);
+        synth.ensureLoaded();
+        return synth.renderPcm(gmProgram, keys, startMs, durMs, velocities);
     }
 
     public boolean isFirstMeasureComplete(){

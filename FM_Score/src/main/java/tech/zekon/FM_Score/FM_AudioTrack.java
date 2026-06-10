@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -351,6 +352,9 @@ class FM_SoundPool {
 
     //hold the playing threads
     private final SparseArray<PlayThread> threadMap;
+    // Sustain pedal: while on, released keys keep ringing here instead of stopping.
+    private volatile boolean sustain = false;
+    private final ArrayList<PlayThread> sustainedThreads = new ArrayList<>();
     volatile static boolean playing;
     //hold the audio files
     protected static final SparseArray<String> assetFiles = new SparseArray<>();
@@ -862,21 +866,26 @@ class FM_SoundPool {
     }
 
     void playKey(int key) {
-        playKey(key, false, false);
+        playKey(key, false, 1f);
     }
 
     void playKey(int key, boolean NextPause) {
-        playKey(key, NextPause, false);
+        playKey(key, NextPause, 1f);
+    }
+
+    /** Plays a live key press at {@code volume} (0..1), e.g. from touch velocity. */
+    void playKey(int key, float volume) {
+        playKey(key, false, volume);
     }
 
     void playSilentKey(int key) {
-        playKey(key, false, true);
+        playKey(key, false, 0f);
     }
 
-    void playKey(int key, boolean NextPause, boolean silent) {
+    void playKey(int key, boolean NextPause, float volume) {
         if (key == -1) return;
         if (isKeyNotPlaying(key)) {
-            PlayThread thread = new PlayThread(key, NextPause, silent);
+            PlayThread thread = new PlayThread(key, NextPause, volume);
             thread.start();
             threadMap.put(key, thread);
         }
@@ -887,11 +896,38 @@ class FM_SoundPool {
         try {
             PlayThread thread = threadMap.get(key, null);
             if (thread != null) {
-                thread.Stop();
-                threadMap.remove(key);
+                threadMap.remove(key);   // removed so the key can be re-struck while it rings
+                if (sustain) {
+                    synchronized (sustainedThreads) {
+                        // Replace an older ringing copy of this key — re-striking under the pedal
+                        // would otherwise stack phasing duplicates of the same sample — and sweep
+                        // entries whose 8 s await already ran out.
+                        for (Iterator<PlayThread> it = sustainedThreads.iterator(); it.hasNext(); ) {
+                            PlayThread t = it.next();
+                            if (t.key == key || !t.isAlive()) {
+                                t.Stop();
+                                it.remove();
+                            }
+                        }
+                        sustainedThreads.add(thread);   // keep ringing until the pedal is released
+                    }
+                } else {
+                    thread.Stop();
+                }
             }
         } catch (Exception e) {
             FM_Log.w("FM_SoundPool", "stopKey failed for key " + key, e);
+        }
+    }
+
+    /** Sustain pedal: while on, released keys keep ringing; turning it off stops the held notes. */
+    void setSustain(boolean on) {
+        sustain = on;
+        if (!on) {
+            synchronized (sustainedThreads) {
+                for (PlayThread t : sustainedThreads) t.Stop();
+                sustainedThreads.clear();
+            }
         }
     }
 
@@ -977,6 +1013,10 @@ class FM_SoundPool {
                 threadMap.remove(i);
             }
         }
+        synchronized (sustainedThreads) {
+            for (PlayThread t : sustainedThreads) t.Stop();
+            sustainedThreads.clear();
+        }
     }
 
     class PlayThread extends Thread {
@@ -985,9 +1025,8 @@ class FM_SoundPool {
         private final boolean NextPause;
         private final float volume;
 
-        PlayThread(int key, boolean NextPause, boolean silent) {
-            if (silent) volume = 0f;
-            else volume = 1f;
+        PlayThread(int key, boolean NextPause, float volume) {
+            this.volume = volume;
             this.NextPause = NextPause;
             this.key = key;
             this.stop = new CountDownLatch(1);
@@ -1012,7 +1051,9 @@ class FM_SoundPool {
                     fall = fall / 5f;
                 while (d < fall) {
                     d += CustomDelay(2, true);
-                    float p = 1f - d / fall;
+                    // Fade from the note's own volume (not full scale) so a soft note doesn't
+                    // jump UP to full when released.
+                    float p = volume * (1f - d / fall);
                     sndPool.setVolume(stream, p, p);
                 }
                 //sndPool.setVolume(stream, 0, 0);
