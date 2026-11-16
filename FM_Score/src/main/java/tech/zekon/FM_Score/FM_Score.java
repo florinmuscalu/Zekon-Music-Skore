@@ -9,7 +9,6 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -19,6 +18,8 @@ import org.json.JSONObject;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+
+import androidx.annotation.AnyThread;
 
 import static android.view.MotionEvent.INVALID_POINTER_ID;
 
@@ -61,7 +62,7 @@ public class FM_Score extends View {
     float pivotPointY = 0f;
 
     private boolean TrimLastRow;
-    private int progressBar;
+    private volatile int progressBar;   // written by the playback thread, read in onDraw
     @FM_BoundingBoxType
     private int DrawBoundingBox;
 
@@ -102,11 +103,13 @@ public class FM_Score extends View {
 
     }
 
+    @AnyThread   // the Progress* calls come from the playback thread, so they post the redraw
     public void ProgressReset() {
         progressBar = -1;
-        invalidate();
+        postInvalidate();
     }
 
+    @AnyThread
     public void ProgressSetStart(int measure) {
         if (measure == 1) {
             progressBar = -1;
@@ -119,15 +122,16 @@ public class FM_Score extends View {
                 }
             }
         }
-        invalidate();
+        postInvalidate();
     }
 
+    @AnyThread
     public void ProgressAdvance() {
         progressBar += 1;
         if (ScoreBase.StaveNotes.get(progressBar) instanceof FM_BarNote) progressBar += 1;
         if (ScoreBase.StaveNotes.get(progressBar) instanceof FM_Clef) progressBar += 1;
         if (ScoreBase.StaveNotes.get(progressBar) instanceof FM_KeySignature) progressBar += 1;
-        invalidate();
+        postInvalidate();
     }
 
     public void setTrimLastRow(boolean trimLastRow) {
@@ -550,7 +554,7 @@ public class FM_Score extends View {
                             save = true;
                         }
                         if (save) {
-                            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+                            SharedPreferences settings = context.getSharedPreferences(context.getPackageName() + "_preferences", Context.MODE_PRIVATE);
                             SharedPreferences.Editor editor = settings.edit();
                             editor.putFloat("zoom_level", FM_Const.pxTOdp(context, _DistanceBetweenStaveLines));
                             editor.apply();
@@ -1013,7 +1017,7 @@ public class FM_Score extends View {
         AllowZoomControls = allowZoomControls;
         tmpZoomControls = allowZoomControls;
         if (allowZoomControls) {
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences settings = context.getSharedPreferences(context.getPackageName() + "_preferences", Context.MODE_PRIVATE);
             float d = settings.getFloat("zoom_level", FM_Const.pxTOdp(context, _DistanceBetweenStaveLines));
             setDistanceBetweenStaveLines(d);
         }

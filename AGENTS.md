@@ -8,20 +8,20 @@ path (`../StaveTest/FM_Score`). Self-contained — it has **no** external siblin
 
 | Gradle module | compileSdk | Role |
 |---------------|------------|------|
-| `:app`        | **36**     | the StaveTest score app |
-| `:FM_Score`   | **37**     | shared audio/notation engine (consumed by the three Real-* apps) |
+| `:app`        | **37.2**   | the StaveTest score app |
+| `:FM_Score`   | **37.2**   | shared audio/notation engine (consumed by the three Real-* apps) |
 
-> ⚠️ This repo currently **spans two platforms** (`:app` on 36, `:FM_Score` on 37), so install **both** below.
-
-## Toolchain (2026-06-01)
+## Toolchain (2026-11-16)
 
 | Tool | Version | Notes |
 |------|---------|-------|
-| JDK (runs Gradle) | **21** (Temurin) | 17 also OK. **JDK 25 fails** — Gradle 9.5.1 supports ≤ JDK 23. |
-| Gradle | 9.5.1 | via `./gradlew`; nothing to install |
-| Android Gradle Plugin | 9.2.1 | builds compileSdk 37 with no warning |
-| Platforms | `android-36` **and** `android-37.0` | API 37 uses *minor-version* packaging |
-| Build-tools | 36.0.0 + 37.0.0 | |
+| JDK (runs Gradle) | **21** (Temurin) | 17 and 25 also OK (25 checked on Gradle 9.9.1, 2026-11-16). |
+| Gradle | 9.9.1 | via `./gradlew`; nothing to install |
+| Android Gradle Plugin | 9.5.1 | builds compileSdk 37.2 with no warning |
+| Platform | `android-37.2` | API 37 uses *minor-version* packaging |
+| Build-tools | 36.0.0 | the plugin's default |
+| **NDK** | **30.0.16248370** | required — native SoundFont synth (`FM_Score/src/main/cpp`); pinned via `ndkVersion` |
+| **CMake** | **4.1.2** | required — builds the native lib |
 | Java source/target | 17 | |
 
 ## 1 — JDK 21
@@ -55,8 +55,8 @@ mv cmdline-tools "$ANDROID_HOME/cmdline-tools/latest"
 (Persist the two `export` lines in `~/.zshrc`. Alternatively `brew install --cask android-commandlinetools`,
 but then point `ANDROID_HOME` at its Homebrew prefix instead.)
 
-### ⚠️ API 37 = `android-37.0` (minor-version packaging)
-The platform package is **`platforms;android-37.0`**, *not* `platforms;android-37` — the latter fails with
+### ⚠️ API 37 = `android-37.2` (minor-version packaging)
+The platform package is **`platforms;android-37.2`**, *not* `platforms;android-37` — the latter fails with
 *"Failed to find package."* Older `cmdline-tools` can't even list it. If `sdkmanager --list | grep android-37`
 comes back empty, update the tools first:
 ```bash
@@ -66,12 +66,11 @@ rm -rf "$ANDROID_HOME/cmdline-tools/latest" && mv "$ANDROID_HOME/cmdline-tools/l
 ```
 (The `SDK XML version 3` warning sdkmanager prints is harmless.)
 
-## 3 — SDK packages (both platforms — see note above)
+## 3 — SDK packages
 ```bash
 yes | sdkmanager --licenses
-sdkmanager "platform-tools" \
-  "platforms;android-37.0" "build-tools;37.0.0" \
-  "platforms;android-36"   "build-tools;36.0.0"
+sdkmanager "platform-tools" "platforms;android-37.2" "build-tools;36.0.0" \
+  "ndk;30.0.16248370" "cmake;4.1.2"
 ```
 
 ## 4 — Build
@@ -83,8 +82,8 @@ chmod +x gradlew                            # exec bit is often lost on checkout
 Signing config (if any) is in `app/build.gradle`.
 
 ## Troubleshooting
-- **`Failed to find package platforms;android-37`** → use `android-37.0`, and update cmdline-tools (§2).
-- **Gradle dies under JDK 25** (`Unsupported class file major version`, toolchain errors) → point `JAVA_HOME` at JDK 17–21.
+- **`Failed to find package platforms;android-37`** → use `android-37.2`, and update cmdline-tools (§2).
+- **Gradle dies under an unsupported JDK** (`Unsupported class file major version`, toolchain errors) → point `JAVA_HOME` at JDK 17–25.
 - **`./gradlew: Permission denied`** → `chmod +x gradlew`, or run `sh gradlew …`.
 - **SSL / `PKIX` / handshake errors from sdkmanager or Gradle** (corporate proxy) → import the proxy's root CA into the JDK that runs the build:
   ```bash
