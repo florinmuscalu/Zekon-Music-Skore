@@ -16,8 +16,8 @@ path (`../StaveTest/FM_Score`). Self-contained — it has **no** external siblin
 | Tool | Version | Notes |
 |------|---------|-------|
 | JDK (runs Gradle) | **21** (Temurin) | 17 and 25 also OK (25 checked on Gradle 9.9.1, 2026-11-16). |
-| Gradle | 9.9.1 | via `./gradlew`; nothing to install |
-| Android Gradle Plugin | 9.5.1 | builds compileSdk 37.2 with no warning |
+| Gradle | 9.9.2 | via `./gradlew`; nothing to install |
+| Android Gradle Plugin | 9.5.2 | builds compileSdk 37.2 with no warning |
 | Platform | `android-37.2` | API 37 uses *minor-version* packaging |
 | Build-tools | 36.0.0 | the plugin's default |
 | **NDK** | **30.0.16248370** | required — native SoundFont synth (`FM_Score/src/main/cpp`); pinned via `ndkVersion` |
